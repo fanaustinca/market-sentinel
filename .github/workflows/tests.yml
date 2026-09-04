@@ -5,8 +5,26 @@ on:
     branches: [master, main]
   pull_request:
 
+# Two jobs rather than one, run in parallel. Wall time becomes the slower of the
+# two instead of their sum, and a red build says immediately which kind of thing
+# broke: a unit test failing is a code error, the null gate failing is a
+# lookahead leak, and those call for very different reactions.
 jobs:
-  test:
+  unit:
+    name: unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt && pip install -e .
+      - name: Prove the null market is empty and no strategy sees the future
+        run: python -m pytest tests/ -q
+
+  null-gate:
+    name: nothing profits from noise
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -16,19 +34,16 @@ jobs:
           cache: pip
       - run: pip install -r requirements.txt && pip install -e .
 
-      - name: Prove the null market is empty and no strategy sees the future
-        run: python -m pytest tests/ -v
-
       # The permanent guard. If any strategy ever starts profiting from pure
       # randomness, that is a lookahead bug and the build must fail before the
       # commit is trusted -- not eighteen months later on real money.
       #
-      # 60 markets of 1260 days rather than the full 200 x 2520: a GitHub runner
-      # has two cores and the AI is roughly two seconds per market. This size
-      # detects a leak comfortably (a peeking strategy scores t > 20, against a
-      # threshold of 3) while finishing in a few minutes. The floors quoted
-      # anywhere in the project come from the full local sweep recorded in
-      # reports/, never from this run -- a p95 estimated from 60 samples is too
-      # noisy to publish.
+      # 60 markets of 1260 days rather than the full 200 x 2520: a runner has two
+      # cores and eleven strategies are swept. This size detects a leak
+      # comfortably -- a peeking strategy scores t > 20 against a threshold of 3 --
+      # while finishing in a few minutes. The floors quoted anywhere in the
+      # project come from the full local sweep recorded in reports/, never from
+      # this run: a p95 estimated from 60 samples is too noisy to publish, and
+      # null_test.py refuses to write a report from fewer than 100.
       - name: Prove no strategy profits from noise
         run: python experiments/null_test.py --markets 60 --steps 1260 --no-write

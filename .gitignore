@@ -14,6 +14,12 @@ data/curated/
 !data_cache/
 !data_cache/*.parquet
 
+# The decision journal is the record, not a build artifact. Entries are
+# predictions made before the outcome was known, and they are only evidence if
+# they are committed at the time rather than reconstructed later.
+!journal/
+!journal/*.json
+
 # secrets
 .env
 config/secrets.yaml

@@ -295,7 +295,7 @@ Cost through paper trading: **$0**.
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt && pip install -e .
 
-pytest                                     # 267 tests
+pytest                                     # 280 tests
 
 python experiments/validate_sandbox.py     # Phase 0 evidence
 python experiments/null_test.py            # Phase 1 gate — must pass, runs in CI
@@ -308,7 +308,17 @@ python experiments/corrected_sandbox.py    # does the fixed sandbox predict real
 python experiments/adversarial.py          # Phase 3: crashes and correlation breakdown
 python experiments/is_it_timing.py         # the harder floor: timing, or just exposure?
 python experiments/more_paths.py           # does it replicate? 8 countries, 391 market-years
+
+python -m sentinel.journal                 # what to hold today, and why
+python -m sentinel.journal --write         # ...and record it before the outcome is known
 ```
+
+`python -m sentinel.journal` is the advisory output — `plan.md` §12 recommends staying
+recommend-and-you-click well into Phase 6. It fetches current prices, runs every strategy through
+**the same code the backtests ran**, prints each position with a readable reason and its measured
+noise floor, and refuses outright if the data is stale. `--write` records the reading to a dated
+file in `journal/` and will not overwrite one: a prediction rewritten after the fact is not
+evidence, and that property is the only thing that makes six months of paper trading mean anything.
 
 Every experiment takes `--quick` for a smoke test. The Null Test refuses to write a report from
 fewer than 100 markets per cell, because a 95th percentile estimated from fewer is too noisy to

@@ -50,7 +50,7 @@ comparison was too generous.
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt && pip install -e .
-pytest                                   # 231 tests
+pytest                                   # 280 tests
 python experiments/null_test.py          # the Phase 1 gate
 ```
 
@@ -201,7 +201,10 @@ honest continuations:
 
 **(a) Ship the risk tool.** Take `absolute_momentum` to paper trading as what the evidence supports:
 something that roughly halves the worst drawdown for about two points of annual return. Small,
-verifiable, and the claim matches the measurement.
+verifiable, and the claim matches the measurement. **The plumbing for this already exists** —
+`python -m sentinel.journal --write` produces the daily reading and records it before the outcome is
+known. Running it on a schedule is the whole of Phase 5's mechanics; the remaining six months are
+calendar time.
 
 **(b) Keep asking the research question.** The instruments are built and they work. The open
 questions below are real and the sandbox is now trustworthy enough to explore them.

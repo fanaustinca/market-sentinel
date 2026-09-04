@@ -1,0 +1,75 @@
+{
+  "written_at": "2026-09-04T17:57:10.145297+00:00",
+  "data_as_of": "2026-09-04",
+  "data_fingerprint": "1140fde0d058",
+  "tickers": [
+    "SPY"
+  ],
+  "signals": [
+    {
+      "strategy": "absolute_momentum",
+      "weights": {
+        "SPY": 1.0
+      },
+      "previous_weights": {
+        "SPY": 1.0
+      },
+      "cash": 0.0,
+      "changed": false,
+      "reason": "trailing 252-day return is positive (+18.1%), so hold",
+      "noise_floor": 0.5062
+    },
+    {
+      "strategy": "buy_and_hold",
+      "weights": {
+        "SPY": 1.0
+      },
+      "previous_weights": {
+        "SPY": 1.0
+      },
+      "cash": 0.0,
+      "changed": false,
+      "reason": "holds 100% invested",
+      "noise_floor": 0.5176
+    },
+    {
+      "strategy": "volatility_target",
+      "weights": {
+        "SPY": 1.0
+      },
+      "previous_weights": {
+        "SPY": 1.0
+      },
+      "cash": 0.0,
+      "changed": false,
+      "reason": "trailing 21-day volatility is 8.3% against a 12% target, so hold 100%",
+      "noise_floor": 0.5163
+    },
+    {
+      "strategy": "short_momentum",
+      "weights": {
+        "SPY": 0.0
+      },
+      "previous_weights": {
+        "SPY": 1.0
+      },
+      "cash": 1.0,
+      "changed": true,
+      "reason": "trailing 5-day return is negative (-0.0%), so stand aside",
+      "noise_floor": 0.2692
+    },
+    {
+      "strategy": "regime_aware",
+      "weights": {
+        "SPY": 0.9289103757782325
+      },
+      "previous_weights": {
+        "SPY": 0.9289103757782325
+      },
+      "cash": 0.07108962422176746,
+      "changed": false,
+      "reason": "regime model puts P(stressed) at 3%, so hold 93%",
+      "noise_floor": 0.5124
+    }
+  ]
+}
