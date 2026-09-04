@@ -200,6 +200,12 @@ confirming that blindness is a real finding about the feature set.
 Dependencies: `numpy`, `scipy`, `pandas`, `scikit-learn`, `lightgbm`, `pytest`.
 Developed on x86-64 WSL2 / Python 3.12, CI on ubuntu-latest.
 
+Install from `requirements.txt` rather than relying on whatever is already in
+your environment. The first CI run of Phase 1 failed exactly here: `lightgbm`
+was present locally but undeclared, so 119 tests passed on this machine and the
+two AI tests failed on a clean one. Adding an import means adding a line to
+`requirements.txt` **and** `pyproject.toml`.
+
 **On a DGX Spark (aarch64):** nothing here is GPU-bound and nothing needs CUDA.
 The workload is many small LightGBM fits, which is CPU- and core-count-bound —
 `run_null_test` parallelises across processes and will benefit directly from more
