@@ -581,3 +581,56 @@ none of these matched, they lost.
 `volatility_target`. Both are simple enough to verify by hand. Neither beat buy-and-hold *and* the
 noise floor by a margin that survives the caveats — 32.9 years of SPY is one path, and it is the
 path everyone already knows went up.
+
+---
+
+## 2026-09-04 — The demeaned noise floor is too generous for judging a timing strategy
+
+**Decision:** Any question of the form "did the timing add value?" is judged against a bootstrap that
+**preserves the market's drift** and destroys only the ordering. The demeaned floor stays for the
+Null Test, where it remains correct. Evidence in `reports/2026-09-04-is-it-timing.txt`.
+
+**Why:** Every null market in this project is demeaned, for a good reason — with drift left in, any
+strategy holding the asset makes money from exposure rather than skill, and the Null Test would
+measure the wrong thing.
+
+But applied to a real-data result it produces a bar that means less than it appears to. Buy and hold
+scored Sharpe 0.654 on real SPY against a demeaned floor of 0.414, and so "beat its noise floor"
+while doing nothing whatsoever except being invested in a market that went up. If buy-and-hold
+clears a bar, clearing it is not evidence of skill.
+
+Resampling with the drift left in fixes it. The ordering is still destroyed, so there is nothing to
+time — but the market still rises, so a strategy is still paid for exposure. A timing rule's score on
+that market is exactly what its average exposure earns, and nothing more is available. The gap
+between real and shuffled is then the part attributable to using the order of returns, which is the
+only thing the shuffle removed and the only thing timing could be.
+
+**What it did to the results**, 300 shuffled markets over the same 32.9 years:
+
+    strategy              real   shuffled   timing edge   percentile
+    buy_and_hold        +0.637     +0.636        +0.001         52%   <- calibration check
+    absolute_momentum   +0.769     +0.526        +0.243         87%
+    volatility_target   +0.742     +0.599        +0.143         79%
+    regime_aware        +0.453     +0.607        -0.154         18%
+    short_momentum      +0.040     +0.299        -0.259         10%
+
+The calibration check passes exactly: buy-and-hold has no timing ability, so the shuffle takes
+nothing from it, and it lands at the 52nd percentile.
+
+**The conclusion, stated plainly: nothing in this project reaches significance.** `absolute_momentum`
+is the best candidate at p = 0.13 — suggestive, and short of the conventional bar. Against the
+demeaned floor it had looked decisive (0.798 against 0.344); the entire difference was credit for
+being invested in a rising market, which is available for free by holding the index.
+
+And two strategies did *worse* than shuffling their own market. `regime_aware`'s apparent
+floor-clearing was pure exposure; its timing actively cost 0.154 of Sharpe.
+
+**What this does not reduce:** the drawdown result. `absolute_momentum`'s worst drawdown was −27.8%
+against buy-and-hold's −51.0%. Roughly halving the worst loss follows from always stepping aside
+after a sustained decline, which is a mechanical property and not a claim about predicting anything.
+It holds whether or not the timing edge is real, and for a project whose stated goal is capital
+preservation rather than return maximisation, it may be the more relevant number.
+
+**What would settle it:** not more backtesting on SPY — the shuffle has extracted what this path can
+say. Either more independent paths (other indices, other countries, pre-1993 data), or paper trading
+forward, where the answer is not yet known to anybody.

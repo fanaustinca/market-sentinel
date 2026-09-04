@@ -26,11 +26,14 @@ real market data. The project has produced five findings that are worth more tha
 5. **Every piece of machinery added has made real results worse.** The real-SPY ranking is almost
    perfectly inverse to complexity, and the control arm caught it every time it was asked.
 
-The two candidates worth carrying forward are **`absolute_momentum`** (Sharpe 0.798, floor 0.344)
-and **`volatility_target`** (0.731, floor 0.384), against buy-and-hold's 0.654, over 32.9 years of
-SPY. One has two parameters and the other has one. Neither is a model, and neither clears the bar by
-a margin that survives the caveats — 33 years of SPY is one path, and it is the path everyone
-already knows went up.
+6. **Against a floor that gives no credit for being invested, nothing here is significant.** The
+   demeaned floors flatter every strategy; reshuffled *with drift preserved*, `absolute_momentum`'s
+   timing edge is p = 0.13 and `regime_aware`'s is negative.
+
+The best candidate is **`absolute_momentum`** — two parameters, checkable by hand. What survives
+scrutiny is not its return but its **drawdown**: −27.8% against buy-and-hold's −51.0%, which follows
+mechanically from stepping aside after a sustained decline and does not depend on the timing edge
+being real. Do not carry the Sharpe number forward without the p-value attached.
 
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
@@ -178,7 +181,19 @@ caught something code review would not have, and it is why every new strategy ge
 
 ## Next steps, in order
 
-### 1. Find the next thing the simulator is missing
+### 1. Get more independent paths
+
+The single most valuable thing available, and the shuffle experiment says why: it has already
+extracted what SPY 1993-2025 can tell us, and the answer was p = 0.13. More backtesting on the same
+path cannot improve that number — only more paths can.
+
+Cheapest sources, in order: pre-1993 US index data (from a total-return series rather than SPY,
+which did not exist), other developed indices via the same yfinance adapter, and other asset classes.
+Each is an approximately independent draw of the same question. Note that they are not fully
+independent — global equity markets are correlated, and 2008 happened everywhere at once — so treat
+five indices as worth rather less than five times one.
+
+### 2. Find the next thing the simulator is missing
 
 The corrected sandbox ranks `absolute_momentum` third; real SPY ranks it first. The regime generator
 has no long-horizon trend structure for a 252-day rule to work with, so it cannot represent whatever
@@ -190,12 +205,12 @@ luck, and the floor for that window is +0.29. The way to tell them apart is a ge
 express long-horizon momentum, then checking whether the real result sits inside what that generator
 produces by chance. This is the same question the Null Test answers, one level up.
 
-### 2. Re-measure the multi-asset results against correlation breakdown
+### 3. Re-measure the multi-asset results against correlation breakdown
 
 Every rung-1 multi-asset number was produced on a fixed-correlation market and understates drawdown
 by roughly 17 points. `CorrelationBreakdownGenerator` now exists; the numbers have not been redone.
 
-### 3. Phase 5 — paper trading
+### 4. Phase 5 — paper trading
 
 Six months of calendar time, no code can compress it, and it is the only genuinely out-of-sample
 test available. Needs an Alpaca adapter behind the same `MarketData` interface, which does not
@@ -205,7 +220,7 @@ Before starting, write down the expected range for each strategy from the number
 Divergence from a prediction made in advance is a bug to find; divergence from a number recalled
 afterwards is a story to tell, and the difference matters.
 
-### 4. Not yet built
+### 5. Not yet built
 
 - **Anomaly detector** — must only ever *reduce* risk. Never started.
 - **Position sizing for gap risk.** Phase 3 showed the drawdown breaker is worse than useless

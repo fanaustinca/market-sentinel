@@ -1,0 +1,48 @@
+{
+  "generated": "2026-09-04",
+  "ticker": "SPY",
+  "fingerprint": "98f0d745f5a5",
+  "n_markets": 300,
+  "results": {
+    "buy_and_hold": {
+      "real_sharpe": 0.6367013208706284,
+      "shuffled_mean": 0.6360216873931444,
+      "shuffled_p95": 0.950586288405473,
+      "shuffled_sd": 0.17913668930217008,
+      "timing_edge": 0.0006796334774840096,
+      "percentile": 0.52
+    },
+    "absolute_momentum": {
+      "real_sharpe": 0.7689660643731765,
+      "shuffled_mean": 0.5262406402401033,
+      "shuffled_p95": 0.8345749292134894,
+      "shuffled_sd": 0.2009115797778662,
+      "timing_edge": 0.2427254241330732,
+      "percentile": 0.8666666666666667
+    },
+    "short_momentum": {
+      "real_sharpe": 0.039873429663010836,
+      "shuffled_mean": 0.2988880235239002,
+      "shuffled_p95": 0.6039614052418806,
+      "shuffled_sd": 0.2010859740923716,
+      "timing_edge": -0.2590145938608894,
+      "percentile": 0.09666666666666666
+    },
+    "volatility_target": {
+      "real_sharpe": 0.7423768338120358,
+      "shuffled_mean": 0.5990661614893362,
+      "shuffled_p95": 0.9055686780121777,
+      "shuffled_sd": 0.17568140631566354,
+      "timing_edge": 0.14331067232269956,
+      "percentile": 0.79
+    },
+    "regime_aware": {
+      "real_sharpe": 0.4531862050830246,
+      "shuffled_mean": 0.6072275308110562,
+      "shuffled_p95": 0.9093722581797068,
+      "shuffled_sd": 0.1799636029361162,
+      "timing_edge": -0.1540413257280316,
+      "percentile": 0.18
+    }
+  }
+}

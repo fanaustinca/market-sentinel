@@ -1,0 +1,57 @@
+
+IS IT TIMING, OR IS IT JUST BEING INVESTED?
+
+  SPY 1993-02-01 to 2025-12-31 (32.9 years), fingerprint 98f0d745f5a5
+  300 bootstrap markets, drift preserved, ordering destroyed
+
+  'shuffled' is what each strategy scores when there is nothing left to
+  time but the market still rises. The gap between the two columns is the
+  only part attributable to using the order of returns.
+
+  strategy                     real  shuffled  timing edge  percentile
+  buy_and_hold               +0.637    +0.636       +0.001      52.0%
+  absolute_momentum          +0.769    +0.526       +0.243      86.7%
+  short_momentum             +0.040    +0.299       -0.259       9.7%
+  volatility_target          +0.742    +0.599       +0.143      79.0%
+  regime_aware               +0.453    +0.607       -0.154      18.0%
+
+  READING IT
+
+  buy_and_hold: scores +0.636 on shuffled markets against +0.637 real.
+    As it must — it has no timing ability, so the shuffle takes nothing
+    from it. This is the experiment's calibration check, and it passes.
+  absolute_momentum: 87%th percentile, p = 0.13. Suggestive and NOT significant — the conventional bar is 95%.
+  short_momentum: 10%th percentile. It did *worse* than shuffling its own market, so the timing actively cost money.
+  volatility_target: 79%th percentile, p = 0.21. No detectable timing edge; consistent with exposure alone.
+  regime_aware: 18%th percentile. It did *worse* than shuffling its own market, so the timing actively cost money.
+
+  THE ONE THAT MATTERS
+
+  absolute_momentum scores +0.769 on real SPY and
+  +0.526 on shuffled SPY — a timing edge of +0.243, at the
+  87%th percentile of what the shuffle produces.
+
+  p = 0.13. **This does not reach significance.** Against the
+  demeaned floor in real_data.py it looked decisive — 0.798 against 0.344.
+  Against this floor it does not, and the difference is entirely that the
+  demeaned floor credited it for being invested in a market that went up.
+  That is not a skill; it is available for free by holding the index.
+
+  The honest statement is: over the single path of 1993-2025, trend
+  following added an estimated +0.24 of Sharpe over the same average
+  exposure held at random moments, and roughly 13% of random
+  reorderings of that same history would have produced as much by chance.
+  That is worth continuing to test. It is not worth funding.
+
+  WHAT WOULD SETTLE IT
+
+  Not more backtesting on SPY — the shuffle has already extracted what
+  this path can tell us. Either more independent paths (other indices,
+  other countries, pre-1993 data), or paper trading forward, where the
+  answer is not yet known to anybody.
+
+  Note also what this experiment does NOT reduce: the drawdown result.
+  absolute_momentum's max drawdown was -27.8% against buy-and-hold's
+  -51.0%. Cutting the worst loss roughly in half is a property of always
+  stepping aside after sustained declines, not a claim about predicting
+  them, and it does not depend on the timing edge being real.

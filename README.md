@@ -195,6 +195,35 @@ than a 21-day rolling standard deviation.
 That is not an argument that models never work. It is exactly what the permanent control arm was put
 there to detect, and it detected it every time it was asked.
 
+### The harder question: is it timing, or just being invested?
+
+The floors above are measured on **demeaned** returns, the convention every null market here uses.
+Applied to a real-data result that bar means less than it looks. Buy-and-hold scores 0.654 against a
+demeaned floor of 0.414 — it "beats its noise floor" while doing nothing but being invested in a
+market that went up. If buy-and-hold clears a bar, clearing it is not evidence of skill.
+
+So the returns were reshuffled again with **the drift left in**. Ordering destroyed, so there is
+nothing to time; market still rises, so exposure is still paid for. Whatever a strategy scores there
+is what its average exposure earns, and the gap to its real score is the part attributable to using
+the order of returns.
+
+| Strategy | real | shuffled | timing edge | percentile |
+|---|---|---|---|---|
+| buy_and_hold | +0.637 | +0.636 | +0.001 | 52% ← calibration check |
+| **absolute_momentum** | +0.769 | +0.526 | **+0.243** | **87%** |
+| volatility_target | +0.742 | +0.599 | +0.143 | 79% |
+| regime_aware | +0.453 | +0.607 | −0.154 | 18% |
+| short_momentum | +0.040 | +0.299 | −0.259 | 10% |
+
+**Nothing here reaches significance.** The best candidate sits at p = 0.13. Two strategies did
+*worse* than shuffling their own market — `regime_aware`'s apparent floor-clearing was pure
+exposure, and its timing actively cost 0.15 of Sharpe.
+
+What this does *not* reduce is the drawdown result: −27.8% against buy-and-hold's −51.0%. Roughly
+halving the worst loss follows mechanically from stepping aside after a sustained decline. It holds
+whether or not the timing edge is real, and for a project whose stated goal is capital preservation
+rather than return maximisation, it may be the more relevant number.
+
 ## The Reality Ladder
 
 Each rung adds exactly one element of reality, so any failure is attributable.
@@ -240,6 +269,7 @@ python experiments/real_data.py            # rung 2: real ETF history
 python experiments/simulator_gap.py        # where reality diverged from the simulator
 python experiments/corrected_sandbox.py    # does the fixed sandbox predict reality?
 python experiments/adversarial.py          # Phase 3: crashes and correlation breakdown
+python experiments/is_it_timing.py         # the harder floor: timing, or just exposure?
 ```
 
 Every experiment takes `--quick` for a smoke test. The Null Test refuses to write a report from
@@ -260,16 +290,21 @@ publish and every later phase compares against these numbers.
 
 ## What would actually be traded, if anything
 
-Two candidates, both simple enough to check by hand in a spreadsheet: **absolute momentum**
-(hold while the trailing 12-month return is positive, else cash) and **volatility targeting** (hold
-`12% / trailing volatility`, capped at fully invested). Each clears its own noise floor and beats
-buy-and-hold risk-adjusted over 33 years of SPY.
+On the evidence so far: **nothing, yet.**
 
-Neither clears it by a margin that survives the caveats. 32.9 years of SPY is **one path**, and it
-is the path everyone already knows went up; the noise floor for a window that long is still +0.29;
-the universe was chosen today from funds that exist today; and taxes are not modelled. The next
-honest test is paper trading, where the answer is not yet known to anybody — and no amount of
-further backtesting substitutes for it.
+The best candidate is **absolute momentum** — hold while the trailing 12-month return is positive,
+else cash. Two parameters, checkable by hand. Over 33 years of SPY it returned 9.84% a year against
+buy-and-hold's 9.30%, with a worst drawdown of −27.8% against −51.0%. But its *timing* edge is
+p = 0.13 against a floor that gives no credit for simply being invested, and 0.13 is not a number to
+fund a position on.
+
+What is solid is the drawdown, because it does not depend on the timing edge being real — stepping
+aside after a sustained decline mechanically halves the worst loss. For a project whose stated goal
+is capital preservation, that may be the result that matters. It is also, notably, available from a
+rule a beginner could write in an afternoon.
+
+The next honest test is paper trading, where the answer is not yet known to anybody. More
+backtesting on SPY will not help: the shuffle has already extracted what this single path can say.
 
 New here? Start with [HANDOFF.md](HANDOFF.md).
 
