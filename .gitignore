@@ -1,0 +1,22 @@
+# data
+data/raw/
+data/curated/
+*.parquet
+*.csv
+*.db
+
+# secrets
+.env
+config/secrets.yaml
+*.key
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# os
+.DS_Store
