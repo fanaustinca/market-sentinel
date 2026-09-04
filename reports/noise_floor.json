@@ -237,6 +237,72 @@
         }
       }
     },
+    "volatility_target": {
+      "p95": 0.5163,
+      "p99": 0.6877,
+      "mean": -0.0147,
+      "sd": 0.3124,
+      "n": 600,
+      "per_market": {
+        "gbm": {
+          "mean_sharpe": -0.0239,
+          "t": -1.094,
+          "p95": 0.4881,
+          "p99": 0.6879,
+          "profitable_fraction": 0.38,
+          "passed": true
+        },
+        "jump": {
+          "mean_sharpe": -0.008,
+          "t": -0.36,
+          "p95": 0.511,
+          "p99": 0.6832,
+          "profitable_fraction": 0.39,
+          "passed": true
+        },
+        "heston": {
+          "mean_sharpe": -0.0122,
+          "t": -0.547,
+          "p95": 0.5377,
+          "p99": 0.6804,
+          "profitable_fraction": 0.405,
+          "passed": true
+        }
+      }
+    },
+    "regime_volatility_target": {
+      "p95": 0.5349,
+      "p99": 0.7695,
+      "mean": 0.0039,
+      "sd": 0.3116,
+      "n": 600,
+      "per_market": {
+        "gbm": {
+          "mean_sharpe": 0.0069,
+          "t": 0.316,
+          "p95": 0.5181,
+          "p99": 0.7599,
+          "profitable_fraction": 0.415,
+          "passed": true
+        },
+        "jump": {
+          "mean_sharpe": 0.0077,
+          "t": 0.348,
+          "p95": 0.5259,
+          "p99": 0.7798,
+          "profitable_fraction": 0.43,
+          "passed": true
+        },
+        "heston": {
+          "mean_sharpe": -0.003,
+          "t": -0.137,
+          "p95": 0.5353,
+          "p99": 0.747,
+          "profitable_fraction": 0.4,
+          "passed": true
+        }
+      }
+    },
     "ai_walkforward": {
       "p95": 0.2314,
       "p99": 0.5317,

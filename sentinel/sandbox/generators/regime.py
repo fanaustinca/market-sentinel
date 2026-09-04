@@ -127,5 +127,40 @@ class RegimeSwitchingGenerator(Generator):
             },
         )
 
+    @classmethod
+    def equity_like(cls, **kwargs) -> "RegimeSwitchingGenerator":
+        """A regime market whose states are calibrated to what SPY actually does.
+
+        The default parameters, `mu=(0.12, -0.15)` with `sigma=(0.12, 0.32)`,
+        weld two properties together: calm means rising *and* quiet, stressed
+        means falling *and* volatile. That coupling is not a fact about markets;
+        it was a modelling choice, and it silently taught every strategy built in
+        this sandbox that fleeing volatility means fleeing losses.
+
+        Measured on SPY from 1993, conditioning on the classifier's own states
+        (see `experiments/simulator_gap.py`):
+
+            calm       +9.0% a year at 13.4% volatility   Sharpe 0.67
+            stressed  +17.1% a year at 27.8% volatility   Sharpe 0.62
+
+        Real equity volatility is *compensated*. The high-volatility state has
+        the higher return, and the risk-adjusted return is close to identical in
+        both -- the market is not offering a better deal in one state, it is
+        offering the same deal at two different sizes.
+
+        This preset reproduces that. It is a harder and more honest sandbox: a
+        strategy that gets its edge from sitting out volatility will earn nothing
+        here, which is what it earns in reality. Use it to check whether a result
+        obtained with the default parameters survives removing the assumption
+        that produced it.
+
+        The class was always able to express this. Nothing needed changing except
+        the numbers, and every call site used the defaults.
+        """
+        kwargs.setdefault("mu", (0.09, 0.17))
+        kwargs.setdefault("sigma", (0.134, 0.278))
+        kwargs.setdefault("persistence", (0.985, 0.968))
+        return cls(**kwargs)
+
     def _params(self, n_assets: int) -> dict[str, Any]:
         return {}

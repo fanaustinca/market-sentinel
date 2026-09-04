@@ -22,7 +22,7 @@
         "sd": 0.1818998004723775
       },
       "beats_floor": true,
-      "seconds": 1.4
+      "seconds": 1.3
     },
     "always_cash": {
       "sharpe": 0.0,
@@ -90,7 +90,7 @@
         "sd": 0.18341170964825795
       },
       "beats_floor": true,
-      "seconds": 320.3
+      "seconds": 343.4
     },
     "regime_gate": {
       "sharpe": 0.4525528948635954,
@@ -107,7 +107,41 @@
         "sd": 0.18237255312588724
       },
       "beats_floor": true,
-      "seconds": 321.2
+      "seconds": 326.3
+    },
+    "volatility_target": {
+      "sharpe": 0.7312745320992841,
+      "cagr": 0.07925079801748014,
+      "volatility": 0.11306765979327484,
+      "max_drawdown": -0.3938305898975799,
+      "max_drawdown_days": 1578,
+      "turnover": 2.2120568487162457,
+      "breaker_days": 264,
+      "bootstrap_floor": {
+        "p95": 0.38359920088282967,
+        "p99": 0.4460085040495132,
+        "mean": 0.06641420770493472,
+        "sd": 0.17773812418821577
+      },
+      "beats_floor": true,
+      "seconds": 1.3
+    },
+    "regime_volatility_target": {
+      "sharpe": 0.5827247780156682,
+      "cagr": 0.05884168121738531,
+      "volatility": 0.1081866297678836,
+      "max_drawdown": -0.34024687705058354,
+      "max_drawdown_days": 1552,
+      "turnover": 5.587982115987328,
+      "breaker_days": 264,
+      "bootstrap_floor": {
+        "p95": 0.37209742138299684,
+        "p99": 0.4861718757977566,
+        "mean": 0.08521219877957278,
+        "sd": 0.1800333198087273
+      },
+      "beats_floor": true,
+      "seconds": 333.0
     },
     "ai_walkforward": {
       "sharpe": 0.055129576756693666,
@@ -124,7 +158,7 @@
         "sd": 0.16077142866644367
       },
       "beats_floor": false,
-      "seconds": 176.7
+      "seconds": 175.3
     },
     "ai_walkforward_classifier": {
       "sharpe": 0.1432273301884855,
@@ -141,7 +175,7 @@
         "sd": 0.16168732041702177
       },
       "beats_floor": true,
-      "seconds": 202.0
+      "seconds": 185.9
     }
   },
   "crises": {
@@ -152,6 +186,8 @@
       "short_momentum": -0.32905869095887674,
       "regime_aware": -0.3144760417535276,
       "regime_gate": -0.42862201462313576,
+      "volatility_target": -0.37774690256232013,
+      "regime_volatility_target": -0.2800525849167025,
       "ai_walkforward": -0.21883490163096975,
       "ai_walkforward_classifier": -0.11658270142798322
     },
@@ -162,6 +198,8 @@
       "short_momentum": -0.2678684885217494,
       "regime_aware": -0.08927024323442667,
       "regime_gate": -0.10665579508532608,
+      "volatility_target": -0.2679374532505908,
+      "regime_volatility_target": -0.3334532581752596,
       "ai_walkforward": -0.10161562378949263,
       "ai_walkforward_classifier": -0.09948757238959671
     },
@@ -172,6 +210,8 @@
       "short_momentum": -0.12839849050310914,
       "regime_aware": -0.041161907293754796,
       "regime_gate": -0.047529818329420714,
+      "volatility_target": -0.12667945003952508,
+      "regime_volatility_target": -0.12962653168769966,
       "ai_walkforward": -0.030704304819012096,
       "ai_walkforward_classifier": -0.04007783899590012
     },
@@ -182,6 +222,8 @@
       "short_momentum": -0.11574793953963958,
       "regime_aware": -0.014804910720899511,
       "regime_gate": -0.02261856170049159,
+      "volatility_target": -0.14131101656900213,
+      "regime_volatility_target": -0.11300101328152468,
       "ai_walkforward": -0.018717380012606588,
       "ai_walkforward_classifier": -0.04203697198331613
     }
@@ -231,7 +273,55 @@
         },
         "beats_floor": true
       },
-      "regime_rotation": {
+      "rotate_SPY_to_cash": {
+        "sharpe": 0.7610514211526725,
+        "cagr": 0.06310405646921025,
+        "volatility": 0.08519314920835207,
+        "max_drawdown": -0.12939010336330947,
+        "max_drawdown_days": 560,
+        "turnover": 11.008115073015734,
+        "breaker_days": 66,
+        "bootstrap_floor": {
+          "p95": 0.3852091714304951,
+          "p99": 0.5219656021249744,
+          "mean": 0.06475882074444173,
+          "sd": 0.21445363719473812
+        },
+        "beats_floor": true
+      },
+      "rotate_SPY_to_IEF": {
+        "sharpe": 0.7235377332891573,
+        "cagr": 0.06402556804560744,
+        "volatility": 0.09158816111247972,
+        "max_drawdown": -0.16942293597359825,
+        "max_drawdown_days": 723,
+        "turnover": 26.23736657406538,
+        "breaker_days": 110,
+        "bootstrap_floor": {
+          "p95": 0.39009454206621336,
+          "p99": 0.5484048608897408,
+          "mean": 0.06579112622650463,
+          "sd": 0.21356870948440015
+        },
+        "beats_floor": true
+      },
+      "rotate_SPY_to_IEF+GLD": {
+        "sharpe": 0.756660831986798,
+        "cagr": 0.07474824185131079,
+        "volatility": 0.10219027767718965,
+        "max_drawdown": -0.20064718035698748,
+        "max_drawdown_days": 556,
+        "turnover": 27.151994406442746,
+        "breaker_days": 132,
+        "bootstrap_floor": {
+          "p95": 0.3899978509549964,
+          "p99": 0.5673597323256923,
+          "mean": 0.07059612772896628,
+          "sd": 0.21389406112302808
+        },
+        "beats_floor": true
+      },
+      "rotate_SPY+IWM+EFA_to_IEF+GLD_mom": {
         "sharpe": 0.3939478988328119,
         "cagr": 0.041815596309476843,
         "volatility": 0.12335433430717753,
@@ -253,17 +343,26 @@
       "financial crisis": {
         "buy_and_hold": -0.14613072111879977,
         "fixed_SPY60_IEF40": -0.28268010395616894,
-        "regime_rotation": 0.04123762184541424
+        "rotate_SPY_to_cash": -0.0773941902404991,
+        "rotate_SPY_to_IEF": 0.00289601923479732,
+        "rotate_SPY_to_IEF+GLD": 0.03448706490551223,
+        "rotate_SPY+IWM+EFA_to_IEF+GLD_mom": 0.04123762184541424
       },
       "covid crash": {
         "buy_and_hold": -0.14170828353940723,
         "fixed_SPY60_IEF40": -0.1525522631185241,
-        "regime_rotation": -0.121479759890609
+        "rotate_SPY_to_cash": -0.05867916223266112,
+        "rotate_SPY_to_IEF": -0.021544774093468333,
+        "rotate_SPY_to_IEF+GLD": -0.10057403289634681,
+        "rotate_SPY+IWM+EFA_to_IEF+GLD_mom": -0.121479759890609
       },
       "2022 bear": {
         "buy_and_hold": -0.21620801950273372,
         "fixed_SPY60_IEF40": -0.19548025018778392,
-        "regime_rotation": -0.16517849643996818
+        "rotate_SPY_to_cash": -0.038799727106547,
+        "rotate_SPY_to_IEF": -0.14132860530079183,
+        "rotate_SPY_to_IEF+GLD": -0.17707766124033364,
+        "rotate_SPY+IWM+EFA_to_IEF+GLD_mom": -0.16517849643996818
       }
     }
   }

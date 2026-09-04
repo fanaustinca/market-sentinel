@@ -1,0 +1,33 @@
+
+DOES THE SANDBOX PREDICT REALITY?
+
+  Strategies ranked by Sharpe in each world. A sandbox worth trusting
+  should order them the way reality does; matching levels is neither
+  expected nor necessary.
+
+  strategy                     classic   corrected   real SPY
+  absolute_momentum             +0.164      +0.429     +0.769
+  volatility_target             +0.436      +0.585     +0.742
+  buy_and_hold                  +0.256      +0.583     +0.637
+  regime_volatility_target      +0.398      +0.513     +0.574
+  regime_gate                   +0.531      +0.412     +0.454
+  regime_aware                  +0.538      +0.420     +0.453
+  short_momentum                +0.028      +0.244     +0.040
+
+  rank correlation with real SPY:
+    classic sandbox    (mu = 0.12 / -0.15)   -0.143
+    corrected sandbox  (mu = 0.09 / +0.17)   +0.750
+
+  The corrected sandbox is a materially better guide. Removing one
+  false assumption -- that volatility implies loss -- moved it from
+  misleading to informative, without changing any strategy.
+
+  Rung-1 results are worth acting on again, provided they are obtained
+  with equity_like() parameters and the classic preset is treated as
+  what it is: a market where volatility and loss are the same thing,
+  which is a market nobody trades.
+
+  A caution that applies to the corrected sandbox too: its parameters were
+  calibrated on the same SPY history it is being checked against, so the
+  agreement above is not out-of-sample. It shows the correction is
+  self-consistent, not that it will hold on data nobody has seen.

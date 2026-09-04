@@ -1,0 +1,46 @@
+
+PHASE 3 -- ADVERSARIAL MARKETS
+
+  WHAT THE RISK LAYER IS WORTH
+
+    20% over 60d         drawdown saved  +3.9%   return given up +0.13%
+    35% over 60d         drawdown saved  +6.1%   return given up +0.72%
+    35% over 20d         drawdown saved  +7.5%   return given up +1.20%
+    35% over 5d          drawdown saved  +5.7%   return given up +0.37%
+    35% over 1d          drawdown saved  -1.5%   return given up -1.09%
+    50% over 20d         drawdown saved +12.5%   return given up +2.33%
+    50% over 1d          drawdown saved  -0.9%   return given up -1.56%
+
+  THE CASE WHERE THE BREAKER MAKES THINGS WORSE
+
+    35% over 60 days   +6.1% drawdown saved
+    35% over  5 days   +5.7%
+    35% over  1 day    -1.5%   <- and it costs -1.09% a year
+
+  A drawdown breaker reacts to losses already realised. When the whole
+  fall lands overnight it cannot act until the damage is done, and what
+  it then does is sell at the bottom and sit in cash through the
+  rebound -- converting an unavoidable loss into a permanent one.
+
+  This is gap risk: 1987, a peg breaking, an overnight halt. It is the
+  scenario a trailing rule is structurally unable to help with, and the
+  honest response is position sizing that survives a gap, not a better
+  breaker. No parameter choice removes it.
+
+  WHAT A FIXED-CORRELATION SIMULATOR PROMISES
+
+    fixed correlation      vol 8.9%, max drawdown -15.4%
+    correlation breaks     vol 15.4%, max drawdown -32.8%
+
+  The same portfolio, the same weights, the same assets: -17.4% of extra
+  drawdown that a fixed-correlation backtest would never show. Every
+  multi-asset result in this project so far was measured on the first
+  market, so every one of them understates the risk by roughly this
+  much. That is a caveat on published numbers, not a bug to fix.
+
+  NO SILENT FAILURES
+
+  Nothing crashed, produced non-finite weights, or exceeded its position
+  limits under any scenario. The engine raises on non-finite weights and
+  the risk layer can only ever shrink a position, so an oversized trade is
+  structurally impossible rather than merely unlikely.

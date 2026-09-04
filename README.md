@@ -3,9 +3,10 @@
 An AI trading system developed inside a **synthetic market laboratory** — where the ground truth is
 known — before it is ever pointed at a real market.
 
-**Status:** Phases 0–2 complete and validated. The system has reached real market data (rung 2).
-The return-forecasting AI has been **measured, found wanting, and retired**; the regime classifier
-survives. See [HANDOFF.md](HANDOFF.md) for exactly what is verified and what is not.
+**Status:** Phases 0–3 complete and validated, and the system has been run against 33 years of
+real market data. The return-forecasting AI has been **measured, found wanting, and retired**. The
+simulator has been caught teaching a false lesson, corrected, and re-verified against reality. See
+[HANDOFF.md](HANDOFF.md) for exactly what is verified and what is not.
 
 ## The idea
 
@@ -118,6 +119,82 @@ The oracles are there so a weak result can be *attributed* rather than blamed �
 and "this market held little to find" look identical from a single backtest and call for opposite
 responses.
 
+### The simulator was teaching a false lesson
+
+Then the classifier met real data and lost to buy-and-hold. The reason turned out not to be the
+classifier:
+
+| Classifier's state | sandbox | real SPY |
+|---|---|---|
+| calm | +9.2%/yr | +9.0%/yr |
+| **stressed** | **−20.9%/yr** | **+17.1%/yr** |
+
+`RegimeSwitchingGenerator` was built with `mu=(0.12, −0.15)` and `sigma=(0.12, 0.32)` — calm means
+rising *and* quiet, stressed means falling *and* volatile. The two are welded together by
+construction, so inside the sandbox a strategy that flees volatility is automatically fleeing
+losses. Real equity volatility is *compensated*; sorting by trailing realised volatility with no
+model at all gives the same answer.
+
+Every rung-1 result was correct, and none of it transferred. This is `plan.md` §10's third
+prediction — *"real markets will break something the simulator never did; that gap is the most
+interesting thing this project will produce"* — arriving on schedule, and it is attributable to one
+line of generator configuration precisely because the strategies, engine, costs and metrics are
+identical code at both rungs.
+
+**How much it mattered**, measured by whether each sandbox ranks strategies the way reality does:
+
+| | rank correlation with real SPY |
+|---|---|
+| classic sandbox (`mu = +0.12 / −0.15`) | **−0.143** |
+| corrected sandbox (`mu = +0.09 / +0.17`) | **+0.750** |
+
+The original was not merely uninformative — it was *negatively* correlated with reality. Acting on
+its rankings was worse than choosing at random. The fix changed no strategy and no engine code; it
+changed two numbers in a generator's default arguments.
+
+### Phase 3 — adversarial markets
+
+Every crash scenario run twice, with the risk layer on and off, so the breaker's value is a number
+rather than a reassurance:
+
+| Scenario | Drawdown saved | Return given up |
+|---|---|---|
+| 35% over 60 days | +6.1% | 0.72%/yr |
+| 50% over 20 days | +12.5% | 2.33%/yr |
+| **35% over 1 day** | **−1.5%** | **−1.09%/yr** |
+
+Against an overnight gap the breaker is **actively harmful**: it cannot act until the damage is
+done, then sells the bottom and sits in cash through the rebound. No parameter choice removes that —
+the mechanism is trailing by construction. The honest response is position sizing that survives a
+gap, not a better breaker, and the failure is pinned in the test suite so it cannot be rediscovered
+expensively.
+
+Correlation breakdown was also measured, and it invalidates nothing so much as it adds a caveat.
+The same four-asset equally weighted portfolio: −15.4% max drawdown when correlations stay at 0.2,
+−32.8% when they rush to 0.95 during stress. Every fixed-correlation result in this project
+understates risk by roughly that much.
+
+### Rung 2 — 33 years of real SPY
+
+Judged against each strategy's own bootstrap floor, computed by resampling SPY's own returns:
+
+| Strategy | Sharpe | floor | CAGR | max DD | complexity |
+|---|---|---|---|---|---|
+| **absolute_momentum** | **+0.798** | +0.344 | +9.84% | −27.8% | two parameters |
+| **volatility_target** | **+0.731** | +0.384 | +7.93% | −39.4% | one parameter |
+| buy_and_hold | +0.654 | +0.414 | +9.30% | −51.0% | none |
+| regime_volatility_target | +0.583 | +0.372 | +5.88% | −34.0% | an HMM |
+| regime_aware | +0.504 | +0.387 | +4.10% | −40.0% | an HMM |
+| ai_walkforward | +0.055 | +0.079 | +0.15% | −30.3% | LightGBM, 16 features |
+
+**The ordering is almost perfectly inverse to complexity.** The multi-asset ladder says the same
+thing independently: rotating into cash (0.761) beats rotating into treasuries (0.724), which beats
+adding momentum-based asset selection (0.394). A fitted two-state HMM forecasts volatility *worse*
+than a 21-day rolling standard deviation.
+
+That is not an argument that models never work. It is exactly what the permanent control arm was put
+there to detect, and it detected it every time it was asked.
+
 ## The Reality Ladder
 
 Each rung adds exactly one element of reality, so any failure is attributable.
@@ -152,7 +229,7 @@ Cost through paper trading: **$0**.
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt && pip install -e .
 
-pytest                                     # 231 tests
+pytest                                     # 267 tests
 
 python experiments/validate_sandbox.py     # Phase 0 evidence
 python experiments/null_test.py            # Phase 1 gate — must pass, runs in CI
@@ -160,6 +237,9 @@ python experiments/noise_floor_scaling.py  # what a Sharpe number is worth at ea
 python experiments/recovery_test.py        # Phase 2 sensitivity curves
 python experiments/regime_test.py          # classification quality, lag, and the oracle ladder
 python experiments/real_data.py            # rung 2: real ETF history
+python experiments/simulator_gap.py        # where reality diverged from the simulator
+python experiments/corrected_sandbox.py    # does the fixed sandbox predict reality?
+python experiments/adversarial.py          # Phase 3: crashes and correlation breakdown
 ```
 
 Every experiment takes `--quick` for a smoke test. The Null Test refuses to write a report from
@@ -174,8 +254,22 @@ publish and every later phase compares against these numbers.
 - [x] **Phase 2** — the Recovery Test. Killed the return-forecasting branch; the regime branch lives.
 - [x] **Regime classifier** — accuracy, calibration, detection lag, and value against an oracle ceiling
 - [x] **Rung 2** — real ETF history, judged against a bootstrap floor from the same returns
-- [ ] Phase 3 — adversarial markets
+- [x] **Rung 2 diagnosis** — found the simulator's false lesson, corrected it, re-verified
+- [x] **Phase 3** — adversarial markets: crashes, gap risk, correlation breakdown
 - [ ] Phase 5 — six months of paper trading (calendar time; no code can compress it)
+
+## What would actually be traded, if anything
+
+Two candidates, both simple enough to check by hand in a spreadsheet: **absolute momentum**
+(hold while the trailing 12-month return is positive, else cash) and **volatility targeting** (hold
+`12% / trailing volatility`, capped at fully invested). Each clears its own noise floor and beats
+buy-and-hold risk-adjusted over 33 years of SPY.
+
+Neither clears it by a margin that survives the caveats. 32.9 years of SPY is **one path**, and it
+is the path everyone already knows went up; the noise floor for a window that long is still +0.29;
+the universe was chosen today from funds that exist today; and taxes are not modelled. The next
+honest test is paper trading, where the answer is not yet known to anybody — and no amount of
+further backtesting substitutes for it.
 
 New here? Start with [HANDOFF.md](HANDOFF.md).
 

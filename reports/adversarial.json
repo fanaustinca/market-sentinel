@@ -1,0 +1,257 @@
+{
+  "generated": "2026-09-04",
+  "n_markets": 100,
+  "n_steps": 2520,
+  "crashes": {
+    "20% over 60d": {
+      "buy_and_hold": {
+        "drawdown_guarded": -0.31768576110421276,
+        "drawdown_unguarded": -0.3992535776236601,
+        "cagr_guarded": 0.07120654691513488,
+        "cagr_unguarded": 0.06790170708255432,
+        "breaker_days": 171.22,
+        "worst_guarded": -0.578275910572118
+      },
+      "absolute_momentum": {
+        "drawdown_guarded": -0.27912011961087974,
+        "drawdown_unguarded": -0.34298021973684895,
+        "cagr_guarded": 0.04134381334998239,
+        "cagr_unguarded": 0.03638611741199015,
+        "breaker_days": 107.22,
+        "worst_guarded": -0.5077820229171217
+      },
+      "volatility_target": {
+        "drawdown_guarded": -0.24823313725962723,
+        "drawdown_unguarded": -0.25505052040935444,
+        "cagr_guarded": 0.06516573590807821,
+        "cagr_unguarded": 0.06745346368918477,
+        "breaker_days": 112.15,
+        "worst_guarded": -0.5037674013361515
+      },
+      "regime_aware": {
+        "drawdown_guarded": -0.18902842297325745,
+        "drawdown_unguarded": -0.194677955710023,
+        "cagr_guarded": 0.03312483379720646,
+        "cagr_unguarded": 0.034048822027846884,
+        "breaker_days": 44.16,
+        "worst_guarded": -0.4946926466546815
+      }
+    },
+    "35% over 60d": {
+      "buy_and_hold": {
+        "drawdown_guarded": -0.32385185423761265,
+        "drawdown_unguarded": -0.46637502741267406,
+        "cagr_guarded": 0.07569479038422354,
+        "cagr_unguarded": 0.05686778300772597,
+        "breaker_days": 171.88,
+        "worst_guarded": -0.5915434578275577
+      },
+      "absolute_momentum": {
+        "drawdown_guarded": -0.2793382898923816,
+        "drawdown_unguarded": -0.36076056129320244,
+        "cagr_guarded": 0.03884927508036847,
+        "cagr_unguarded": 0.02840650029459779,
+        "breaker_days": 105.24,
+        "worst_guarded": -0.5106380459526092
+      },
+      "volatility_target": {
+        "drawdown_guarded": -0.2508306066275398,
+        "drawdown_unguarded": -0.26349991548997825,
+        "cagr_guarded": 0.07035916290049045,
+        "cagr_unguarded": 0.07011343489856811,
+        "breaker_days": 113.91,
+        "worst_guarded": -0.503767401336151
+      },
+      "regime_aware": {
+        "drawdown_guarded": -0.18660317112896613,
+        "drawdown_unguarded": -0.19241516777660736,
+        "cagr_guarded": 0.041718600993008795,
+        "cagr_unguarded": 0.042533263264022965,
+        "breaker_days": 42.57,
+        "worst_guarded": -0.4939578398774531
+      }
+    },
+    "35% over 20d": {
+      "buy_and_hold": {
+        "drawdown_guarded": -0.2766590883939093,
+        "drawdown_unguarded": -0.4402680301081594,
+        "cagr_guarded": 0.08231610860413742,
+        "cagr_unguarded": 0.053630569229971836,
+        "breaker_days": 157.36,
+        "worst_guarded": -0.5287488915562735
+      },
+      "absolute_momentum": {
+        "drawdown_guarded": -0.2677940854924939,
+        "drawdown_unguarded": -0.3673353286417862,
+        "cagr_guarded": 0.035891221594571296,
+        "cagr_unguarded": 0.019812555650584217,
+        "breaker_days": 98.42,
+        "worst_guarded": -0.5852518585045996
+      },
+      "volatility_target": {
+        "drawdown_guarded": -0.24724789238367995,
+        "drawdown_unguarded": -0.2742020193827576,
+        "cagr_guarded": 0.06640300476306343,
+        "cagr_unguarded": 0.06225848257253688,
+        "breaker_days": 121.39,
+        "worst_guarded": -0.5037674013361488
+      },
+      "regime_aware": {
+        "drawdown_guarded": -0.18645886156929298,
+        "drawdown_unguarded": -0.19440346523145088,
+        "cagr_guarded": 0.028376768748493642,
+        "cagr_unguarded": 0.029118334351866604,
+        "breaker_days": 46.31,
+        "worst_guarded": -0.5280959071985811
+      }
+    },
+    "35% over 5d": {
+      "buy_and_hold": {
+        "drawdown_guarded": -0.32067183683989803,
+        "drawdown_unguarded": -0.4263969130900697,
+        "cagr_guarded": 0.05830343715155503,
+        "cagr_unguarded": 0.05382161545043082,
+        "breaker_days": 159.78,
+        "worst_guarded": -0.5802774802836872
+      },
+      "absolute_momentum": {
+        "drawdown_guarded": -0.28073911290562026,
+        "drawdown_unguarded": -0.38794073638525567,
+        "cagr_guarded": 0.03130545379959179,
+        "cagr_unguarded": 0.018985514896013692,
+        "breaker_days": 97.76,
+        "worst_guarded": -0.5222815748677132
+      },
+      "volatility_target": {
+        "drawdown_guarded": -0.28291983999517806,
+        "drawdown_unguarded": -0.29244700961160847,
+        "cagr_guarded": 0.049449721209915955,
+        "cagr_unguarded": 0.050914585392497894,
+        "breaker_days": 126.01,
+        "worst_guarded": -0.5037674013361495
+      },
+      "regime_aware": {
+        "drawdown_guarded": -0.18379353315655064,
+        "drawdown_unguarded": -0.1901589669066133,
+        "cagr_guarded": 0.021753471412063397,
+        "cagr_unguarded": 0.02223105445230804,
+        "breaker_days": 45.43,
+        "worst_guarded": -0.5284208709937415
+      }
+    },
+    "35% over 1d": {
+      "buy_and_hold": {
+        "drawdown_guarded": -0.4592872461713802,
+        "drawdown_unguarded": -0.42103423278840973,
+        "cagr_guarded": 0.031241596840060903,
+        "cagr_unguarded": 0.054814518515926496,
+        "breaker_days": 159.56,
+        "worst_guarded": -0.6676861290260292
+      },
+      "absolute_momentum": {
+        "drawdown_guarded": -0.4001377684765884,
+        "drawdown_unguarded": -0.378715200981043,
+        "cagr_guarded": 0.010850848538602475,
+        "cagr_unguarded": 0.02667342383546174,
+        "breaker_days": 97.98,
+        "worst_guarded": -0.6506224632732212
+      },
+      "volatility_target": {
+        "drawdown_guarded": -0.4180432626918212,
+        "drawdown_unguarded": -0.41040978058369004,
+        "cagr_guarded": 0.02479824690243382,
+        "cagr_unguarded": 0.02857806324901353,
+        "breaker_days": 126.23,
+        "worst_guarded": -0.6185175578670455
+      },
+      "regime_aware": {
+        "drawdown_guarded": -0.18549423322531655,
+        "drawdown_unguarded": -0.19157745134142715,
+        "cagr_guarded": 0.022146779255679396,
+        "cagr_unguarded": 0.022745892921890744,
+        "breaker_days": 45.65,
+        "worst_guarded": -0.5283822453432878
+      }
+    },
+    "50% over 20d": {
+      "buy_and_hold": {
+        "drawdown_guarded": -0.27630836149524146,
+        "drawdown_unguarded": -0.5542258766613538,
+        "cagr_guarded": 0.09516860726708933,
+        "cagr_unguarded": 0.03989366649525,
+        "breaker_days": 157.14,
+        "worst_guarded": -0.5287488915562749
+      },
+      "absolute_momentum": {
+        "drawdown_guarded": -0.26878201139438823,
+        "drawdown_unguarded": -0.42541513542690196,
+        "cagr_guarded": 0.03314203474537279,
+        "cagr_unguarded": 0.005612094363662561,
+        "breaker_days": 97.32,
+        "worst_guarded": -0.5237003917246896
+      },
+      "volatility_target": {
+        "drawdown_guarded": -0.24688694676081016,
+        "drawdown_unguarded": -0.30365170146283843,
+        "cagr_guarded": 0.07397214637524709,
+        "cagr_unguarded": 0.06278276872431666,
+        "breaker_days": 124.03,
+        "worst_guarded": -0.5037674013361512
+      },
+      "regime_aware": {
+        "drawdown_guarded": -0.18791718616022535,
+        "drawdown_unguarded": -0.19511100453285987,
+        "cagr_guarded": 0.03299077069896253,
+        "cagr_unguarded": 0.033618550077275884,
+        "breaker_days": 46.08,
+        "worst_guarded": -0.5281733733788501
+      }
+    },
+    "50% over 1d": {
+      "buy_and_hold": {
+        "drawdown_guarded": -0.5730754134878425,
+        "drawdown_unguarded": -0.5505359866612682,
+        "cagr_guarded": 0.006593497102252794,
+        "cagr_unguarded": 0.04106217982418243,
+        "breaker_days": 159.56,
+        "worst_guarded": -0.7443739454046374
+      },
+      "absolute_momentum": {
+        "drawdown_guarded": -0.49152966725924957,
+        "drawdown_unguarded": -0.47495163860522327,
+        "cagr_guarded": -0.009413380189701108,
+        "cagr_unguarded": 0.014888700805544726,
+        "breaker_days": 96.88,
+        "worst_guarded": -0.7396487975440249
+      },
+      "volatility_target": {
+        "drawdown_guarded": -0.5216792533714675,
+        "drawdown_unguarded": -0.519703540897558,
+        "cagr_guarded": 0.004428488671374121,
+        "cagr_unguarded": 0.007275921857387086,
+        "breaker_days": 126.23,
+        "worst_guarded": -0.7066343825208685
+      },
+      "regime_aware": {
+        "drawdown_guarded": -0.18546343882578595,
+        "drawdown_unguarded": -0.19153638706924475,
+        "cagr_guarded": 0.02216236411719522,
+        "cagr_unguarded": 0.022746501466342786,
+        "breaker_days": 45.65,
+        "worst_guarded": -0.5283980623351103
+      }
+    }
+  },
+  "correlation_breakdown": {
+    "fixed correlation 0.2": {
+      "max_drawdown": -0.15367560081868395,
+      "worst_drawdown": -0.27632123269679565,
+      "volatility": 0.08858731433098291
+    },
+    "correlation breaks to 0.95": {
+      "max_drawdown": -0.3275732880481761,
+      "worst_drawdown": -0.6392184820864385,
+      "volatility": 0.1543476958721989
+    }
+  }
+}

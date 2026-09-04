@@ -9,8 +9,8 @@ why. This file covers what exists, what is verified, what is not, and what to do
 
 ## TL;DR
 
-Phases 0, 1 and 2 are complete and validated, and the system has reached real market data. The
-project has produced four findings that are worth more than the code:
+Phases 0 through 3 are complete and validated, and the system has been run against 33 years of
+real market data. The project has produced five findings that are worth more than the code:
 
 1. **Nothing here profits from noise.** 27 strategy × market cells, all pass. The Phase 1 gate now
    runs on every commit.
@@ -20,12 +20,17 @@ project has produced four findings that are worth more than the code:
    times stronger than real markets offer, and detects less than a 5-day moving average does.
 4. **The simulator taught the regime strategy something false.** In the sandbox, high volatility
    means falling prices — because the generator was built that way. On real SPY the opposite holds.
-   This is the single most valuable thing the project has produced, and it is the reason the
-   Reality Ladder exists.
+   Correcting two numbers in the generator's defaults moved its rank correlation with reality from
+   **−0.143 to +0.750**: it had been worse than useless. This is the single most valuable thing the
+   project has produced and the reason the Reality Ladder exists.
+5. **Every piece of machinery added has made real results worse.** The real-SPY ranking is almost
+   perfectly inverse to complexity, and the control arm caught it every time it was asked.
 
-The current best real-data result is **`absolute_momentum`, Sharpe 0.798 against buy-and-hold's
-0.654** over 32.9 years of SPY, clearing a bootstrap noise floor of 0.344. That is a two-parameter
-rule, not a model, and it is the only thing here that has beaten the index on real data.
+The two candidates worth carrying forward are **`absolute_momentum`** (Sharpe 0.798, floor 0.344)
+and **`volatility_target`** (0.731, floor 0.384), against buy-and-hold's 0.654, over 32.9 years of
+SPY. One has two parameters and the other has one. Neither is a model, and neither clears the bar by
+a margin that survives the caveats — 33 years of SPY is one path, and it is the path everyone
+already knows went up.
 
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
@@ -146,9 +151,14 @@ position was wrong. Volatility should *scale* exposure, not switch it off — wh
 
 ## What is built but NOT verified ⚠️
 
-- **`VolatilityTarget` / `RegimeVolatilityTarget`** — written, causal, unit-tested, and they pass
-  the Null Test on both GBM and Heston. They have **not** yet been run through the full real-data
-  comparison, which is the next task. Do not quote them as working.
+- **Nothing is verified for real money.** Everything below rung 3 is a backtest, and the honest
+  status of every number in `reports/` is "measured on data whose outcome was already known".
+- **`RegimeVolatilityTarget`** — works, and loses to the plain `VolatilityTarget` by 0.15 of Sharpe
+  on real SPY. A fitted two-state HMM forecasts volatility *worse* than a 21-day rolling standard
+  deviation. Kept as a control arm; not a candidate.
+- **The corrected sandbox is not out-of-sample.** `equity_like()` was calibrated on the same SPY
+  history the +0.750 rank correlation was measured against. It shows the correction is
+  self-consistent, not that it will hold on data nobody has seen.
 - **`RegimeRotation`** (multi-asset) — causal and tested mechanically. Its premise, that treasuries
   rise when equities fall, is a fact about 2000, 2008 and 2020 and was false in 2022. The crisis
   table in the real-data report exists to keep that visible.
@@ -168,32 +178,39 @@ caught something code review would not have, and it is why every new strategy ge
 
 ## Next steps, in order
 
-### 1. Re-run the real-data comparison with the volatility strategies
+### 1. Find the next thing the simulator is missing
 
-`python experiments/real_data.py`. They are already in the strategy list. The question is whether
-sizing for volatility beats both the bootstrap floor and buy-and-hold on 32.9 years of SPY — and
-whether the regime-based volatility forecast beats the plain 21-day realised one. If it does not,
-the classifier has bought nothing over a rolling standard deviation and the simpler version wins.
+The corrected sandbox ranks `absolute_momentum` third; real SPY ranks it first. The regime generator
+has no long-horizon trend structure for a 252-day rule to work with, so it cannot represent whatever
+real markets are offering there.
 
-### 2. Fix the generator the finding exposed
+Two possibilities, and they call for opposite actions. Either there is a genuine trend premium the
+sandbox cannot express — in which case add it and re-measure everything — or 0.798 over 33 years is
+luck, and the floor for that window is +0.29. The way to tell them apart is a generator that *can*
+express long-horizon momentum, then checking whether the real result sits inside what that generator
+produces by chance. This is the same question the Null Test answers, one level up.
 
-`RegimeSwitchingGenerator` cannot express "volatile but rising", which is the state real equity
-markets are in most often. Decoupling `mu` from `sigma` — or adding a third state — makes the
-sandbox able to represent reality rather than a caricature of it. Every regime result should then be
-re-measured against the corrected generator; some of them will get worse, and that is the point.
+### 2. Re-measure the multi-asset results against correlation breakdown
 
-### 3. Phase 3 — adversarial markets
+Every rung-1 multi-asset number was produced on a fixed-correlation market and understates drawdown
+by roughly 17 points. `CorrelationBreakdownGenerator` now exists; the numbers have not been redone.
 
-`experiments/adversarial.py` does not exist. Crashes, correlation breakdown, regimes never seen in
-training. Verify the circuit breaker fires and the anomaly detector notices. Note that the breaker
-is already firing a lot on real data — 506 days for buy-and-hold over 33 years — and nobody has
-checked whether that is helping or hurting.
+### 3. Phase 5 — paper trading
+
+Six months of calendar time, no code can compress it, and it is the only genuinely out-of-sample
+test available. Needs an Alpaca adapter behind the same `MarketData` interface, which does not
+exist. Carry `absolute_momentum` and `volatility_target`; carry the baselines beside them as always.
+
+Before starting, write down the expected range for each strategy from the numbers in `reports/`.
+Divergence from a prediction made in advance is a bug to find; divergence from a number recalled
+afterwards is a story to tell, and the difference matters.
 
 ### 4. Not yet built
 
 - **Anomaly detector** — must only ever *reduce* risk. Never started.
-- **Phase 5, paper trading** — six months of calendar time, no code can compress it. Needs the
-  Alpaca adapter, which does not exist.
+- **Position sizing for gap risk.** Phase 3 showed the drawdown breaker is worse than useless
+  against an overnight move. Nothing in the system currently addresses that, and no breaker
+  parameter can.
 
 ---
 

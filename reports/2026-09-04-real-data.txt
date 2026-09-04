@@ -11,6 +11,8 @@ data fingerprint 98f0d745f5a5
   short_momentum               +0.008   +0.214   -0.646indistinguishable from luck
   regime_aware                 +0.504   +0.387   -0.150 beats luck, not the index
   regime_gate                  +0.453   +0.392   -0.201 beats luck, not the index
+  volatility_target            +0.731   +0.384   +0.078          clears both bars
+  regime_volatility_target     +0.583   +0.372   -0.071 beats luck, not the index
   ai_walkforward               +0.055   +0.079   -0.599indistinguishable from luck
   ai_walkforward_classifier    +0.143   +0.039   -0.511 beats luck, not the index
 
@@ -23,6 +25,8 @@ data fingerprint 98f0d745f5a5
   short_momentum               -52.1%      6979d   -0.49%
   regime_aware                 -40.0%      1766d   +4.10%
   regime_gate                  -52.9%      3191d   +4.19%
+  volatility_target            -39.4%      1578d   +7.93%
+  regime_volatility_target     -34.0%      1552d   +5.88%
   ai_walkforward               -30.3%      6513d   +0.15%
   ai_walkforward_classifier    -20.8%      6475d   +0.52%
 
@@ -30,11 +34,11 @@ data fingerprint 98f0d745f5a5
 
   Return through each crisis:
 
-  crisis                buy_and_hol  absolute_mo  short_momen  regime_awar  regime_gate  ai_walkforw  ai_walkforw
-  dot-com bust               -45.3%       -15.2%       -32.9%       -31.4%       -42.9%       -21.9%       -11.7%
-  financial crisis           -48.3%       -14.3%       -26.8%        -8.9%       -10.7%       -10.2%        -9.9%
-  covid crash                -12.1%       -12.1%       -12.8%        -4.1%        -4.8%        -3.1%        -4.0%
-  2022 bear                  -22.5%       -21.8%       -11.6%        -1.5%        -2.3%        -1.9%        -4.2%
+  crisis                buy_and_hol  absolute_mo  short_momen  regime_awar  regime_gate  volatility_  regime_vola  ai_walkforw  ai_walkforw
+  dot-com bust               -45.3%       -15.2%       -32.9%       -31.4%       -42.9%       -37.8%       -28.0%       -21.9%       -11.7%
+  financial crisis           -48.3%       -14.3%       -26.8%        -8.9%       -10.7%       -26.8%       -33.3%       -10.2%        -9.9%
+  covid crash                -12.1%       -12.1%       -12.8%        -4.1%        -4.8%       -12.7%       -13.0%        -3.1%        -4.0%
+  2022 bear                  -22.5%       -21.8%       -11.6%        -1.5%        -2.3%       -14.1%       -11.3%        -1.9%        -4.2%
 
   READING THIS HONESTLY
 
@@ -62,15 +66,18 @@ data fingerprint 740afdb2cbac
   strategy                             Sharpe    floor     CAGR    maxDD
   buy_and_hold                         +0.805   +0.469   +7.56%   -24.5%
   fixed_SPY60_IEF40                    +0.779   +0.434   +7.19%   -29.6%
-  regime_rotation                      +0.394   +0.347   +4.18%   -32.3%
+  rotate_SPY_to_cash                   +0.761   +0.385   +6.31%   -12.9%
+  rotate_SPY_to_IEF                    +0.724   +0.390   +6.40%   -16.9%
+  rotate_SPY_to_IEF+GLD                +0.757   +0.390   +7.47%   -20.1%
+  rotate_SPY+IWM+EFA_to_IEF+GLD_mom    +0.394   +0.347   +4.18%   -32.3%
 
   Return through each crisis:
 
-  crisis                   buy_and_hold  fixed_SPY60_IEF  regime_rotation
-  dot-com bust                       --               --               --
-  financial crisis               -14.6%           -28.3%            +4.1%
-  covid crash                    -14.2%           -15.3%           -12.1%
-  2022 bear                      -21.6%           -19.5%           -16.5%
+  crisis                   buy_and_hold  fixed_SPY60_IEF  rotate_SPY_to_c  rotate_SPY_to_I  rotate_SPY_to_I  rotate_SPY+IWM+
+  dot-com bust                       --               --               --               --               --               --
+  financial crisis               -14.6%           -28.3%            -7.7%            +0.3%            +3.4%            +4.1%
+  covid crash                    -14.2%           -15.3%            -5.9%            -2.2%           -10.1%           -12.1%
+  2022 bear                      -21.6%           -19.5%            -3.9%           -14.1%           -17.7%           -16.5%
 
   2022 is the row to read carefully. Treasuries fell alongside equities
   that year, so any rotation that leans on bonds had nowhere defensive to

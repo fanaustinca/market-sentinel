@@ -454,3 +454,130 @@ A third, smaller one in the same family: four `RegimeRotation` variants shared o
 `name`, so the results dictionary keyed by strategy name collapsed them into a single row and the
 last one silently won. No crash — just a comparison table that looked fine and reported one strategy
 three times under three different sets of numbers. Names are now derived from configuration.
+
+---
+
+## 2026-09-04 — The corrected sandbox predicts reality; the original one predicted the opposite
+
+**Decision:** `RegimeSwitchingGenerator.equity_like()` becomes the default preset for any experiment
+whose purpose is to rank strategies. The original parameters stay available and are documented as
+what they are. Evidence in `reports/2026-09-04-corrected-sandbox.txt`.
+
+**Why:** After finding that the generator's defaults welded high volatility to negative drift, the
+obvious question was whether fixing the parameters actually fixed anything. The check does not need
+years of waiting: run the same strategies in both sandboxes and on real SPY, and see which sandbox
+*orders* them the way reality does. Rank agreement is the right test — no simulator will reproduce
+SPY's exact Sharpe, and it does not need to. What a sandbox is for is deciding which of two
+strategies to pursue.
+
+    rank correlation with real SPY
+      classic sandbox    (mu = +0.12 / −0.15)    −0.143
+      corrected sandbox  (mu = +0.09 / +0.17)    +0.750
+
+The classic sandbox was not merely uninformative. It was **negatively correlated with reality** — a
+strategy it ranked highly was, on average, one that did worse on real data. Following its advice was
+worse than choosing at random. Specifically, it put `regime_aware` and `regime_gate` at the top and
+`buy_and_hold` near the bottom; on real SPY that ordering is inverted.
+
+The correction changed no strategy, no engine code, and no metric. It changed two numbers in a
+generator's default arguments.
+
+**The caveat that must travel with this result:** `equity_like()` was calibrated on the same SPY
+history it is being checked against, so +0.750 is not out-of-sample. It shows the correction is
+self-consistent, not that it will hold on data nobody has seen. The genuinely out-of-sample test is
+Phase 5 paper trading, and nothing before it can substitute.
+
+**The next gap, already visible:** the corrected sandbox ranks `absolute_momentum` third, while real
+SPY ranks it first. The regime generator has no long-horizon trend structure for a 252-day momentum
+rule to work with, so it cannot represent whatever real markets are offering there. That is the next
+thing the simulator is missing, and it is worth finding out whether the real result is a trend
+premium or thirty-three years of luck — the noise floor for that window is 0.29, and
+`absolute_momentum` scores 0.798 against it.
+
+---
+
+## 2026-09-04 — Phase 3: the drawdown breaker is net harmful against gap risk
+
+**Decision:** The circuit breaker stays, and its failure mode is documented rather than tuned away.
+Evidence in `reports/2026-09-04-adversarial.txt`.
+
+**What was measured:** every crash scenario run twice — once with the breaker, once without — so its
+value is a number rather than a reassurance.
+
+    35% fall over 60 days     +6.1% drawdown saved, costs +0.72%/yr
+    35% fall over 20 days     +7.5% saved
+    50% fall over 20 days    +12.5% saved
+    35% fall over  1 day      −1.5% saved, costs −1.09%/yr
+    50% fall over  1 day      −0.9% saved, costs −1.56%/yr
+
+**Why the one-day rows matter:** a drawdown breaker reacts to losses already realised. When the whole
+fall lands overnight it cannot act until the damage is done, and what it then does is sell at the
+bottom and sit in cash through the rebound — converting an unavoidable loss into a permanent one,
+and paying more than a percent a year for it.
+
+This is gap risk: 1987, a currency peg breaking, an overnight halt. **No parameter choice removes
+it**, because the mechanism is trailing by construction. The honest response is position sizing that
+survives a gap, not a better breaker, and pretending otherwise would be the exact failure the
+project exists to avoid — a control that is believed in rather than measured.
+
+Pinned in `tests/test_adversarial.py` so it cannot be rediscovered expensively.
+
+---
+
+## 2026-09-04 — Every multi-asset result so far understates risk by about 17 points of drawdown
+
+**Decision:** A caveat on published numbers, not a bug to fix. `CorrelationBreakdownGenerator` now
+exists so future multi-asset work can be measured properly.
+
+**Why:** Every generator in this project until now uses a single fixed correlation matrix, which
+quietly promises that assets will keep behaving differently during a crash. They do not — the
+nastiest thing real markets do is push correlations toward one exactly when diversification is
+needed.
+
+The same equally weighted four-asset portfolio, same weights, same assets:
+
+    fixed correlation 0.2         vol  8.9%, max drawdown −15.4%
+    correlation breaks to 0.95    vol 15.4%, max drawdown −32.8%
+
+Seventeen points of drawdown that a fixed-correlation backtest would never show, and a portfolio
+volatility nearly twice what was promised. Every multi-asset number in `reports/` was measured on
+the first kind of market and carries this understatement.
+
+The real-data results do not, since real prices contain whatever correlation structure they contain.
+But the rung-1 multi-asset conclusions do, and they should be re-measured against this generator
+before any of them is acted on.
+
+---
+
+## 2026-09-04 — Every piece of machinery added to this project has made real results worse
+
+**Decision:** Recorded as the session's most uncomfortable finding, because it is the one most likely
+to be rationalised away later.
+
+Ranked by Sharpe on 32.9 years of real SPY, with each strategy's own bootstrap noise floor:
+
+    absolute_momentum          +0.798  (floor +0.344)   two parameters
+    volatility_target          +0.731  (floor +0.384)   one parameter
+    buy_and_hold               +0.654  (floor +0.414)   no parameters
+    regime_volatility_target   +0.583  (floor +0.372)   an HMM
+    regime_aware               +0.504  (floor +0.387)   an HMM
+    regime_gate                +0.453  (floor +0.392)   an HMM
+    ai_walkforward_classifier  +0.143  (floor +0.039)   LightGBM, 16 features
+    short_momentum             +0.008  (floor +0.214)   below its own floor
+    ai_walkforward             +0.055  (floor +0.079)   below its own floor
+
+The ordering is almost perfectly inverse to complexity. The multi-asset ladder says the same thing
+independently: rotating into cash (Sharpe 0.761) beats rotating into treasuries (0.724), which beats
+adding momentum-based asset selection (0.394). And `regime_volatility_target` loses to plain
+`volatility_target` by 0.15, meaning a fitted two-state HMM forecasts volatility *worse* than a
+21-day rolling standard deviation.
+
+This is not an argument that models never work. It is what the control arm was put there to detect,
+and it detected it every time it was asked. `plan.md` §4 says an AI that matches a two-parameter
+rule "has learned nothing and is strictly worse, because it has far more ways to fail silently" —
+none of these matched, they lost.
+
+**What follows:** the two candidates worth carrying to paper trading are `absolute_momentum` and
+`volatility_target`. Both are simple enough to verify by hand. Neither beat buy-and-hold *and* the
+noise floor by a margin that survives the caveats — 32.9 years of SPY is one path, and it is the
+path everyone already knows went up.
