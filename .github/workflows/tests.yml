@@ -15,7 +15,10 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: pip install -r requirements.txt && pip install -e .
-      - name: Prove the null market is genuinely empty
+      - name: Prove the null market is empty and no strategy sees the future
         run: python -m pytest tests/ -v
-      # Phase 1 adds experiments/null_test.py here. Once the AI exists, this job
-      # fails the build if it ever makes money on pure randomness.
+      # TODO (Phase 1 gate): add the full Null Test sweep here once it has been
+      # run and its noise floors recorded in reports/. The module already exists
+      # at sentinel/evaluation/null_test.py -- it has simply never been run at
+      # scale. Wiring it in fails the build if the AI ever profits from noise.
+      # See HANDOFF.md "Next steps" step 1.

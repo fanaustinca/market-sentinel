@@ -157,3 +157,54 @@ money on noise?" but "did the AI's results fall inside the distribution chance a
 misunderstood one invalidates every result downstream. They are about thirty lines each, and the
 cost of understanding them fully is far below the cost of trusting them blindly. It also drops a
 heavy dependency. Cross-check against `statsmodels` if any result ever looks surprising.
+
+---
+
+## 2026-09-04 — Circuit breaker resets its reference peak on re-entry
+
+**Decision:** When the drawdown breaker's cooldown expires, the peak it measures
+against is reset to the current equity value.
+
+**Why:** Found by inspection of a backtest that looked wrong — buy-and-hold showed
+6.3% volatility on a 16% market. The breaker was measuring against an all-time
+high the strategy might never reach again, so it re-tripped on the very next bar
+and the system sat in cash permanently after one bad stretch. Each re-entry now
+gets its own drawdown budget. `drawdown_stop=None` (and the `UNLIMITED` preset)
+disables the breaker for measurement runs, where it would otherwise mask the
+behaviour being measured.
+
+---
+
+## 2026-09-04 — Lookahead is detected by truncation, not by code review
+
+**Decision:** `check_causality` feeds a strategy progressively longer histories
+and asserts past decisions never change. Applied to every strategy, including
+ones not yet written.
+
+**Why:** Reviewing code for lookahead does not work reliably — it hides in a shift
+of the wrong sign, a centred rolling window, a full-sample mean used to
+standardise. The truncation property is mechanical and needs no understanding of
+how a strategy works.
+
+**Correction, same day:** the first version excluded each truncation's final row
+as "unsettled". That was wrong and dangerous: a strategy peeking exactly one day
+ahead differs from an honest one *only* in that row, so the exclusion blinded the
+detector to the most important case. Caught only because `tests/test_no_lookahead.py`
+contains deliberately-broken strategies that must always be detected. Those cheat
+strategies are load-bearing — without them the flaw would have shipped and every
+causality claim in the project would have been worthless. Do not delete them.
+
+---
+
+## 2026-09-04 — Null markets must have zero drift
+
+**Decision:** The Null Test uses generators configured with `mu=0`.
+
+**Why:** With positive drift, any strategy holding assets makes money — from beta,
+not skill. The Null Test would then measure exposure rather than the thing it
+exists to detect. At `mu=0` the expected return of any fixed allocation is zero,
+so profit can only come from timing, and there is nothing to time.
+
+`run_null_test` additionally refuses any generator declaring
+`has_exploitable_signal=True`, so the control can never accidentally be run on a
+market that contains a signal.

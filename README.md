@@ -3,7 +3,7 @@
 An AI trading system developed inside a **synthetic market laboratory** — where the ground truth is
 known — before it is ever pointed at a real market.
 
-**Status:** Phase 0 — the null-market generator is built and validated. See [plan.md](plan.md).
+**Status:** Phase 0 complete and validated. Phase 1 built but **not yet validated** — see [HANDOFF.md](HANDOFF.md).
 
 ## The idea
 
@@ -56,13 +56,17 @@ MIT — see [LICENSE](LICENSE).
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt && pip install -e .
 
-pytest                                  # 28 tests proving the null market is empty
-python experiments/validate_sandbox.py  # the validation report, with commentary
+pytest                                  # 121 tests
+python experiments/validate_sandbox.py  # Phase 0 evidence, with commentary
 ```
 
 ## Progress
 
-- [x] **Phase 0** — market interface, GBM null generator, random-walk test battery
-- [ ] Phase 0 — remaining generators: AR(1), Ornstein-Uhlenbeck, regime-switching, jump, Heston
-- [ ] Phase 1 — the AI, and the Null Test
+- [x] **Phase 0** — six generators, validated against theory (rejection rates, parameter recovery)
+- [x] Phase 1 — features, backtest engine, baselines, lookahead detector, the AI
+- [ ] **Phase 1 gate — run the full Null Test.** Written, never run at scale. This is the next task.
 - [ ] Phase 2 — the Recovery Test
+- [ ] Phase 3 — adversarial markets
+- [ ] Phase 4 — real history
+
+New here? Start with [HANDOFF.md](HANDOFF.md).
