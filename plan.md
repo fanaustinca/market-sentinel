@@ -1,200 +1,243 @@
 # market-sentinel — Project Plan
 
-A defensive, rules-first market system. Built to **lose slowly and predictably** before it is
-ever asked to win.
+An AI trading system developed inside a **synthetic market laboratory**, where the ground truth is
+known, before it is ever pointed at a real market.
 
-Status: **planning only.** No code written. No money involved. Nothing is decided yet.
-
----
-
-## 0. The honest starting point
-
-Read this section twice. Everything else in the plan follows from it.
-
-**There is no such thing as an AI that does not lose money in markets.** If a system can make
-money it can lose money — those are the same machine running in two directions. Anyone who tells
-you otherwise is selling something.
-
-What we *can* build is a system where:
-
-- losses are **small** (bounded by design, not by hope),
-- losses are **expected** (you saw the same size loss 40 times in the backtest before it happened
-  with real money),
-- and the system **gets out of the way** during the market conditions that cause big losses.
-
-If the requirement is *literally* "never lose a dollar," the answer is not this repo. The answer
-is a high-yield savings account or short-term Treasury bills: roughly 4% a year, government
-insured, no skill required, no code required. That is a genuinely good option and it is the
-benchmark this project has to beat to justify its own existence.
-
-So the bar this project must clear is not "make money." It is:
-
-> **Beat a savings account, after taxes and fees, over a full market cycle, without a drawdown
-> that would make you quit.**
-
-That is a much harder bar than it sounds, and most professionals do not clear it.
-
-### The second honest thing
-
-The hard part of this project is **not** predicting the market. The hard part is **not fooling
-yourself**. It is trivially easy to produce a backtest showing 40% annual returns. It is trivially
-easy because the tools let you cheat by accident — using data you would not have had at the time,
-testing 500 ideas and keeping the one that worked, forgetting that trades cost money.
-
-Therefore: **most of the engineering effort in this plan goes into validation infrastructure, not
-strategy.** Roughly 70/30. That ratio is the single most important design decision in the document.
+Status: **planning only.** No code written. No money involved.
 
 ---
 
-## 1. Goal, stated in numbers
+## 0. The core idea
 
-The system is a success if, measured over a multi-year out-of-sample period:
+Most retail quant projects fail the same way. Someone trains a model on real price history, gets a
+beautiful backtest, trades it, and loses money. They never find out why, because they only ever had
+**one copy of history** and no way to tell the difference between a model that learned something
+real and a model that memorized noise. Both look identical on the only data that exists.
+
+This project fixes that by **building the markets first.**
+
+If you generate a market yourself, you know exactly what is in it. You know whether it contains an
+exploitable pattern, what kind, and how strong. That turns the central unanswerable question —
+*"did my AI actually learn anything?"* — into a question with a checkable answer.
+
+Two experiments fall out of this immediately, and they are the backbone of the entire project:
+
+### The Null Test — can it correctly find nothing?
+
+Generate a market that is pure randomness. No pattern, no signal, nothing to discover — by
+construction, mathematically guaranteed. Then run the complete AI pipeline on it.
+
+**The AI must fail.** It must report roughly zero profit.
+
+If it reports profit, you have not discovered a strategy. You have discovered a **bug in your own
+code** — almost always the model accidentally seeing future data. This test catches, automatically
+and immediately, the single most expensive class of error in the field. And it catches it on day
+one, on fake money, instead of eighteen months later on real money.
+
+Run it a thousand times and you get something even more valuable: a **noise floor.** You learn what
+returns your method produces on markets containing *nothing*. If random markets routinely hand your
+method a Sharpe ratio of 0.8 by pure chance, then a Sharpe of 0.6 on real data is not evidence of
+skill — it is below the noise floor of your own instrument. Almost no retail project ever computes
+this number, and it is the difference between a result and a coincidence.
+
+### The Recovery Test — how weak a signal can it find?
+
+Now generate a market with a pattern deliberately planted in it, at a strength you control. Turn
+that strength down gradually and find the point where the AI stops finding it.
+
+That number is your AI's **sensitivity**, and it is brutally informative. Real market signals are
+extremely weak. If your model needs a strong signal to detect anything, and real markets only offer
+faint ones, then your model cannot work on real markets — and you know this **before** risking
+anything, from a measurement rather than a guess.
+
+Together these two tests turn the AI from something you hope works into an instrument with known
+error bars. That is the whole project.
+
+---
+
+## 1. The Reality Ladder
+
+Four rungs. Each adds exactly one element of reality. You do not climb until the current rung is
+solid, and the same code runs at every level.
+
+| Rung | Market | Money | What it proves |
+|---|---|---|---|
+| **1. Sandbox** | Synthetic | Fake | The AI works when a correct answer exists — and correctly finds nothing when it does not |
+| **2. Backtest** | Real history | Fake | It survives real market messiness: fat tails, gaps, costs, crashes |
+| **3. Paper** | Real, live | Fake | The plumbing works in real time — data feeds, orders, timing |
+| **4. Live** | Real, live | Real | It works when it actually matters |
+
+The value of this structure is that **each rung isolates one kind of failure.** A break at rung 2
+that was fine at rung 1 means real markets contain something your simulator did not. A break at
+rung 3 that was fine at rung 2 is an engineering bug, not a strategy problem. Without this
+separation, a failure at the end is unattributable and you are just guessing.
+
+Most of the calendar time in this project is spent on rung 1, which costs nothing and can be run a
+million times overnight.
+
+---
+
+## 2. Goal
+
+Success, measured out-of-sample:
 
 | Metric | Target | Why |
 |---|---|---|
-| CAGR | > 6% | Must beat cash (~4%) by enough to be worth the effort and risk |
+| CAGR | > 6% | Must beat cash (~4%) enough to justify the risk and effort |
 | Max drawdown | < 15% | The peak-to-trough loss you must be able to sit through |
-| Sharpe ratio | > 0.7 | Return per unit of volatility; SPY buy-and-hold is ~0.5 long-run |
-| Time in market | < 100% | Must be willing to hold cash; that is where the safety comes from |
-| Trades per year | < 30 | Low turnover = low costs, low taxes, low chance of overfitting |
-| Beats SPY buy-and-hold on **risk-adjusted** return | yes | If it does not, just buy SPY and stop |
+| Sharpe ratio | > 0.7, **and above the null floor** | Return per unit of risk — the second clause is the one that matters |
+| Trades per year | < 50 | Low turnover: low cost, low tax, less room to overfit |
+| Beats buy-and-hold SPY risk-adjusted | yes | If not, buy the index fund and stop |
 
-**The kill switch:** if after Phase 3 the system cannot beat "buy SPY and never look at it" on a
-risk-adjusted basis, the correct outcome is to **shut the project down and buy the index fund.**
-The plan must be able to conclude that. A plan that cannot fail is not a plan.
-
----
-
-## 2. Guiding principles
-
-1. **Simple beats clever.** Every parameter you add is a new way to fool yourself. A 2-parameter
-   strategy that works is worth more than a 50-parameter one that backtests better.
-2. **ETFs, not individual stocks.** A single company can go to zero overnight on news no model
-   saw coming. A broad index cannot. Individual stock picking is deferred indefinitely.
-3. **Cash is a position.** The main source of safety in this design is the ability to be 100% out
-   of the market. Most retail losses come from being fully invested during a crash.
-4. **Paper trade for a minimum of 6 months before a single real dollar.** Non-negotiable.
-5. **Out-of-sample or it did not happen.** Any result measured on data the strategy was tuned on
-   is marketing, not evidence.
-6. **Every number gets a benchmark next to it.** "12% return" is meaningless. "12% vs SPY's 14%"
-   is information.
-7. **Log everything, immutably.** Every decision the system makes gets written down *before* the
-   outcome is known. This is the only defense against rewriting history in your own memory.
-8. **The system proposes, the human disposes** — at least until Phase 5.
+**The kill switch:** if the AI cannot clear the noise floor established by the Null Test, the
+project has produced a real and valuable finding — *this approach does not work* — and the correct
+action is to stop and buy an index fund. The plan is designed to be able to reach that conclusion.
+A plan that cannot fail is not a plan.
 
 ---
 
-## 3. What "AI" actually means here
+## 3. The synthetic market generator
 
-You asked for a stock market AI, so let me be specific about where machine learning helps and
-where it is actively dangerous.
+The centerpiece of the codebase, and the first thing built. Each generator produces price series
+with **known, controllable statistical properties.**
 
-**Where ML is dangerous:** predicting tomorrow's price. Financial data has a terrible
-signal-to-noise ratio and non-stationary behavior (the rules change over time). Neural nets given
-price data will find patterns in what is essentially noise, and will do so with tremendous
-confidence. This is the #1 way retail quant projects lose money.
+| Model | What it produces | What it tests |
+|---|---|---|
+| **Geometric Brownian motion** | Pure random walk. No signal, guaranteed | The Null Test. The most important generator |
+| **AR(1) momentum** | Returns mildly predict future returns, strength tunable | The Recovery Test. Can the AI find a planted trend? |
+| **Ornstein-Uhlenbeck** | Mean reversion — prices pull back to a level | The opposite signal. Does the AI adapt, or only ever see trends? |
+| **Markov regime-switching** | Flips between calm-bull and volatile-bear states at known times | The big one. Regime detection is the AI's actual job |
+| **Merton jump-diffusion** | Sudden crashes out of nowhere | Risk controls. Do circuit breakers fire correctly? |
+| **Heston stochastic volatility** | Volatility clusters — calm periods and stormy ones | Realism. Real markets do this; random walks do not |
+| **Block bootstrap of real returns** | Reshuffled chunks of actual history | The bridge to rung 2. Real fat tails, destroyed ordering |
 
-**Where ML genuinely helps:**
+Multi-asset from the start, since the strategy allocates *across* assets — which means simulating a
+correlation structure, including the nastiest real-world behavior there is: **correlations spiking
+toward 1 during crashes.** Diversification tends to evaporate exactly when it is needed, and a
+simulator that misses this will make any strategy look far safer than it is.
 
-- **Regime classification** — is the market currently calm, volatile, trending, or breaking down?
-  This is a much easier question than "what happens tomorrow" and it drives the risk-on/risk-off
-  decision that provides most of the safety.
-- **Reading text at scale** — earnings call transcripts, filings, news. An LLM is legitimately good
-  at "summarize the risk factors in this 10-K" or "did guidance improve or worsen versus last
-  quarter." This is language work, which LLMs are good at, not prediction, which they are not.
-- **Anomaly detection** — flagging that today does not look like the data the strategy was
-  validated on, which is a signal to reduce risk rather than to trade.
+The simulator also models the boring things that quietly destroy returns: bid-ask spread, slippage,
+and the fact that you trade at tomorrow's open, not at the close price that triggered your decision.
 
-**The sequencing rule: no ML until a dumb rules-based baseline works.** The baseline is not a
-warm-up exercise; it is the control group. If a neural net cannot beat a 2-line moving-average
-rule out-of-sample, the neural net has learned nothing and is added risk for free. Phases 1-3 have
-zero ML in them, deliberately.
+**Deliberately not using AI to generate the markets** (GANs, diffusion models), despite it being
+possible and fashionable. A learned generator produces data whose true properties are *unknown* —
+which destroys the entire reason for having a simulator. Parametric models are the point precisely
+because their ground truth is exact. Revisit only as a late stretch goal.
 
 ---
 
-## 4. The strategy family (Phase 1 baseline)
+## 4. The AI
 
-Starting point is **dual momentum applied to a small ETF universe**, a well-documented approach
-whose main appeal is that it is simple enough to fully understand and has few parameters to
-overfit.
+Present from day one, because the sandbox makes it safe to be.
 
-The mechanic, in plain English, evaluated once a month:
+### Architecture
 
-1. Look at a handful of broad ETFs: US stocks (`SPY`), international stocks (`VEU`), bonds (`AGG`),
-   and cash/T-bills (`BIL`).
-2. Compare each one's return over the last ~12 months.
-3. **Absolute momentum:** if US stocks have underperformed T-bills over that window, the market
-   regime is bad — hold bonds or cash instead of stocks.
-4. **Relative momentum:** if the regime is fine, hold whichever of US/international did better.
-5. Re-check next month. Otherwise do nothing.
+Three components, built in order:
 
-Why this specific family for a first build:
+**1. Regime classifier.** Given recent market behavior, output a probability distribution over
+market states: calm-trending, volatile, crashing, mean-reverting. This is the core, and it is a far
+more tractable question than "what is the price tomorrow." The sandbox is ideal for it because
+regime-switching generators come with the true regime labels attached — so you can measure
+classification accuracy directly, which is impossible on real data where nobody knows the true
+label.
 
-- **It has an explicit "get out" rule**, which is what caps drawdown. In 2008 and 2022 this class
-  of rule moved to bonds/cash rather than riding the decline down.
-- **Two parameters** (lookback window, rebalance frequency). Very little room to overfit.
-- **~2-6 trades a year.** Costs and taxes stay negligible, and it does not require you to watch
-  screens.
-- **You can verify every decision by hand in a spreadsheet.** Critical when you are learning: you
-  should never run a system you cannot check manually.
+*Model: gradient-boosted trees (LightGBM) as the workhorse — strong on tabular data, fast, hard to
+catastrophically overfit, and it reports feature importance so you can see what it is using.
+Cross-checked against a Hidden Markov Model, which is the classical interpretable approach.*
 
-Its published long-run numbers are attractive, but **published backtests by the authors of a
-strategy are not evidence.** Phase 2 exists specifically to reproduce or refute them with our own
-data and our own cost assumptions. Fully expect the honest numbers to be worse than the brochure.
+**2. Position sizer.** Convert regime probabilities plus uncertainty into target portfolio weights.
+Deliberately conservative: high uncertainty produces small positions. **A model that says "I don't
+know" and sizes down is worth more than one that is confidently wrong**, and the sandbox lets us
+verify it actually behaves that way by feeding it markets it has never seen.
 
-Candidate variants to test *after* the baseline is validated, not before: volatility targeting
-(size positions by recent volatility), a trend filter (only hold what is above its 200-day
-average), and a defensive sleeve (gold/TIPS as an alternative safe asset).
+**3. Anomaly detector.** Flag when current conditions do not resemble anything in training. Its
+output is not a trade — it is a *reduce risk* signal. This is the system's defense against the
+thing that has no defense: a genuinely unprecedented market.
+
+### Rules on the AI
+
+- **Confidence must be calibrated, not just accurate.** When it says 70%, it must be right about
+  70% of the time. Verified on synthetic data where truth is known. An overconfident model is worse
+  than no model, because you will size positions off its certainty.
+- **A dumb rules baseline runs alongside every single experiment**, permanently — not as a warm-up
+  phase, but as a control arm. Every result is reported as "AI vs. simple rule." If a two-parameter
+  moving-average rule matches the neural network, the network has learned nothing and is added
+  fragility for free. This is how the earlier plan's caution survives in a form that lets the AI
+  start immediately.
+- **Interpretability is a requirement.** Every trade must come with a reason you can read. You
+  cannot maintain, debug, or hold your nerve during a drawdown on a system you cannot interrogate.
+- **No deep learning until gradient boosting is exhausted.** Not conservatism — on this data volume,
+  trees genuinely outperform neural nets, and they train in seconds instead of hours. Sequence
+  models are a Phase 5 experiment, run against the same tests.
+
+### Reinforcement learning
+
+Deferred, deliberately, and worth explaining since it is the obvious thing to reach for. RL needs
+enormous amounts of data and is notoriously unstable — but the simulator *can* generate unlimited
+data, which is exactly the condition RL needs. So it becomes genuinely viable here, later, as a
+Phase 5 experiment once the supervised pipeline provides a baseline to beat. The danger is that an
+RL agent will learn to exploit the *simulator's* quirks rather than market structure, which is why
+it comes after the simulator has been validated against reality at rung 2.
 
 ---
 
 ## 5. Architecture
 
 ```
-                  ┌─────────────────┐
-                  │   DATA LAYER    │  yfinance / Alpaca / FRED
-                  │  fetch + cache  │  → parquet on local disk
-                  └────────┬────────┘
-                           │  point-in-time, survivorship-safe
-                  ┌────────▼────────┐
-                  │  FEATURE LAYER  │  returns, momentum, volatility,
-                  │                 │  drawdown, regime flags
-                  └────────┬────────┘
-                           │
-                  ┌────────▼────────┐
-                  │ STRATEGY LAYER  │  pure function:
-                  │                 │  (features, date) → target weights
-                  └────────┬────────┘
-                           │
-                  ┌────────▼────────┐
-                  │   RISK LAYER    │  position caps, drawdown circuit
-                  │   (veto power)  │  breaker, cash floor, sanity checks
-                  └────────┬────────┘
-                           │
-          ┌────────────────┴────────────────┐
-          │                                 │
- ┌────────▼────────┐              ┌─────────▼────────┐
- │   BACKTESTER    │              │ EXECUTION LAYER  │
- │  historical     │              │  paper → live    │
- │  walk-forward   │              │  (Alpaca API)    │
- └────────┬────────┘              └─────────┬────────┘
-          │                                 │
-          └────────────────┬────────────────┘
-                           │
-                  ┌────────▼────────┐
-                  │  JOURNAL / LOG  │  every decision, before outcome
-                  │   + dashboard   │  known. Append-only.
-                  └─────────────────┘
+┌──────────────────────────────────────────────────────────┐
+│                    MARKET SOURCES                        │
+│                                                          │
+│   ┌────────────────┐   ┌──────────┐   ┌──────────────┐   │
+│   │   SYNTHETIC    │   │   REAL   │   │  REAL, LIVE  │   │
+│   │   GENERATOR    │   │ HISTORY  │   │    FEED      │   │
+│   │ (known truth)  │   │ (yahoo)  │   │  (alpaca)    │   │
+│   └───────┬────────┘   └────┬─────┘   └──────┬───────┘   │
+└───────────┼─────────────────┼────────────────┼───────────┘
+            └─────────────────┼────────────────┘
+                              │  ← identical interface: all
+                              │    three look the same to
+                   ┌──────────▼──────────┐   everything below
+                   │    FEATURE LAYER    │
+                   │ returns, vol, trend │
+                   └──────────┬──────────┘
+                              │
+           ┌──────────────────┼──────────────────┐
+           │                                     │
+  ┌────────▼─────────┐                 ┌─────────▼────────┐
+  │    AI ENGINE     │                 │  RULES BASELINE  │
+  │ regime · sizing  │   ← compared →  │  (control arm,   │
+  │    · anomaly     │      always     │   always on)     │
+  └────────┬─────────┘                 └─────────┬────────┘
+           └──────────────────┬──────────────────┘
+                              │
+                   ┌──────────▼──────────┐
+                   │     RISK LAYER      │  veto power.
+                   │ caps · breakers ·   │  can shrink or
+                   │   sanity checks     │  reject, never
+                   └──────────┬──────────┘  enlarge
+                              │
+                   ┌──────────▼──────────┐
+                   │  EXECUTION / SIM    │
+                   │ costs · slippage ·  │
+                   │   realistic fills   │
+                   └──────────┬──────────┘
+                              │
+                   ┌──────────▼──────────┐
+                   │  EVALUATION HARNESS │
+                   │ null test · recovery│
+                   │  test · tearsheets  │
+                   └─────────────────────┘
 ```
 
-**The critical design constraint:** the strategy layer is a **pure function** — same inputs always
-produce the same outputs, no hidden state, no network calls. This is what makes it possible to run
-the *exact same code* in backtest and in live trading. Most retail systems have subtly different
-backtest and live code paths, and that gap is where undetected bugs live.
+**The critical design constraint:** synthetic, historical, and live markets present the **same
+interface**. The AI cannot tell which one it is trading. This is what makes the Reality Ladder
+meaningful — climbing a rung changes the data source and nothing else, so any change in behavior is
+attributable to reality itself rather than to a code path that differs between test and production.
+Most retail systems have subtly different backtest and live code, and that gap is where undetected
+bugs live.
 
-**The risk layer has veto power over the strategy layer.** The strategy proposes target weights;
-risk can shrink or reject them but never increase them. Separating these means a bug in strategy
-logic cannot produce an oversized position.
+**The risk layer holds veto power** over both the AI and the baseline. It can shrink or reject a
+position, never enlarge one. A bug in the model therefore cannot produce an oversized trade.
 
 ---
 
@@ -202,215 +245,180 @@ logic cannot produce an oversized position.
 
 ```
 market-sentinel/
-├── plan.md                  ← this document
-├── README.md                ← what it is, honest disclaimer, how to run
-├── DECISIONS.md             ← running log of design choices + why (dated)
-├── data/
-│   ├── raw/                 ← cached downloads, never edited (gitignored)
-│   └── curated/             ← cleaned parquet, point-in-time correct
+├── plan.md · README.md · DECISIONS.md
 ├── sentinel/
-│   ├── data/                ← fetchers, cache, corporate-action handling
-│   ├── features/            ← momentum, volatility, regime indicators
-│   ├── strategies/          ← one file per strategy, all pure functions
-│   ├── risk/                ← position sizing, circuit breakers, limits
-│   ├── backtest/            ← engine, cost model, walk-forward harness
-│   ├── execution/           ← broker adapters (paper first)
-│   └── journal/             ← decision logging, reporting
-├── notebooks/               ← exploration, clearly marked non-production
+│   ├── sandbox/          ← THE SIMULATOR. built first
+│   │   ├── generators/     gbm, ar1, ou, regime, jump, heston
+│   │   ├── correlations/   multi-asset structure, crash coupling
+│   │   └── microstructure/ spread, slippage, fill timing
+│   ├── data/             ← real market adapters (same interface)
+│   ├── features/         ← returns, volatility, trend, regime inputs
+│   ├── ai/
+│   │   ├── regime/         classifier + calibration
+│   │   ├── sizing/         probabilities → weights
+│   │   └── anomaly/        out-of-distribution detection
+│   ├── baseline/         ← the dumb rules control arm
+│   ├── risk/             ← caps, circuit breakers, sanity checks
+│   ├── engine/           ← unified backtest/live loop
+│   ├── execution/        ← broker adapters (paper first)
+│   └── journal/          ← decision logging, reporting
+├── experiments/
+│   ├── null_test.py      ← THE MOST IMPORTANT FILE IN THE REPO
+│   ├── recovery_test.py  ← sensitivity curve
+│   └── adversarial.py    ← crash and regime-shift stress tests
 ├── tests/
-│   ├── test_no_lookahead.py ← the most important test file in the repo
-│   └── ...
-├── reports/                 ← generated tearsheets, dated, committed
-└── config/
-    └── strategy.yaml        ← all parameters live here, never hardcoded
+└── reports/              ← dated tearsheets, committed to git
 ```
 
-`tests/test_no_lookahead.py` deserves the emphasis. It automatically feeds the strategy truncated
-history and asserts that decisions made on day N never change when day N+1 data arrives. Lookahead
-bias is the most common and most expensive bug in this domain, and it is silent — it just makes
-your backtest look great.
+`experiments/null_test.py` runs in CI on every commit. If the AI ever starts making money on pure
+randomness, the build fails. This is a permanent, automated guard against the field's most
+expensive bug, and having it run continuously is worth more than any amount of care.
 
 ---
 
 ## 7. Tech stack
 
-| Layer | Choice | Reasoning |
+| Layer | Choice | Why |
 |---|---|---|
-| Language | **Python 3.12** | Every finance library assumes it; you already have it installed |
-| Data wrangling | pandas + numpy | The default; enormous amount of help available online |
-| Storage | **parquet files** | No database to run. Fast, compressed, versionable |
-| Market data | **yfinance** (free) → Alpaca (free) | Start free. Yahoo is fine for daily ETF bars |
-| Macro data | **FRED** (free API key) | Interest rates, unemployment — for regime work |
-| Backtest engine | **write our own, ~300 lines** | Off-the-shelf engines hide their assumptions; for a small monthly-rebalance universe, a custom loop is simple and you will understand every line. Cross-check against `vectorbt` |
-| Broker | **Alpaca** | Free paper trading with a real API, commission-free live, good docs |
-| Dashboard | Static HTML report | Generated after each run. No server to babysit |
-| Scheduling | cron on this machine | Monthly rebalance. Does not need cloud infra |
-| Testing | pytest | Non-negotiable given the correctness stakes |
+| Language | **Python 3.12** | Every relevant library assumes it; already installed |
+| Numerics | numpy + pandas | The simulator is mostly numpy and will be fast |
+| ML | **LightGBM**, scikit-learn | Best-in-class on tabular data; seconds to train |
+| Regime cross-check | `hmmlearn` | Classical, interpretable comparison |
+| Storage | **parquet** | No database to run |
+| Real data | yfinance, FRED | Free, sufficient for daily bars |
+| Broker | **Alpaca** | Free paper trading with a real API |
+| Testing | pytest + CI | The null test must run automatically |
+| Reporting | static HTML | Generated per run, no server |
 
-Deliberately **not** using: TensorFlow/PyTorch (nothing in Phases 1-3 needs them), a database
-(overkill), a cloud VM (monthly rebalancing does not need uptime), or a paid data vendor (until
-free data is proven to be the bottleneck).
+Not using: deep learning frameworks (nothing needs them yet), a database (overkill), cloud compute
+(the simulator runs fine locally), or paid data (until free is proven to be the bottleneck).
 
----
-
-## 8. Risk controls (the part that actually protects you)
-
-These are enforced in code, in the risk layer, and are not overridable by any strategy.
-
-1. **Max position size:** no single ticker above 50% of the portfolio (Phase 1 holds one at a time,
-   so this is a backstop against a sizing bug).
-2. **Drawdown circuit breaker:** if the portfolio falls more than 12% from its high-water mark, go
-   fully to cash and **halt automated trading pending human review.** This is the hard floor.
-3. **Cash floor:** always keep a defined minimum in cash equivalents.
-4. **Staleness guard:** if market data is older than N hours or a price moves more than X% versus
-   the prior close, refuse to trade and alert. Bad ticks have caused real disasters.
-5. **Order sanity check:** every order is validated against expected notional before submission. An
-   order more than 3x the expected size is blocked automatically.
-6. **No leverage. No margin. No options. No shorting. No crypto.** Every one of these can lose more
-   than you put in, or is a fee sink. Cash accounts only.
-7. **Position limit on new capital:** never add money to the system faster than the paper-trading
-   record justifies.
-
-Number 6 is the single largest determinant of whether a beginner loses catastrophically. Most
-retail blowups are leverage or options, not bad stock picks.
+**Cost through rung 3: $0.**
 
 ---
 
-## 9. Phased roadmap
+## 8. Risk controls
 
-Each phase has an **exit criterion**. You do not start the next phase until the current one is met.
-The criteria exist to stop enthusiasm from outrunning evidence.
+Enforced in the risk layer, not overridable by any model:
 
-### Phase 0 — Foundations *(~1 week)*
-Repo scaffolding, data fetching, caching, parquet storage. Handle splits and dividends correctly
-(total-return prices, not raw prices — otherwise every backtest is wrong by several percent a year).
-Plot SPY's history and eyeball it against a known chart.
-
-*Exit: you can reproduce SPY's 2008 drawdown and 2020 crash to within a fraction of a percent.*
-
-### Phase 1 — Baseline strategy *(~1 week)*
-Implement dual momentum as a pure function. Config-driven. Unit tested. **No backtest yet** —
-build the logic and prove it is correct on hand-checkable examples first.
-
-*Exit: you can compute the strategy's decision for a given month by hand in a spreadsheet and it
-matches the code exactly.*
-
-### Phase 2 — Backtester and the truth *(~2-3 weeks — the real work)*
-The custom engine, with an explicit cost model (commission, spread, slippage) and correct
-point-in-time data handling. The anti-lookahead test suite. Then walk-forward validation: tune on
-1990-2005, test untouched on 2006-2024.
-
-*Exit: an out-of-sample tearsheet with CAGR, max drawdown, Sharpe, and a benchmark comparison —
-plus a written honest assessment of whether it beats buy-and-hold. **This phase is allowed to kill
-the project.***
-
-### Phase 3 — Paper trading *(6 months minimum, calendar time, no shortcut)*
-Alpaca paper account. Cron job. Every month the system logs its intended decision *before* acting,
-then acts. Monthly written review comparing live paper results to backtest expectations.
-
-*Exit: 6 months of paper results with no execution bugs, and live behavior tracking the backtest's
-expected range. Any material divergence means a bug — go find it.*
-
-### Phase 4 — ML augmentation *(optional, only if Phases 1-3 succeeded)*
-Add a regime classifier and/or LLM-based text analysis of holdings. Must be A/B tested against the
-Phase 1 baseline out-of-sample. **If it does not clearly beat the dumb baseline, it is deleted.**
-
-*Exit: statistically meaningful improvement on out-of-sample data, or an honest decision not to
-ship it.*
-
-### Phase 5 — Real money *(only after all of the above)*
-Start with an amount you would be genuinely fine losing entirely. Increase only after a year of
-live results matching paper. Human approves every trade for the first year.
-
-*Exit: none. This phase never ends, and it is always under review.*
-
-**Realistic timeline: 8-10 months before real money is involved.** If that sounds slow, that
-slowness *is* the product. The alternative timeline is "3 weeks to a live system and 4 months to
-finding out it was broken the whole time."
+1. **No leverage, margin, options, shorting, or crypto.** Permanent policy. These cause most
+   catastrophic retail losses, and excluding them structurally beats relying on discipline.
+2. **Broad ETFs only.** A single company can gap down 40% overnight on news no model could
+   anticipate. An index cannot.
+3. **Drawdown circuit breaker.** Down 12% from the high-water mark → full cash, halt automation,
+   require human review.
+4. **Cash is always a valid position.** The system's main defense is the ability to be entirely out
+   of the market.
+5. **Uncertainty shrinks positions.** Low model confidence directly reduces exposure.
+6. **Staleness and sanity guards.** Stale data or an order more than 3x expected size is blocked
+   automatically, not flagged.
+7. **Anomaly detector reduces risk, never increases it.** Asymmetric by design.
 
 ---
 
-## 10. How we know it is working
+## 9. Roadmap
 
-Every backtest and every monthly live review produces the same standard report:
+Each phase has an exit criterion. Enthusiasm does not get to outrun evidence.
 
-- Equity curve vs SPY and vs cash on the same axes
-- CAGR, volatility, Sharpe, Sortino, max drawdown, longest drawdown *duration*
-- Worst 10 months, and what the system was holding during each
-- Trade log with costs
-- **Drawdown duration** gets special emphasis: it is not the depth of a loss that makes people
-  quit, it is being underwater for 18 months while their friends make money in the index.
+### Phase 0 — Build the sandbox *(~2 weeks)*
+Generators, correlation structure, cost model, unified market interface.
 
-And one qualitative question answered in writing each month: *"Did the system do anything I did not
-expect? If so, why?"* Unexplained behavior is treated as a bug until proven otherwise.
+*Exit: generated markets pass statistical checks — a GBM series is verifiably indistinguishable from
+a random walk, a regime-switching series verifiably switches at the times you specified.*
 
----
+### Phase 1 — The AI, and the Null Test *(~3 weeks)*
+Build the regime classifier, sizer, and anomaly detector. Then immediately try to make money on
+pure noise.
 
-## 11. Costs
+*Exit: **the AI fails on random markets.** Near-zero return across 1,000 null markets, with a
+measured noise floor. A pass here is the AI proving it can find nothing when there is nothing.*
 
-| Item | Cost |
-|---|---|
-| Market data (yfinance, FRED) | $0 |
-| Alpaca paper + live trading | $0 |
-| Compute (this machine) | $0 |
-| LLM API for Phase 4 text analysis | ~$5-20/mo, only if Phase 4 happens |
-| **Total through Phase 3** | **$0** |
+### Phase 2 — The Recovery Test *(~2 weeks)*
+Plant signals of known strength; sweep strength down; find the detection limit. Same for regime
+switches: how sharp must a regime change be before the classifier catches it, and how fast?
 
-The entire project through paper trading costs nothing but time. There is no reason to spend money
-on data or infrastructure until free versions are demonstrably the limiting factor.
+*Exit: a sensitivity curve, plus a written judgment on whether real markets plausibly contain
+signals above that threshold. **This phase is allowed to kill the project** — and if it does, it
+will have done so cheaply, on fake money, with a clear reason.*
 
----
+### Phase 3 — Adversarial markets *(~2 weeks)*
+Crashes, correlation breakdowns, regime shifts the model never trained on, and markets deliberately
+built to break it. Verify circuit breakers fire and the anomaly detector actually notices.
 
-## 12. Things that will go wrong (predicted in advance)
+*Exit: survives every stress scenario with drawdown inside limits. No silent failures.*
 
-Writing these down now so they can be checked against later, rather than rationalized away:
+### Phase 4 — Real history *(~3 weeks)*
+First contact with reality. Walk-forward: train on 1990-2005, test untouched on 2006-2024. Compare
+against the null floor and the rules baseline.
 
-1. **The backtest will look too good the first time.** It will be a lookahead bug. It is always a
-   lookahead bug.
-2. **Live results will be worse than backtest.** Always. Costs, slippage, and the fact that the
-   backtest period is over-fit even when you are careful.
-3. **There will be a stretch where the strategy underperforms SPY badly** — probably 1-2 years.
-   This is normal and expected for defensive strategies during bull markets, and it is precisely
-   when people abandon a working system.
-4. **The urge to add parameters after a bad month will be strong.** That urge is how strategies get
-   destroyed. Changes require a written rationale in `DECISIONS.md` *and* out-of-sample evidence.
-5. **Free data will have errors** — bad ticks, wrong split adjustments. Hence the staleness guard.
+*Exit: an honest out-of-sample tearsheet, plus a diagnosis of every place reality diverged from the
+simulator — each divergence is a lesson about what the sandbox is missing.*
 
----
+### Phase 5 — Paper trading *(6 months, calendar time, no shortcut)*
+Live data, fake money. Every decision logged *before* the outcome is known. Monthly written review
+comparing live behavior to expectations.
 
-## 13. Practical and legal notes
+*Exit: 6 months, no execution bugs, results inside the predicted range. Divergence means a bug —
+find it.*
 
-- This is a personal tool, not financial advice, and not a product for anyone else. Managing other
-  people's money requires registration; do not do it.
-- **Brokerage accounts require you to be 18+.** If that is not the case yet, the path is a
-  custodial account opened with a parent or guardian — worth sorting out early since it affects
-  which broker to use. Phases 0-3 are entirely unaffected either way; paper trading has no such
-  requirement.
-- **Taxes:** selling at a profit in a taxable account creates a tax bill, and holdings sold within
-  a year are taxed at a higher rate. This is a real drag on returns and the backtest must model it.
-  Low turnover helps a great deal here.
-- Keep records from day one. Future-you will need them.
+### Phase 6 — Real money
+An amount you would be genuinely fine losing entirely. Human approves every trade for the first
+year. Scale only on evidence.
+
+**Realistic timeline: 8-10 months.** But unlike the previous draft, the first six weeks now produce
+real, publishable findings about what the AI can and cannot do — rather than six weeks of
+scaffolding before you learn anything.
 
 ---
 
-## 14. Open questions to decide together
+## 10. Things that will go wrong (predicted in advance)
 
-1. **Advisory or autonomous?** Should the system place trades itself, or email you a recommendation
-   each month that you execute manually? *(Recommendation: advisory through Phase 4. It is safer,
-   simpler, and at 2-6 trades a year the manual work is trivial.)*
-2. **Capital size and timeline** — what amount, and when? This affects broker choice and whether
-   fixed costs matter.
-3. **Account type** — taxable, or a retirement account (which changes the tax math significantly)?
-4. **Learning goal weighting** — is this primarily about building a good system, or primarily about
-   learning markets and programming? Both are valid; they lead to different amounts of "write it
-   yourself" versus "use the library."
-5. **Universe** — stick to 4 broad ETFs, or include a defensive sleeve (gold, TIPS) from the start?
+Written down now so they can be checked rather than rationalized later.
+
+1. **The AI will make money on the Null Test the first time you run it.** It will be a lookahead
+   bug. It is always a lookahead bug. Budget several days for this, and treat finding it as the
+   project's first real success.
+2. **The sensitivity threshold will be discouraging.** Expect to find the AI needs a stronger signal
+   than real markets plausibly contain. That is the most likely single outcome of Phase 2, and it is
+   *information*, obtained for free.
+3. **Real markets will break something the simulator never did.** Guaranteed. That gap is the most
+   interesting thing the project will produce.
+4. **The model will be overconfident** before calibration. Raw classifier probabilities are almost
+   never honest.
+5. **There will be a stretch where it badly underperforms just holding SPY** — likely 1-2 years.
+   Normal for defensive systems in bull markets, and exactly when people abandon working systems.
+6. **The urge to add features after a bad month will be intense.** That urge is how strategies die.
+   Changes require a written rationale in `DECISIONS.md` and out-of-sample evidence.
 
 ---
 
-## 15. Immediate next steps
+## 11. Practical notes
 
-Nothing until the questions in §14 are settled. When they are, the first commit is Phase 0: data
-fetching and the SPY reproduction check.
+- Personal tool. Not financial advice. Managing other people's money requires registration — do not.
+- **Brokerage accounts require 18+**; under that, a custodial account with a parent or guardian.
+  Affects Phase 6 only — every rung below it is unaffected.
+- **Taxes** are a real drag: profits are taxable, and holdings sold inside a year are taxed higher.
+  Low turnover helps. The backtest must model this.
+- Keep records from day one.
+
+---
+
+## 12. Open questions
+
+1. **Advisory or autonomous?** Recommend-and-you-click, or place its own trades? *(Recommendation:
+   advisory well into Phase 6 — safer, simpler, and it keeps you learning what each trade means.)*
+2. **Capital and timing** — how much real money, and when? Affects broker choice and tax modeling.
+3. **Account type** — taxable or retirement? Changes the tax math substantially.
+4. **Emphasis** — is this primarily about learning markets and programming, or about producing a
+   working system fastest? Both are valid and they lead to different amounts of build-it-yourself.
+5. **Universe** — which ETFs, and do we include a defensive sleeve (gold, TIPS) from the start?
+
+---
+
+## 13. Next step
+
+Phase 0: the geometric Brownian motion generator, and a statistical test proving its output is a
+genuine random walk. Roughly fifty lines of code, and everything else in the project is built on
+trusting it.
 
 *Last updated: 2026-09-03*

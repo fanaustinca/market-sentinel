@@ -1,39 +1,50 @@
 # market-sentinel
 
-A defensive, rules-first market system — designed to lose slowly and predictably before it is ever
-asked to win.
+An AI trading system developed inside a **synthetic market laboratory** — where the ground truth is
+known — before it is ever pointed at a real market.
 
 **Status:** planning. No code yet. See [plan.md](plan.md).
 
-## What this is
+## The idea
 
-A personal research project to build and rigorously validate a low-turnover, risk-managed
-allocation strategy across broad ETFs. The design priority is capital preservation and bounded
-drawdown, not maximum return.
+You cannot tell whether a model trained on real market history learned something or memorized
+noise, because there is only one copy of history and no answer key.
 
-Most of the engineering effort goes into *validation* — backtesting correctly, detecting lookahead
-bias, and comparing honestly against a buy-and-hold benchmark — rather than into strategy
-invention.
+So this project builds the markets first. If you generate a market yourself, you know exactly what
+is in it — whether it holds a pattern, what kind, and how strong. Two experiments follow:
+
+**The Null Test.** Generate a market of pure randomness, with nothing to find. Run the AI on it.
+*The AI must fail.* If it reports profit on noise, that is not a strategy — it is a bug, caught on
+day one on fake money instead of eighteen months later on real money. Run it a thousand times and
+you get a **noise floor**: what your method scores on markets containing nothing. Any real result
+below that line is a coincidence, not a discovery.
+
+**The Recovery Test.** Plant a pattern of known strength, then weaken it until the AI loses the
+scent. That threshold is the AI's sensitivity. Real market signals are very weak — so if the
+threshold sits above what real markets plausibly offer, you know the approach cannot work, from a
+measurement rather than a hunch.
+
+## The Reality Ladder
+
+Each rung adds exactly one element of reality, so any failure is attributable.
+
+| Rung | Market | Money | Proves |
+|---|---|---|---|
+| 1. Sandbox | Synthetic | Fake | The AI finds real signals — and correctly finds nothing in noise |
+| 2. Backtest | Real history | Fake | It survives real messiness: fat tails, gaps, costs, crashes |
+| 3. Paper | Real, live | Fake | The plumbing works in real time |
+| 4. Live | Real, live | Real | It works when it matters |
+
+The AI cannot tell which rung it is on — all three market sources share one interface.
 
 ## What this is not
 
-- **Not financial advice.** Personal tool only.
-- **Not a guarantee against losses.** No such system exists. Any system that can gain can lose.
-- **Not a get-rich system.** The benchmark it must beat is a savings account, and it may well fail
-  to. The plan explicitly allows for the conclusion "just buy an index fund."
+- **Not financial advice.** Personal tool.
+- **Not a guarantee against losses.** No such system exists; anything that can gain can lose.
+- **Not a get-rich system.** It must beat a savings account, and it may fail to. The plan explicitly
+  allows the conclusion "this doesn't work — buy an index fund."
 
-## Roadmap
-
-| Phase | What | Gate |
-|---|---|---|
-| 0 | Data layer | Reproduce SPY history accurately |
-| 1 | Baseline strategy | Hand-verifiable against a spreadsheet |
-| 2 | Backtester + validation | Honest out-of-sample tearsheet |
-| 3 | Paper trading | 6 months, no bugs, matches backtest |
-| 4 | ML augmentation (optional) | Must beat the dumb baseline |
-| 5 | Real money | Only after all of the above |
-
-No real capital before Phase 5. Realistic timeline: 8-10 months.
+Cost through paper trading: **$0**. Realistic timeline to real money: 8-10 months.
 
 ## License
 
