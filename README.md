@@ -3,10 +3,16 @@
 An AI trading system developed inside a **synthetic market laboratory** — where the ground truth is
 known — before it is ever pointed at a real market.
 
-**Status:** Phases 0–3 complete and validated, and the system has been run against 33 years of
-real market data. The return-forecasting AI has been **measured, found wanting, and retired**. The
-simulator has been caught teaching a false lesson, corrected, and re-verified against reality. See
-[HANDOFF.md](HANDOFF.md) for exactly what is verified and what is not.
+**Status:** Phases 0–3 complete and validated, tested against 391 market-years of real data across
+eight countries. The headline result is a negative one, arrived at honestly:
+
+> **Trend following is a risk-reduction tool, not a return-generation tool.** Its drawdown benefit
+> replicates in 8 of 8 markets (p = 0.0039). Its return edge does not (p = 0.145). Nothing in this
+> project is ready for real money, and the plan anticipated that and permits it.
+
+The return-forecasting AI was measured, found wanting, and retired. The simulator was caught
+teaching a false lesson, corrected, and re-verified. See [HANDOFF.md](HANDOFF.md) for exactly what
+is verified and what is not.
 
 ## The idea
 
@@ -195,7 +201,38 @@ than a 21-day rolling standard deviation.
 That is not an argument that models never work. It is exactly what the permanent control arm was put
 there to detect, and it detected it every time it was asked.
 
-### The harder question: is it timing, or just being invested?
+### Does it replicate? — 8 countries, 391 market-years
+
+`is_it_timing.py` (below) reached p = 0.13 on SPY and said the next step had to be more independent
+paths: more backtesting on one path cannot improve a number the shuffle has already extracted. So
+the same test was run on eight national indices — including the Nikkei, which spent thirty years
+going down.
+
+| | `absolute_momentum` timing edge | percentile |
+|---|---|---|
+| US S&P 500 (1927) | +0.172 | 94% |
+| Japan Nikkei 225 (1965) | +0.223 | 96% |
+| Canada TSX (1979) | −0.075 | 32% |
+| UK FTSE 100 (1984) | +0.040 | 60% |
+| Hong Kong Hang Seng (1986) | +0.054 | 64% |
+| Germany DAX (1987) | +0.036 | 59% |
+| France CAC 40 (1990) | +0.027 | 56% |
+| Australia ASX 200 (1992) | −0.129 | 22% |
+| **positive in 6 of 8** | median +0.038 | **sign test p = 0.145** |
+
+**The return edge does not replicate.** But the drawdown does, in **8 of 8 markets**, by a median of
+17.6 points — sign test **p = 0.0039**, the only significant result in the project.
+
+The two differ for a reason that is the whole point. The drawdown benefit does not require the rule
+to predict anything: stepping aside after a sustained decline mechanically truncates a long fall,
+whether or not forecastable structure exists. It is a property of the rule's *shape*, which is
+exactly why it survives when the return edge does not.
+
+It is not free — a median 1.96% a year across these markets, plus sitting in cash through part of
+every recovery. Whether roughly halving the worst drawdown is worth roughly two points of annual
+return is a question about the person holding it, not about the data.
+
+### The harder question underneath it: is it timing, or just being invested?
 
 The floors above are measured on **demeaned** returns, the convention every null market here uses.
 Applied to a real-data result that bar means less than it looks. Buy-and-hold scores 0.654 against a
@@ -270,6 +307,7 @@ python experiments/simulator_gap.py        # where reality diverged from the sim
 python experiments/corrected_sandbox.py    # does the fixed sandbox predict reality?
 python experiments/adversarial.py          # Phase 3: crashes and correlation breakdown
 python experiments/is_it_timing.py         # the harder floor: timing, or just exposure?
+python experiments/more_paths.py           # does it replicate? 8 countries, 391 market-years
 ```
 
 Every experiment takes `--quick` for a smoke test. The Null Test refuses to write a report from
@@ -286,25 +324,27 @@ publish and every later phase compares against these numbers.
 - [x] **Rung 2** — real ETF history, judged against a bootstrap floor from the same returns
 - [x] **Rung 2 diagnosis** — found the simulator's false lesson, corrected it, re-verified
 - [x] **Phase 3** — adversarial markets: crashes, gap risk, correlation breakdown
+- [x] **Replication** — 8 countries, 391 market-years. Return edge fails, drawdown holds.
 - [ ] Phase 5 — six months of paper trading (calendar time; no code can compress it)
 
 ## What would actually be traded, if anything
 
-On the evidence so far: **nothing, yet.**
+On the evidence: **nothing, for return.** No strategy here clears a noise floor that declines to
+credit it for simply being invested in a market that went up.
 
-The best candidate is **absolute momentum** — hold while the trailing 12-month return is positive,
-else cash. Two parameters, checkable by hand. Over 33 years of SPY it returned 9.84% a year against
-buy-and-hold's 9.30%, with a worst drawdown of −27.8% against −51.0%. But its *timing* edge is
-p = 0.13 against a floor that gives no credit for simply being invested, and 0.13 is not a number to
-fund a position on.
+For *risk*, one thing does: **absolute momentum** — hold while the trailing 12-month return is
+positive, else cash. Two parameters, checkable by hand in a spreadsheet, and a rule a beginner could
+write in an afternoon. Across eight countries it roughly halved the worst drawdown, every time, for
+a median cost of about two points of annual return.
 
-What is solid is the drawdown, because it does not depend on the timing edge being real — stepping
-aside after a sustained decline mechanically halves the worst loss. For a project whose stated goal
-is capital preservation, that may be the result that matters. It is also, notably, available from a
-rule a beginner could write in an afternoon.
+That is a real finding and it is not the one the project set out to get. The plan said it must be
+able to reach the conclusion *"this doesn't work — buy an index fund"*, and on returns it has. What
+it also produced is a set of instruments — the Null Test, the noise floor with its window attached,
+the truncation detector, the drift-preserving shuffle, the oracle ladder — that caught every false
+positive this project generated, including several of its own. Most of those false positives looked
+convincing first.
 
-The next honest test is paper trading, where the answer is not yet known to anybody. More
-backtesting on SPY will not help: the shuffle has already extracted what this single path can say.
+The next honest test is paper trading, where the answer is not yet known to anybody.
 
 New here? Start with [HANDOFF.md](HANDOFF.md).
 

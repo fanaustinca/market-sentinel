@@ -9,8 +9,17 @@ why. This file covers what exists, what is verified, what is not, and what to do
 
 ## TL;DR
 
-Phases 0 through 3 are complete and validated, and the system has been run against 33 years of
-real market data. The project has produced five findings that are worth more than the code:
+Phases 0 through 3 are complete and validated, and the system has been tested against 391
+market-years across eight countries. **The headline result is negative and it is solid:**
+
+> Trend following is a **risk-reduction** tool, not a return-generation tool. Its drawdown benefit
+> replicates in 8 of 8 markets (sign test p = 0.0039 — the only significant result in the project).
+> Its return edge does not (p = 0.145). Nothing here is ready for real money.
+
+`plan.md` §2 anticipated this outcome and permits it. Do not spend the next session trying to
+rescue the return result; spend it either on paper trading or on the open questions below.
+
+The project has produced six findings that are worth more than the code:
 
 1. **Nothing here profits from noise.** 27 strategy × market cells, all pass. The Phase 1 gate now
    runs on every commit.
@@ -28,12 +37,15 @@ real market data. The project has produced five findings that are worth more tha
 
 6. **Against a floor that gives no credit for being invested, nothing here is significant.** The
    demeaned floors flatter every strategy; reshuffled *with drift preserved*, `absolute_momentum`'s
-   timing edge is p = 0.13 and `regime_aware`'s is negative.
+   timing edge is p = 0.13 on SPY and p = 0.145 pooled across eight countries.
 
 The best candidate is **`absolute_momentum`** — two parameters, checkable by hand. What survives
-scrutiny is not its return but its **drawdown**: −27.8% against buy-and-hold's −51.0%, which follows
-mechanically from stepping aside after a sustained decline and does not depend on the timing edge
-being real. Do not carry the Sharpe number forward without the p-value attached.
+scrutiny is not its return but its **drawdown**, and the reason matters: stepping aside after a
+sustained decline mechanically truncates a long fall whether or not the rule can anticipate one. It
+is a property of the rule's shape rather than evidence of skill, which is precisely why it
+replicates when the return edge does not. **Never carry its Sharpe forward without the p-value
+attached** — every earlier version of this document quoted 0.798 against a floor of 0.344, and that
+comparison was too generous.
 
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
@@ -181,17 +193,25 @@ caught something code review would not have, and it is why every new strategy ge
 
 ## Next steps, in order
 
-### 1. Get more independent paths
+### 1. Decide what the project is now for
 
-The single most valuable thing available, and the shuffle experiment says why: it has already
-extracted what SPY 1993-2025 can tell us, and the answer was p = 0.13. More backtesting on the same
-path cannot improve that number — only more paths can.
+This is a decision rather than a task, and taking it deliberately is worth more than any code.
+The original goal — beat cash risk-adjusted with an AI — has been measured and not met. Three
+honest continuations:
 
-Cheapest sources, in order: pre-1993 US index data (from a total-return series rather than SPY,
-which did not exist), other developed indices via the same yfinance adapter, and other asset classes.
-Each is an approximately independent draw of the same question. Note that they are not fully
-independent — global equity markets are correlated, and 2008 happened everywhere at once — so treat
-five indices as worth rather less than five times one.
+**(a) Ship the risk tool.** Take `absolute_momentum` to paper trading as what the evidence supports:
+something that roughly halves the worst drawdown for about two points of annual return. Small,
+verifiable, and the claim matches the measurement.
+
+**(b) Keep asking the research question.** The instruments are built and they work. The open
+questions below are real and the sandbox is now trustworthy enough to explore them.
+
+**(c) Stop, and buy an index fund.** `plan.md` §2 explicitly permits this and the evidence supports
+it. It would not be a failure — the project answered its question, and the answer was no.
+
+What would *not* be honest is (d): tuning `absolute_momentum` until the return edge crosses 0.05.
+`plan.md` §10 prediction 6 names that urge in advance, and there is now a measured p-value to
+tune against, which makes it easier than usual to do accidentally.
 
 ### 2. Find the next thing the simulator is missing
 
