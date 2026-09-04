@@ -28,20 +28,42 @@ of 0.6 on real data is *not evidence of skill* -- it is below the noise floor of
 the instrument that measured it. Almost nobody computes this number, and without
 it a backtest result cannot be interpreted at all.
 
-The floor is a property of the strategy, not of the market. A strategy that trades
-constantly has many more chances to get lucky and therefore a much wider null
-distribution -- which is a rigorous version of the intuition that a busier
-strategy needs a higher bar.
+What sets the floor, measured rather than assumed
+-------------------------------------------------
+An earlier version of this docstring claimed a busier strategy has a *wider* null
+distribution and therefore a higher bar. Measurement says otherwise, and the
+correction matters because it changes how a threshold should be set.
+
+The spread of null Sharpes is almost entirely fixed by the **length of the track
+record**, not by the strategy. Across constant-weight strategies at exposures
+from 0.1 to 1.0, and momentum rules turning over anywhere from 0.8 to 84 times a
+year, the standard deviation stayed at 0.31 +/- 0.01 on ten-year markets -- which
+is the textbook standard error of an estimated Sharpe, 1/sqrt(years) = 0.316.
+
+Trading frequency moves the *mean* instead. Costs drag it down roughly in
+proportion to turnover: 0.8 turns a year cost 0.04 Sharpe, 84 turns cost 0.375.
+Since the floor is mean + 1.645 sd, a busier strategy ends up with a **lower**
+floor, not a higher one.
+
+That is the opposite of the original intuition and it is a trap. A busy strategy
+clears its own floor more easily only because it starts out losing money to
+costs, so "beat your noise floor" is a necessary test and not a sufficient one --
+a strategy must also clear zero. Both checks are reported.
+
+The practical consequence is that a noise floor is meaningless without the
+evaluation window attached. At ten years the floor is about 0.52; at six years,
+1.645/sqrt(6) = 0.67. A target Sharpe quoted without a window length is not a
+target. See `experiments/noise_floor_scaling.py`.
 """
 
 from __future__ import annotations
 
-from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass, field
 
 import numpy as np
 
-from sentinel.engine.backtest import UNLIMITED, CostModel, RiskLimits, run_backtest
+from sentinel.engine.backtest import CostModel, RiskLimits
+from sentinel.evaluation.sweep import sweep_markets
 from sentinel.sandbox.generators.base import Generator
 from sentinel.strategies.base import Strategy
 
@@ -113,19 +135,6 @@ class NullTestResult:
         )
 
 
-def _run_one(args: tuple) -> tuple[float, float, float]:
-    strategy, generator, n_steps, seed, costs, limits = args
-    scenario = generator.generate(n_steps=n_steps, n_assets=1, seed=seed)
-    if scenario.truth.has_exploitable_signal:
-        raise ValueError(
-            f"{generator.model_name} declares an exploitable signal; "
-            "the Null Test requires a market that provably contains none"
-        )
-    result = run_backtest(scenario.data, strategy, costs=costs, limits=limits)
-    performance = result.performance
-    return performance.sharpe, performance.cagr, performance.max_drawdown
-
-
 def run_null_test(
     strategy: Strategy,
     generator: Generator,
@@ -153,20 +162,17 @@ def run_null_test(
         )
 
     costs = costs or CostModel()
-    limits = limits if limits is not None else UNLIMITED
 
-    jobs = [
-        (strategy, generator, n_steps, seed_offset + i, costs, limits)
-        for i in range(n_markets)
-    ]
-
-    if workers == 1:
-        outcomes = [_run_one(job) for job in jobs]
-    else:
-        with ProcessPoolExecutor(max_workers=workers) as pool:
-            outcomes = list(pool.map(_run_one, jobs, chunksize=4))
-
-    sharpes, cagrs, drawdowns = (np.array(column) for column in zip(*outcomes))
+    sharpes, cagrs, drawdowns = sweep_markets(
+        strategy,
+        generator,
+        n_markets=n_markets,
+        n_steps=n_steps,
+        seed_offset=seed_offset,
+        costs=costs,
+        limits=limits,
+        workers=workers,
+    )
 
     return NullTestResult(
         strategy=strategy.name,

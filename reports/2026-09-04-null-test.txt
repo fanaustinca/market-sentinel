@@ -1,0 +1,28 @@
+
+Grid: mean Sharpe on markets containing nothing (t-statistic)
+
+                                              gbm                heston                  jump
+always_cash                       +0.000 (t +0.0)       +0.000 (t +0.0)       +0.000 (t +0.0)
+buy_and_hold                      -0.009 (t -0.4)       +0.004 (t +0.2)       -0.000 (t -0.0)
+absolute_momentum                 -0.039 (t -1.7)       -0.029 (t -1.3)       -0.031 (t -1.4)
+short_momentum                    -0.240 (t-11.0)       -0.247 (t-11.7)       -0.215 (t-10.5)
+dual_momentum                     -0.039 (t -1.7)       -0.029 (t -1.3)       -0.031 (t -1.4)
+regime_aware                      -0.007 (t -0.5)       -0.031 (t -1.3)       +0.015 (t +0.7)
+regime_gate                       -0.001 (t -0.1)       -0.027 (t -1.1)       +0.014 (t +0.6)
+ai_walkforward                    -0.281 (t-13.5)       -0.226 (t-11.3)       -0.257 (t-11.7)
+ai_walkforward_classifier         -0.296 (t-14.5)       -0.246 (t-11.9)       -0.281 (t-13.4)
+
+Noise floor: the Sharpe luck alone hands each strategy on empty markets
+
+strategy                          p95       p99     worst cell mean
+always_cash                    +0.000    +0.000              +0.000
+buy_and_hold                   +0.518    +0.738              +0.004
+absolute_momentum              +0.506    +0.691              -0.029
+short_momentum                 +0.269    +0.399              -0.215
+dual_momentum                  +0.506    +0.691              -0.029
+regime_aware                   +0.512    +0.694              +0.015
+regime_gate                    +0.471    +0.701              +0.014
+ai_walkforward                 +0.231    +0.532              -0.226
+ai_walkforward_classifier      +0.215    +0.439              -0.246
+
+VERDICT: PASS -- all 27 cells correctly fail to profit from noise.

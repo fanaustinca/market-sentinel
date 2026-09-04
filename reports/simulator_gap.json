@@ -1,0 +1,75 @@
+{
+  "generated": "2026-09-04",
+  "spy_fingerprint": "98f0d745f5a5",
+  "state_profiles": {
+    "sandbox regime market": {
+      "n_scored": 4243,
+      "calm": {
+        "annual_return": 0.09164711470150508,
+        "annual_volatility": 0.14039224280668958,
+        "share_of_days": 0.7925995757718596,
+        "sharpe": 0.6527932944820664
+      },
+      "stressed": {
+        "annual_return": -0.20883324713885332,
+        "annual_volatility": 0.2980381570028024,
+        "share_of_days": 0.20740042422814048,
+        "sharpe": -0.7006929892432857
+      }
+    },
+    "real SPY 1993-2025": {
+      "n_scored": 7530,
+      "calm": {
+        "annual_return": 0.08969980503089128,
+        "annual_volatility": 0.13427826344886729,
+        "share_of_days": 0.6750332005312085,
+        "sharpe": 0.6680143362521863
+      },
+      "stressed": {
+        "annual_return": 0.17090163813614773,
+        "annual_volatility": 0.2779860333649327,
+        "share_of_days": 0.3249667994687915,
+        "sharpe": 0.6147849806245215
+      }
+    }
+  },
+  "sandbox_gap_annual": 0.3004803618403584,
+  "real_gap_annual": -0.08120183310525644,
+  "volatility_quintiles": [
+    {
+      "quintile": 1,
+      "volatility_from": 0.0,
+      "volatility_to": 0.08982710681747179,
+      "forward_annual_return": 0.07124547174214377,
+      "n_days": 1653
+    },
+    {
+      "quintile": 2,
+      "volatility_from": 0.08982710681747179,
+      "volatility_to": 0.11691768895212484,
+      "forward_annual_return": 0.11379133533187881,
+      "n_days": 1653
+    },
+    {
+      "quintile": 3,
+      "volatility_from": 0.11691768895212484,
+      "volatility_to": 0.1532721995311745,
+      "forward_annual_return": 0.15093207699737585,
+      "n_days": 1653
+    },
+    {
+      "quintile": 4,
+      "volatility_from": 0.1532721995311745,
+      "volatility_to": 0.20785117196327482,
+      "forward_annual_return": 0.05644791956592978,
+      "n_days": 1653
+    },
+    {
+      "quintile": 5,
+      "volatility_from": 0.20785117196327482,
+      "volatility_to": 0.9449554446170183,
+      "forward_annual_return": 0.1992843154017806,
+      "n_days": 1653
+    }
+  ]
+}

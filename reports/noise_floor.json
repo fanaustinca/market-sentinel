@@ -1,0 +1,307 @@
+{
+  "generated": "2026-09-04",
+  "n_markets_per_cell": 200,
+  "n_steps": 2520,
+  "t_threshold": 3.0,
+  "passed": true,
+  "platform": "3.12.3 / aarch64",
+  "noise_floor": {
+    "always_cash": {
+      "p95": 0.0,
+      "p99": 0.0,
+      "mean": 0.0,
+      "sd": 0.0,
+      "n": 600,
+      "per_market": {
+        "gbm": {
+          "mean_sharpe": 0.0,
+          "t": 0.0,
+          "p95": 0.0,
+          "p99": 0.0,
+          "profitable_fraction": 0.0,
+          "passed": true
+        },
+        "jump": {
+          "mean_sharpe": 0.0,
+          "t": 0.0,
+          "p95": 0.0,
+          "p99": 0.0,
+          "profitable_fraction": 0.0,
+          "passed": true
+        },
+        "heston": {
+          "mean_sharpe": 0.0,
+          "t": 0.0,
+          "p95": 0.0,
+          "p99": 0.0,
+          "profitable_fraction": 0.0,
+          "passed": true
+        }
+      }
+    },
+    "buy_and_hold": {
+      "p95": 0.5176,
+      "p99": 0.7381,
+      "mean": -0.0018,
+      "sd": 0.3093,
+      "n": 600,
+      "per_market": {
+        "gbm": {
+          "mean_sharpe": -0.0091,
+          "t": -0.419,
+          "p95": 0.4928,
+          "p99": 0.6372,
+          "profitable_fraction": 0.35,
+          "passed": true
+        },
+        "jump": {
+          "mean_sharpe": -0.0,
+          "t": -0.0,
+          "p95": 0.5346,
+          "p99": 0.7343,
+          "profitable_fraction": 0.395,
+          "passed": true
+        },
+        "heston": {
+          "mean_sharpe": 0.0038,
+          "t": 0.176,
+          "p95": 0.5102,
+          "p99": 0.7736,
+          "profitable_fraction": 0.415,
+          "passed": true
+        }
+      }
+    },
+    "absolute_momentum": {
+      "p95": 0.5062,
+      "p99": 0.691,
+      "mean": -0.0331,
+      "sd": 0.3179,
+      "n": 600,
+      "per_market": {
+        "gbm": {
+          "mean_sharpe": -0.0389,
+          "t": -1.715,
+          "p95": 0.4735,
+          "p99": 0.656,
+          "profitable_fraction": 0.345,
+          "passed": true
+        },
+        "jump": {
+          "mean_sharpe": -0.0311,
+          "t": -1.418,
+          "p95": 0.5018,
+          "p99": 0.6704,
+          "profitable_fraction": 0.385,
+          "passed": true
+        },
+        "heston": {
+          "mean_sharpe": -0.0293,
+          "t": -1.277,
+          "p95": 0.5366,
+          "p99": 0.7133,
+          "profitable_fraction": 0.395,
+          "passed": true
+        }
+      }
+    },
+    "short_momentum": {
+      "p95": 0.2692,
+      "p99": 0.399,
+      "mean": -0.2338,
+      "sd": 0.2992,
+      "n": 600,
+      "per_market": {
+        "gbm": {
+          "mean_sharpe": -0.2397,
+          "t": -10.96,
+          "p95": 0.2892,
+          "p99": 0.399,
+          "profitable_fraction": 0.185,
+          "passed": true
+        },
+        "jump": {
+          "mean_sharpe": -0.2149,
+          "t": -10.473,
+          "p95": 0.2617,
+          "p99": 0.368,
+          "profitable_fraction": 0.185,
+          "passed": true
+        },
+        "heston": {
+          "mean_sharpe": -0.2467,
+          "t": -11.7,
+          "p95": 0.2483,
+          "p99": 0.4833,
+          "profitable_fraction": 0.15,
+          "passed": true
+        }
+      }
+    },
+    "dual_momentum": {
+      "p95": 0.5062,
+      "p99": 0.691,
+      "mean": -0.0331,
+      "sd": 0.3179,
+      "n": 600,
+      "per_market": {
+        "gbm": {
+          "mean_sharpe": -0.0389,
+          "t": -1.715,
+          "p95": 0.4735,
+          "p99": 0.656,
+          "profitable_fraction": 0.345,
+          "passed": true
+        },
+        "jump": {
+          "mean_sharpe": -0.0311,
+          "t": -1.418,
+          "p95": 0.5018,
+          "p99": 0.6704,
+          "profitable_fraction": 0.385,
+          "passed": true
+        },
+        "heston": {
+          "mean_sharpe": -0.0293,
+          "t": -1.277,
+          "p95": 0.5366,
+          "p99": 0.7133,
+          "profitable_fraction": 0.395,
+          "passed": true
+        }
+      }
+    },
+    "regime_aware": {
+      "p95": 0.5124,
+      "p99": 0.6945,
+      "mean": -0.0076,
+      "sd": 0.2926,
+      "n": 600,
+      "per_market": {
+        "gbm": {
+          "mean_sharpe": -0.007,
+          "t": -0.454,
+          "p95": 0.3439,
+          "p99": 0.5155,
+          "profitable_fraction": 0.265,
+          "passed": true
+        },
+        "jump": {
+          "mean_sharpe": 0.0152,
+          "t": 0.691,
+          "p95": 0.5259,
+          "p99": 0.7677,
+          "profitable_fraction": 0.43,
+          "passed": true
+        },
+        "heston": {
+          "mean_sharpe": -0.031,
+          "t": -1.316,
+          "p95": 0.5447,
+          "p99": 0.6952,
+          "profitable_fraction": 0.415,
+          "passed": true
+        }
+      }
+    },
+    "regime_gate": {
+      "p95": 0.4714,
+      "p99": 0.7012,
+      "mean": -0.0048,
+      "sd": 0.2808,
+      "n": 600,
+      "per_market": {
+        "gbm": {
+          "mean_sharpe": -0.0013,
+          "t": -0.125,
+          "p95": 0.2037,
+          "p99": 0.4719,
+          "profitable_fraction": 0.12,
+          "passed": true
+        },
+        "jump": {
+          "mean_sharpe": 0.0138,
+          "t": 0.626,
+          "p95": 0.5259,
+          "p99": 0.769,
+          "profitable_fraction": 0.435,
+          "passed": true
+        },
+        "heston": {
+          "mean_sharpe": -0.027,
+          "t": -1.111,
+          "p95": 0.6011,
+          "p99": 0.7312,
+          "profitable_fraction": 0.43,
+          "passed": true
+        }
+      }
+    },
+    "ai_walkforward": {
+      "p95": 0.2314,
+      "p99": 0.5317,
+      "mean": -0.2549,
+      "sd": 0.2974,
+      "n": 600,
+      "per_market": {
+        "gbm": {
+          "mean_sharpe": -0.2812,
+          "t": -13.487,
+          "p95": 0.1566,
+          "p99": 0.4032,
+          "profitable_fraction": 0.16,
+          "passed": true
+        },
+        "jump": {
+          "mean_sharpe": -0.257,
+          "t": -11.675,
+          "p95": 0.2817,
+          "p99": 0.5694,
+          "profitable_fraction": 0.16,
+          "passed": true
+        },
+        "heston": {
+          "mean_sharpe": -0.2265,
+          "t": -11.262,
+          "p95": 0.2443,
+          "p99": 0.4486,
+          "profitable_fraction": 0.2,
+          "passed": true
+        }
+      }
+    },
+    "ai_walkforward_classifier": {
+      "p95": 0.2149,
+      "p99": 0.4395,
+      "mean": -0.2742,
+      "sd": 0.2932,
+      "n": 600,
+      "per_market": {
+        "gbm": {
+          "mean_sharpe": -0.2959,
+          "t": -14.485,
+          "p95": 0.136,
+          "p99": 0.4311,
+          "profitable_fraction": 0.115,
+          "passed": true
+        },
+        "jump": {
+          "mean_sharpe": -0.2807,
+          "t": -13.376,
+          "p95": 0.2613,
+          "p99": 0.517,
+          "profitable_fraction": 0.15,
+          "passed": true
+        },
+        "heston": {
+          "mean_sharpe": -0.2461,
+          "t": -11.871,
+          "p95": 0.2149,
+          "p99": 0.3885,
+          "profitable_fraction": 0.195,
+          "passed": true
+        }
+      }
+    }
+  }
+}

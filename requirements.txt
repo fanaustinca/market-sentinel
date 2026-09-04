@@ -4,3 +4,10 @@ pandas>=2.2
 scikit-learn>=1.5
 lightgbm>=4.0
 pytest>=8.0
+
+# Rung 2: real market data. yfinance fetches it; pyarrow is what pandas uses to
+# cache it to parquet, and the cache is not optional -- Yahoo restates adjusted
+# history when corporate actions are reprocessed, so an uncached run silently
+# depends on the day it was run.
+yfinance>=0.2.40
+pyarrow>=15.0

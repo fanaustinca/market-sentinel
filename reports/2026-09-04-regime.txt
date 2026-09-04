@@ -1,0 +1,45 @@
+
+REGIME DETECTION -- SUMMARY
+
+  The classifier reaches 90% balanced accuracy with a median
+  detection lag of 3 days, catching 93% of true regime changes,
+  and is well calibrated (mean gap 0.019), so its probability can be
+  used directly for sizing rather than only as a signal.
+
+  Value capture, against the ceiling a perfect classifier would reach:
+
+    buy and hold                +0.330
+    the real classifier         +0.548   (42% of the way to the ceiling)
+    perfect, 4 days late        +0.683
+    perfect, instant            +0.847   (impossible)
+
+  Detection lag alone costs +0.164 of Sharpe. Everything else the
+  classifier gets wrong -- false alarms, estimation error, warmup -- costs
+  a further +0.134. That split says where effort would pay off.
+
+  Drawdown is the clearer win: -44% holding the market against
+  -19% with the classifier. The project's goal is capital
+  preservation, and this is what that looks like when it works.
+
+  CONTRAST WITH THE RETURN-FORECASTING AI
+
+  The Recovery Test found the walk-forward return model needs an AR(1)
+  signal of phi = 0.155 -- roughly three times what real markets plausibly
+  offer -- and that a two-parameter momentum rule beat it. The classifier
+  framing works on a market where the forecasting framing does not.
+
+  plan.md section 4 predicted exactly this: 'a far more tractable question
+  than what is the price tomorrow'. It is now measured rather than asserted.
+
+  WHAT THIS DOES NOT SHOW
+
+  This is rung 1. The market was built with genuine, persistent, two-state
+  regimes because the generator was told to put them there. Real markets
+  are not obliged to contain anything so clean, and the sweep above shows
+  detection collapsing as the states converge. Nothing here is evidence
+  about real markets; it is evidence the method works when the structure
+  it looks for is present.
+
+  NULL CHECK
+
+  Both regime strategies correctly fail to profit on single-regime noise.

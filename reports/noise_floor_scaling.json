@@ -1,0 +1,173 @@
+{
+  "generated": "2026-09-04",
+  "n_markets": 400,
+  "z95": 1.6448536269514722,
+  "table": {
+    "buy_and_hold": {
+      "252": {
+        "years": 1.0,
+        "floor_p95": 1.603,
+        "predicted_p95": 1.5835,
+        "sd": 0.9972,
+        "sd_predicted": 1.0,
+        "mean_sharpe": -0.0613
+      },
+      "504": {
+        "years": 2.0,
+        "floor_p95": 1.1172,
+        "predicted_p95": 1.1448,
+        "sd": 0.6907,
+        "sd_predicted": 0.7071,
+        "mean_sharpe": -0.0182
+      },
+      "756": {
+        "years": 3.0,
+        "floor_p95": 0.9637,
+        "predicted_p95": 0.9446,
+        "sd": 0.5852,
+        "sd_predicted": 0.5774,
+        "mean_sharpe": -0.005
+      },
+      "1260": {
+        "years": 5.0,
+        "floor_p95": 0.7709,
+        "predicted_p95": 0.7348,
+        "sd": 0.4387,
+        "sd_predicted": 0.4472,
+        "mean_sharpe": -0.0008
+      },
+      "1512": {
+        "years": 6.0,
+        "floor_p95": 0.6354,
+        "predicted_p95": 0.6764,
+        "sd": 0.3925,
+        "sd_predicted": 0.4082,
+        "mean_sharpe": 0.0049
+      },
+      "2520": {
+        "years": 10.0,
+        "floor_p95": 0.4858,
+        "predicted_p95": 0.5273,
+        "sd": 0.2892,
+        "sd_predicted": 0.3162,
+        "mean_sharpe": 0.0072
+      },
+      "5040": {
+        "years": 20.0,
+        "floor_p95": 0.3499,
+        "predicted_p95": 0.374,
+        "sd": 0.2198,
+        "sd_predicted": 0.2236,
+        "mean_sharpe": 0.0062
+      }
+    },
+    "absolute_momentum": {
+      "504": {
+        "years": 2.0,
+        "floor_p95": 0.9091,
+        "predicted_p95": 1.0884,
+        "sd": 0.6128,
+        "sd_predicted": 0.7071,
+        "mean_sharpe": -0.0746
+      },
+      "756": {
+        "years": 3.0,
+        "floor_p95": 1.0474,
+        "predicted_p95": 0.8818,
+        "sd": 0.5956,
+        "sd_predicted": 0.5774,
+        "mean_sharpe": -0.0679
+      },
+      "1260": {
+        "years": 5.0,
+        "floor_p95": 0.7019,
+        "predicted_p95": 0.6878,
+        "sd": 0.4436,
+        "sd_predicted": 0.4472,
+        "mean_sharpe": -0.0478
+      },
+      "1512": {
+        "years": 6.0,
+        "floor_p95": 0.5902,
+        "predicted_p95": 0.6297,
+        "sd": 0.4096,
+        "sd_predicted": 0.4082,
+        "mean_sharpe": -0.0419
+      },
+      "2520": {
+        "years": 10.0,
+        "floor_p95": 0.4876,
+        "predicted_p95": 0.4909,
+        "sd": 0.3173,
+        "sd_predicted": 0.3162,
+        "mean_sharpe": -0.0292
+      },
+      "5040": {
+        "years": 20.0,
+        "floor_p95": 0.341,
+        "predicted_p95": 0.3434,
+        "sd": 0.2249,
+        "sd_predicted": 0.2236,
+        "mean_sharpe": -0.0244
+      }
+    },
+    "short_momentum": {
+      "252": {
+        "years": 1.0,
+        "floor_p95": 1.3852,
+        "predicted_p95": 1.3171,
+        "sd": 1.0333,
+        "sd_predicted": 1.0,
+        "mean_sharpe": -0.3278
+      },
+      "504": {
+        "years": 2.0,
+        "floor_p95": 0.9677,
+        "predicted_p95": 0.8964,
+        "sd": 0.7388,
+        "sd_predicted": 0.7071,
+        "mean_sharpe": -0.2667
+      },
+      "756": {
+        "years": 3.0,
+        "floor_p95": 0.7935,
+        "predicted_p95": 0.7052,
+        "sd": 0.5938,
+        "sd_predicted": 0.5774,
+        "mean_sharpe": -0.2445
+      },
+      "1260": {
+        "years": 5.0,
+        "floor_p95": 0.526,
+        "predicted_p95": 0.495,
+        "sd": 0.4622,
+        "sd_predicted": 0.4472,
+        "mean_sharpe": -0.2406
+      },
+      "1512": {
+        "years": 6.0,
+        "floor_p95": 0.4048,
+        "predicted_p95": 0.4434,
+        "sd": 0.4152,
+        "sd_predicted": 0.4082,
+        "mean_sharpe": -0.2281
+      },
+      "2520": {
+        "years": 10.0,
+        "floor_p95": 0.2994,
+        "predicted_p95": 0.2969,
+        "sd": 0.3123,
+        "sd_predicted": 0.3162,
+        "mean_sharpe": -0.2233
+      },
+      "5040": {
+        "years": 20.0,
+        "floor_p95": 0.099,
+        "predicted_p95": 0.1488,
+        "sd": 0.2073,
+        "sd_predicted": 0.2236,
+        "mean_sharpe": -0.219
+      }
+    }
+  }
+}

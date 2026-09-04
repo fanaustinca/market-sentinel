@@ -1,0 +1,663 @@
+{
+  "generated": "2026-09-04",
+  "n_markets_per_point": 200,
+  "n_steps": 2520,
+  "real_phi_range": [
+    0.01,
+    0.05
+  ],
+  "ar1_momentum": {
+    "buy_and_hold": {
+      "generator": "ar1",
+      "parameter": "phi",
+      "threshold_50": null,
+      "threshold_80": null,
+      "calibration_error": 0.0,
+      "curve": [
+        {
+          "strength": 0.0,
+          "mean_sharpe": -0.0091,
+          "lift": 0.0,
+          "t_versus_null": 0.0,
+          "detection_power": 0.05
+        },
+        {
+          "strength": 0.01,
+          "mean_sharpe": -0.0092,
+          "lift": -0.0001,
+          "t_versus_null": -0.004,
+          "detection_power": 0.055
+        },
+        {
+          "strength": 0.02,
+          "mean_sharpe": -0.0093,
+          "lift": -0.0002,
+          "t_versus_null": -0.007,
+          "detection_power": 0.06
+        },
+        {
+          "strength": 0.03,
+          "mean_sharpe": -0.0093,
+          "lift": -0.0002,
+          "t_versus_null": -0.011,
+          "detection_power": 0.065
+        },
+        {
+          "strength": 0.05,
+          "mean_sharpe": -0.0095,
+          "lift": -0.0004,
+          "t_versus_null": -0.018,
+          "detection_power": 0.07
+        },
+        {
+          "strength": 0.075,
+          "mean_sharpe": -0.0097,
+          "lift": -0.0006,
+          "t_versus_null": -0.026,
+          "detection_power": 0.075
+        },
+        {
+          "strength": 0.1,
+          "mean_sharpe": -0.0099,
+          "lift": -0.0008,
+          "t_versus_null": -0.034,
+          "detection_power": 0.08
+        },
+        {
+          "strength": 0.15,
+          "mean_sharpe": -0.0104,
+          "lift": -0.0013,
+          "t_versus_null": -0.05,
+          "detection_power": 0.1
+        },
+        {
+          "strength": 0.2,
+          "mean_sharpe": -0.0109,
+          "lift": -0.0018,
+          "t_versus_null": -0.066,
+          "detection_power": 0.11
+        },
+        {
+          "strength": 0.3,
+          "mean_sharpe": -0.0119,
+          "lift": -0.0028,
+          "t_versus_null": -0.096,
+          "detection_power": 0.135
+        }
+      ]
+    },
+    "absolute_momentum": {
+      "generator": "ar1",
+      "parameter": "phi",
+      "threshold_50": null,
+      "threshold_80": null,
+      "calibration_error": 0.0,
+      "curve": [
+        {
+          "strength": 0.0,
+          "mean_sharpe": -0.0389,
+          "lift": 0.0,
+          "t_versus_null": 0.0,
+          "detection_power": 0.05
+        },
+        {
+          "strength": 0.01,
+          "mean_sharpe": -0.0388,
+          "lift": 0.0001,
+          "t_versus_null": 0.003,
+          "detection_power": 0.055
+        },
+        {
+          "strength": 0.02,
+          "mean_sharpe": -0.0376,
+          "lift": 0.0013,
+          "t_versus_null": 0.055,
+          "detection_power": 0.055
+        },
+        {
+          "strength": 0.03,
+          "mean_sharpe": -0.0379,
+          "lift": 0.001,
+          "t_versus_null": 0.041,
+          "detection_power": 0.065
+        },
+        {
+          "strength": 0.05,
+          "mean_sharpe": -0.0395,
+          "lift": -0.0006,
+          "t_versus_null": -0.026,
+          "detection_power": 0.065
+        },
+        {
+          "strength": 0.075,
+          "mean_sharpe": -0.039,
+          "lift": -0.0002,
+          "t_versus_null": -0.007,
+          "detection_power": 0.07
+        },
+        {
+          "strength": 0.1,
+          "mean_sharpe": -0.0391,
+          "lift": -0.0002,
+          "t_versus_null": -0.008,
+          "detection_power": 0.08
+        },
+        {
+          "strength": 0.15,
+          "mean_sharpe": -0.0387,
+          "lift": 0.0001,
+          "t_versus_null": 0.005,
+          "detection_power": 0.09
+        },
+        {
+          "strength": 0.2,
+          "mean_sharpe": -0.0391,
+          "lift": -0.0002,
+          "t_versus_null": -0.008,
+          "detection_power": 0.11
+        },
+        {
+          "strength": 0.3,
+          "mean_sharpe": -0.0376,
+          "lift": 0.0012,
+          "t_versus_null": 0.04,
+          "detection_power": 0.135
+        }
+      ]
+    },
+    "short_momentum": {
+      "generator": "ar1",
+      "parameter": "phi",
+      "threshold_50": 0.124,
+      "threshold_80": 0.18863636363636366,
+      "calibration_error": 0.0,
+      "curve": [
+        {
+          "strength": 0.0,
+          "mean_sharpe": -0.2397,
+          "lift": 0.0,
+          "t_versus_null": 0.0,
+          "detection_power": 0.05
+        },
+        {
+          "strength": 0.01,
+          "mean_sharpe": -0.1984,
+          "lift": 0.0413,
+          "t_versus_null": 1.881,
+          "detection_power": 0.065
+        },
+        {
+          "strength": 0.02,
+          "mean_sharpe": -0.155,
+          "lift": 0.0847,
+          "t_versus_null": 3.896,
+          "detection_power": 0.075
+        },
+        {
+          "strength": 0.03,
+          "mean_sharpe": -0.1103,
+          "lift": 0.1294,
+          "t_versus_null": 5.933,
+          "detection_power": 0.14
+        },
+        {
+          "strength": 0.05,
+          "mean_sharpe": -0.0237,
+          "lift": 0.216,
+          "t_versus_null": 9.865,
+          "detection_power": 0.18
+        },
+        {
+          "strength": 0.075,
+          "mean_sharpe": 0.0861,
+          "lift": 0.3258,
+          "t_versus_null": 14.587,
+          "detection_power": 0.235
+        },
+        {
+          "strength": 0.1,
+          "mean_sharpe": 0.1963,
+          "lift": 0.436,
+          "t_versus_null": 19.061,
+          "detection_power": 0.38
+        },
+        {
+          "strength": 0.15,
+          "mean_sharpe": 0.4254,
+          "lift": 0.6651,
+          "t_versus_null": 28.086,
+          "detection_power": 0.63
+        },
+        {
+          "strength": 0.2,
+          "mean_sharpe": 0.6597,
+          "lift": 0.8994,
+          "t_versus_null": 36.848,
+          "detection_power": 0.85
+        },
+        {
+          "strength": 0.3,
+          "mean_sharpe": 1.1748,
+          "lift": 1.4145,
+          "t_versus_null": 54.124,
+          "detection_power": 0.995
+        }
+      ]
+    },
+    "ai_walkforward": {
+      "generator": "ar1",
+      "parameter": "phi",
+      "threshold_50": 0.15546875,
+      "threshold_80": 0.20697674418604653,
+      "calibration_error": 0.0,
+      "curve": [
+        {
+          "strength": 0.0,
+          "mean_sharpe": -0.2812,
+          "lift": 0.0,
+          "t_versus_null": 0.0,
+          "detection_power": 0.05
+        },
+        {
+          "strength": 0.01,
+          "mean_sharpe": -0.2871,
+          "lift": -0.0059,
+          "t_versus_null": -0.28,
+          "detection_power": 0.05
+        },
+        {
+          "strength": 0.02,
+          "mean_sharpe": -0.3027,
+          "lift": -0.0215,
+          "t_versus_null": -1.012,
+          "detection_power": 0.04
+        },
+        {
+          "strength": 0.03,
+          "mean_sharpe": -0.2957,
+          "lift": -0.0145,
+          "t_versus_null": -0.667,
+          "detection_power": 0.07
+        },
+        {
+          "strength": 0.05,
+          "mean_sharpe": -0.2714,
+          "lift": 0.0097,
+          "t_versus_null": 0.45,
+          "detection_power": 0.06
+        },
+        {
+          "strength": 0.075,
+          "mean_sharpe": -0.2192,
+          "lift": 0.062,
+          "t_versus_null": 2.799,
+          "detection_power": 0.11
+        },
+        {
+          "strength": 0.1,
+          "mean_sharpe": -0.1425,
+          "lift": 0.1387,
+          "t_versus_null": 5.854,
+          "detection_power": 0.17
+        },
+        {
+          "strength": 0.15,
+          "mean_sharpe": 0.1198,
+          "lift": 0.401,
+          "t_versus_null": 16.011,
+          "detection_power": 0.465
+        },
+        {
+          "strength": 0.2,
+          "mean_sharpe": 0.4671,
+          "lift": 0.7483,
+          "t_versus_null": 28.694,
+          "detection_power": 0.785
+        },
+        {
+          "strength": 0.3,
+          "mean_sharpe": 1.3768,
+          "lift": 1.658,
+          "t_versus_null": 62.428,
+          "detection_power": 1.0
+        }
+      ]
+    },
+    "ai_walkforward_classifier": {
+      "generator": "ar1",
+      "parameter": "phi",
+      "threshold_50": 0.15901639344262294,
+      "threshold_80": 0.22000000000000003,
+      "calibration_error": 0.0,
+      "curve": [
+        {
+          "strength": 0.0,
+          "mean_sharpe": -0.2959,
+          "lift": 0.0,
+          "t_versus_null": 0.0,
+          "detection_power": 0.05
+        },
+        {
+          "strength": 0.01,
+          "mean_sharpe": -0.3112,
+          "lift": -0.0153,
+          "t_versus_null": -0.763,
+          "detection_power": 0.04
+        },
+        {
+          "strength": 0.02,
+          "mean_sharpe": -0.3103,
+          "lift": -0.0145,
+          "t_versus_null": -0.683,
+          "detection_power": 0.065
+        },
+        {
+          "strength": 0.03,
+          "mean_sharpe": -0.2985,
+          "lift": -0.0026,
+          "t_versus_null": -0.121,
+          "detection_power": 0.07
+        },
+        {
+          "strength": 0.05,
+          "mean_sharpe": -0.2953,
+          "lift": 0.0006,
+          "t_versus_null": 0.026,
+          "detection_power": 0.09
+        },
+        {
+          "strength": 0.075,
+          "mean_sharpe": -0.2432,
+          "lift": 0.0526,
+          "t_versus_null": 2.368,
+          "detection_power": 0.1
+        },
+        {
+          "strength": 0.1,
+          "mean_sharpe": -0.1733,
+          "lift": 0.1226,
+          "t_versus_null": 5.339,
+          "detection_power": 0.15
+        },
+        {
+          "strength": 0.15,
+          "mean_sharpe": 0.0587,
+          "lift": 0.3546,
+          "t_versus_null": 14.074,
+          "detection_power": 0.445
+        },
+        {
+          "strength": 0.2,
+          "mean_sharpe": 0.3701,
+          "lift": 0.6659,
+          "t_versus_null": 25.441,
+          "detection_power": 0.75
+        },
+        {
+          "strength": 0.3,
+          "mean_sharpe": 1.2433,
+          "lift": 1.5392,
+          "t_versus_null": 56.311,
+          "detection_power": 1.0
+        }
+      ]
+    }
+  },
+  "ou_mean_reversion": {
+    "buy_and_hold": {
+      "generator": "gbm",
+      "parameter": "theta",
+      "threshold_50": null,
+      "threshold_80": null,
+      "calibration_error": 0.0,
+      "curve": [
+        {
+          "strength": 0.0,
+          "mean_sharpe": -0.0091,
+          "lift": 0.0,
+          "t_versus_null": 0.0,
+          "detection_power": 0.05
+        },
+        {
+          "strength": 0.5,
+          "mean_sharpe": 0.0807,
+          "lift": 0.0898,
+          "t_versus_null": 13.329,
+          "detection_power": 0.0
+        },
+        {
+          "strength": 1.0,
+          "mean_sharpe": 0.0796,
+          "lift": 0.0887,
+          "t_versus_null": 18.067,
+          "detection_power": 0.0
+        },
+        {
+          "strength": 2.0,
+          "mean_sharpe": 0.0797,
+          "lift": 0.0888,
+          "t_versus_null": 25.744,
+          "detection_power": 0.0
+        },
+        {
+          "strength": 4.0,
+          "mean_sharpe": 0.0796,
+          "lift": 0.0887,
+          "t_versus_null": 36.509,
+          "detection_power": 0.0
+        },
+        {
+          "strength": 8.0,
+          "mean_sharpe": 0.0789,
+          "lift": 0.088,
+          "t_versus_null": 49.267,
+          "detection_power": 0.0
+        }
+      ]
+    },
+    "absolute_momentum": {
+      "generator": "gbm",
+      "parameter": "theta",
+      "threshold_50": null,
+      "threshold_80": null,
+      "calibration_error": 0.0,
+      "curve": [
+        {
+          "strength": 0.0,
+          "mean_sharpe": -0.0389,
+          "lift": 0.0,
+          "t_versus_null": 0.0,
+          "detection_power": 0.05
+        },
+        {
+          "strength": 0.5,
+          "mean_sharpe": -0.064,
+          "lift": -0.0252,
+          "t_versus_null": -1.46,
+          "detection_power": 0.01
+        },
+        {
+          "strength": 1.0,
+          "mean_sharpe": -0.1639,
+          "lift": -0.125,
+          "t_versus_null": -8.01,
+          "detection_power": 0.0
+        },
+        {
+          "strength": 2.0,
+          "mean_sharpe": -0.2763,
+          "lift": -0.2374,
+          "t_versus_null": -16.929,
+          "detection_power": 0.0
+        },
+        {
+          "strength": 4.0,
+          "mean_sharpe": -0.3944,
+          "lift": -0.3556,
+          "t_versus_null": -28.676,
+          "detection_power": 0.0
+        },
+        {
+          "strength": 8.0,
+          "mean_sharpe": -0.5158,
+          "lift": -0.4769,
+          "t_versus_null": -43.45,
+          "detection_power": 0.0
+        }
+      ]
+    },
+    "short_momentum": {
+      "generator": "gbm",
+      "parameter": "theta",
+      "threshold_50": null,
+      "threshold_80": null,
+      "calibration_error": 0.0,
+      "curve": [
+        {
+          "strength": 0.0,
+          "mean_sharpe": -0.2397,
+          "lift": 0.0,
+          "t_versus_null": 0.0,
+          "detection_power": 0.05
+        },
+        {
+          "strength": 0.5,
+          "mean_sharpe": -0.198,
+          "lift": 0.0417,
+          "t_versus_null": 2.61,
+          "detection_power": 0.025
+        },
+        {
+          "strength": 1.0,
+          "mean_sharpe": -0.2164,
+          "lift": 0.0233,
+          "t_versus_null": 1.476,
+          "detection_power": 0.02
+        },
+        {
+          "strength": 2.0,
+          "mean_sharpe": -0.2574,
+          "lift": -0.0177,
+          "t_versus_null": -1.154,
+          "detection_power": 0.02
+        },
+        {
+          "strength": 4.0,
+          "mean_sharpe": -0.3379,
+          "lift": -0.0982,
+          "t_versus_null": -6.564,
+          "detection_power": 0.0
+        },
+        {
+          "strength": 8.0,
+          "mean_sharpe": -0.4875,
+          "lift": -0.2478,
+          "t_versus_null": -16.155,
+          "detection_power": 0.0
+        }
+      ]
+    },
+    "ai_walkforward": {
+      "generator": "gbm",
+      "parameter": "theta",
+      "threshold_50": 5.287356321839081,
+      "threshold_80": null,
+      "calibration_error": 0.0,
+      "curve": [
+        {
+          "strength": 0.0,
+          "mean_sharpe": -0.2812,
+          "lift": 0.0,
+          "t_versus_null": 0.0,
+          "detection_power": 0.05
+        },
+        {
+          "strength": 0.5,
+          "mean_sharpe": -0.2345,
+          "lift": 0.0467,
+          "t_versus_null": 2.408,
+          "detection_power": 0.075
+        },
+        {
+          "strength": 1.0,
+          "mean_sharpe": -0.187,
+          "lift": 0.0942,
+          "t_versus_null": 4.823,
+          "detection_power": 0.1
+        },
+        {
+          "strength": 2.0,
+          "mean_sharpe": -0.1009,
+          "lift": 0.1803,
+          "t_versus_null": 9.324,
+          "detection_power": 0.185
+        },
+        {
+          "strength": 4.0,
+          "mean_sharpe": 0.0751,
+          "lift": 0.3563,
+          "t_versus_null": 19.351,
+          "detection_power": 0.36
+        },
+        {
+          "strength": 8.0,
+          "mean_sharpe": 0.3555,
+          "lift": 0.6367,
+          "t_versus_null": 36.105,
+          "detection_power": 0.795
+        }
+      ]
+    },
+    "ai_walkforward_classifier": {
+      "generator": "gbm",
+      "parameter": "theta",
+      "threshold_50": 5.947368421052632,
+      "threshold_80": null,
+      "calibration_error": 0.0,
+      "curve": [
+        {
+          "strength": 0.0,
+          "mean_sharpe": -0.2959,
+          "lift": 0.0,
+          "t_versus_null": 0.0,
+          "detection_power": 0.05
+        },
+        {
+          "strength": 0.5,
+          "mean_sharpe": -0.2553,
+          "lift": 0.0405,
+          "t_versus_null": 2.129,
+          "detection_power": 0.08
+        },
+        {
+          "strength": 1.0,
+          "mean_sharpe": -0.2132,
+          "lift": 0.0827,
+          "t_versus_null": 4.386,
+          "detection_power": 0.08
+        },
+        {
+          "strength": 2.0,
+          "mean_sharpe": -0.1498,
+          "lift": 0.1461,
+          "t_versus_null": 8.246,
+          "detection_power": 0.12
+        },
+        {
+          "strength": 4.0,
+          "mean_sharpe": -0.0003,
+          "lift": 0.2956,
+          "t_versus_null": 15.585,
+          "detection_power": 0.315
+        },
+        {
+          "strength": 8.0,
+          "mean_sharpe": 0.2676,
+          "lift": 0.5635,
+          "t_versus_null": 33.694,
+          "detection_power": 0.695
+        }
+      ]
+    }
+  }
+}

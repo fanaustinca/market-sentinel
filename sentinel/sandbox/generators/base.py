@@ -128,7 +128,7 @@ class Generator(ABC):
         prices = self.initial_price * np.exp(log_paths)
 
         if tickers is None:
-            tickers = [f"SYN{i}" for i in range(n_assets)]
+            tickers = self.default_tickers(n_assets) or [f"SYN{i}" for i in range(n_assets)]
         elif len(tickers) != n_assets:
             raise ValueError(f"got {len(tickers)} tickers for {n_assets} assets")
 
@@ -157,6 +157,23 @@ class Generator(ABC):
             truth=truth,
             metadata={"n_steps": n_steps, "n_assets": n_assets},
         )
+
+    def default_tickers(self, n_assets: int) -> list[str] | None:
+        """Column names this generator prefers, or `None` for SYN0, SYN1, ...
+
+        Purely synthetic generators have no opinion -- neutral names are correct,
+        and are part of keeping the AI unable to tell which rung it is on.
+
+        A generator built *from* a real market does have one. A bootstrap of
+        SPY and IEF is those two assets reshuffled, and it has to say so, or a
+        multi-asset strategy asked to trade `SPY` cannot be run on it at all --
+        which means it silently cannot be given a noise floor. That was a real
+        bug: the single-asset floors were computed fine and the multi-asset ones
+        crashed, and a crash is the good case. Had the strategies fallen back to
+        positional column access instead, the floors would have been computed
+        against the wrong assets and looked entirely plausible.
+        """
+        return None
 
     # -- helpers shared by subclasses ---------------------------------------
 

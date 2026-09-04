@@ -1,0 +1,26 @@
+
+SENSITIVITY: signal strength needed for 50% detection
+
+  real markets plausibly offer phi in 0.01-0.05, unstably and without a reliable sign
+
+  strategy                       phi @ 50%   phi @ 80%   verdict
+  buy_and_hold                        none        none   cannot detect this signal at any strength tested
+  absolute_momentum                   none        none   cannot detect this signal at any strength tested
+  short_momentum                     0.124       0.189   threshold 0.124 is 2x the top of the plausible real range
+  ai_walkforward                     0.155       0.207   threshold 0.155 is 3x the top of the plausible real range
+  ai_walkforward_classifier          0.159       0.220   threshold 0.159 is 3x the top of the plausible real range
+
+OU MEAN REVERSION: the same measurement on a signal held in the price level
+
+  The feature set is built from returns. A signal that lives in where the
+  price sits relative to its own history should be much harder for it to
+  see, and how much harder is a fact about the features, not the market.
+
+  strategy                       theta @ 50%
+  buy_and_hold                          none
+  absolute_momentum                     none
+  short_momentum                        none
+  ai_walkforward                        5.29
+  ai_walkforward_classifier             5.95
+
+  calibration check: worst zero-signal detection rate is +0.0% from 5%

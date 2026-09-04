@@ -5,6 +5,15 @@ data/curated/
 *.csv
 *.db
 
+# ...except the real-price cache, which is committed on purpose. Every report
+# citing real data records a fingerprint of the prices it used; that fingerprint
+# is worthless if the prices are not in the repository. Yahoo restates adjusted
+# history when corporate actions are reprocessed, so a rerun months from now
+# would otherwise silently use different data and produce different numbers with
+# no way to tell that is what happened. 568KB is a cheap price for reproducibility.
+!data_cache/
+!data_cache/*.parquet
+
 # secrets
 .env
 config/secrets.yaml

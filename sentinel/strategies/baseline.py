@@ -133,3 +133,87 @@ class DualMomentum(Strategy):
         mask[:: self.rebalance_days] = True
         weights = weights.where(pd.Series(mask, index=prices.index), other=np.nan).ffill()
         return weights.fillna(0.0)
+
+
+class ShortHorizonMomentum(AbsoluteMomentum):
+    """Absolute momentum on a one-week horizon, acting daily.
+
+    The same rule as `AbsoluteMomentum` with the horizon shortened, and it exists
+    because a rule can only see signals that live on its own timescale. Measured
+    on AR(1) markets with a very strong planted signal (phi = 0.3, an order of
+    magnitude beyond anything real):
+
+        lookback 252, monthly   detects 14% of the time -- the null rate
+        lookback  60, monthly   detects 14%
+        lookback  20, weekly    detects 16%
+        lookback   5, daily     detects 100%
+        lookback   2, daily     detects 100%
+
+    The conventional twelve-month rule is not weak at finding this signal. It is
+    **blind** to it, at the null rate, at any strength. AR(1) momentum acts at a
+    one-day lag, and a rule averaging over 252 days cannot represent it.
+
+    So the control arm needs both horizons. Without a short-horizon rule the
+    Recovery Test would report "no strategy detects this signal" when the truth
+    is "no strategy we ran was capable of detecting it", and that mistake would
+    read as evidence the project should be abandoned.
+
+    The cost of the short horizon is turnover -- roughly 50 round trips a year
+    against 0.8 for the twelve-month rule, which by itself costs about 0.24 of
+    Sharpe. It must find a real signal simply to break even.
+    """
+
+    name = "short_momentum"
+
+    def __init__(self, lookback: int = 5, rebalance_days: int = 1) -> None:
+        super().__init__(lookback=lookback, rebalance_days=rebalance_days)
+
+
+class FixedWeights(Strategy):
+    """A constant allocation, rebalanced on a schedule. The portfolio control arm.
+
+    60/40 stocks and bonds is the allocation most defensive systems are
+    implicitly competing with, and comparing against it is far more informative
+    than comparing against all-equity buy-and-hold. A timing system that beats
+    100% SPY on a risk-adjusted basis has often only discovered that holding less
+    equity reduces risk -- which a fixed 60/40 does for free, with one decision
+    made once, and no model to break.
+
+    Args:
+        weights: ticker to weight. Need not sum to 1; the remainder is cash.
+        rebalance_days: how often to return to target. Never rebalancing lets the
+            best performer take over the portfolio, which quietly turns a
+            balanced allocation into a concentrated one over a long backtest.
+    """
+
+    name = "fixed_weights"
+
+    def __init__(self, weights: dict[str, float], rebalance_days: int = 63) -> None:
+        if not weights:
+            raise ValueError("need at least one weight")
+        if any(w < 0 for w in weights.values()):
+            raise ValueError("weights cannot be negative; this project does not short")
+        total = sum(weights.values())
+        if total > 1.0 + 1e-9:
+            raise ValueError(f"weights sum to {total:.3f}; leverage is not permitted")
+        if rebalance_days < 1:
+            raise ValueError("rebalance_days must be at least 1")
+        self.weights = dict(weights)
+        self.rebalance_days = int(rebalance_days)
+        self.name = "fixed_" + "_".join(f"{t}{int(w * 100)}" for t, w in weights.items())
+
+    def compute_weights(self, data: MarketData) -> pd.DataFrame:
+        missing = [t for t in self.weights if t not in data.tickers]
+        if missing:
+            raise ValueError(f"{missing} not in the market's tickers {data.tickers}")
+
+        target = pd.DataFrame(0.0, index=data.prices.index, columns=data.tickers)
+        for ticker, weight in self.weights.items():
+            target[ticker] = weight
+
+        # Between rebalances the engine lets positions drift with prices, so
+        # holding the target constant here would understate turnover and
+        # therefore understate cost.
+        mask = np.zeros(len(target), dtype=bool)
+        mask[:: self.rebalance_days] = True
+        return target.where(pd.Series(mask, index=target.index), other=np.nan).ffill().fillna(0.0)

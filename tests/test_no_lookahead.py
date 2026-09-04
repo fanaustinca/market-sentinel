@@ -31,6 +31,7 @@ from sentinel.strategies.baseline import (
     AlwaysCash,
     BuyAndHold,
     DualMomentum,
+    ShortHorizonMomentum,
 )
 
 
@@ -101,6 +102,7 @@ def test_no_feature_is_standardised_over_the_whole_sample(market: MarketData) ->
         AlwaysCash(),
         AbsoluteMomentum(lookback=252, rebalance_days=21),
         AbsoluteMomentum(lookback=63, rebalance_days=5),
+        ShortHorizonMomentum(),
     ],
     ids=lambda s: f"{s.name}",
 )

@@ -1,0 +1,146 @@
+{
+  "generated": "2026-09-04",
+  "n_markets": 200,
+  "n_steps": 2520,
+  "classification": {
+    "accuracy": 0.9303460011344299,
+    "balanced_accuracy": 0.8978726165006597,
+    "auc": 0.9476075332543255,
+    "brier": 0.05613907835189752,
+    "calibration_error": 0.018649374680661728,
+    "median_lag": 3.2475,
+    "p90_lag": 6.196000000000001,
+    "detected_fraction": 0.9281874971648156,
+    "false_alarm_rate": 0.04194512919842409
+  },
+  "sharpness_sweep": {
+    "0.12": {
+      "balanced_accuracy": 0.5026885468238201,
+      "auc": 0.49683480209943354,
+      "median_lag": 0.0,
+      "detected_fraction": 0.5255518787215206
+    },
+    "0.15": {
+      "balanced_accuracy": 0.535472223360631,
+      "auc": 0.5751227040536512,
+      "median_lag": 0.2825,
+      "detected_fraction": 0.6345349669994677
+    },
+    "0.18": {
+      "balanced_accuracy": 0.7100668469038999,
+      "auc": 0.7832630453863638,
+      "median_lag": 3.0375,
+      "detected_fraction": 0.8324253340007192
+    },
+    "0.22": {
+      "balanced_accuracy": 0.8197892271710003,
+      "auc": 0.9002519952564679,
+      "median_lag": 3.9925,
+      "detected_fraction": 0.8892872696800942
+    },
+    "0.26": {
+      "balanced_accuracy": 0.8647107746465008,
+      "auc": 0.9288753981085168,
+      "median_lag": 3.6075,
+      "detected_fraction": 0.913155489640196
+    },
+    "0.32": {
+      "balanced_accuracy": 0.8977804760220377,
+      "auc": 0.9474393982553884,
+      "median_lag": 3.1225,
+      "detected_fraction": 0.9314416849703051
+    },
+    "0.45": {
+      "balanced_accuracy": 0.927460878114326,
+      "auc": 0.9605911402413716,
+      "median_lag": 2.5225,
+      "detected_fraction": 0.949445564434458
+    }
+  },
+  "trading_value": {
+    "buy_and_hold": {
+      "sharpe": 0.3297628476029958,
+      "sharpe_se": 0.02329773204248465,
+      "cagr": 0.04612385309938487,
+      "max_drawdown": -0.4437208832852227,
+      "turnover": 0.10003969829297342
+    },
+    "absolute_momentum": {
+      "sharpe": 0.2149041339781322,
+      "sharpe_se": 0.025223967590762477,
+      "cagr": 0.024429830984260836,
+      "max_drawdown": -0.3557967138257716,
+      "turnover": 1.3345295752282653
+    },
+    "regime_aware": {
+      "sharpe": 0.5484610224808126,
+      "sharpe_se": 0.02189942568504501,
+      "cagr": 0.0472828552640404,
+      "max_drawdown": -0.1923670559191118,
+      "turnover": 5.654443327921956
+    },
+    "regime_gate": {
+      "sharpe": 0.5404078123038888,
+      "sharpe_se": 0.021833744013702194,
+      "cagr": 0.05089205197890426,
+      "max_drawdown": -0.21174635024425478,
+      "turnover": 5.618729654624851
+    },
+    "regime_oracle": {
+      "sharpe": 0.8469668788136276,
+      "sharpe_se": 0.021706457831038382,
+      "cagr": 0.08689835394427327,
+      "max_drawdown": -0.18596064543878277,
+      "turnover": 3.8815402937673684
+    },
+    "regime_oracle_lag2": {
+      "sharpe": 0.7477432756365064,
+      "sharpe_se": 0.02191998948265845,
+      "cagr": 0.07985922666832515,
+      "max_drawdown": -0.20489179109914502,
+      "turnover": 3.878539102818579
+    },
+    "regime_oracle_lag4": {
+      "sharpe": 0.6828320600754814,
+      "sharpe_se": 0.022677536648623334,
+      "cagr": 0.07557859078787282,
+      "max_drawdown": -0.22328041811646437,
+      "turnover": 3.8725367209210004
+    },
+    "regime_oracle_lag8": {
+      "sharpe": 0.5892299046593364,
+      "sharpe_se": 0.022698514109687568,
+      "cagr": 0.06854532504041966,
+      "max_drawdown": -0.2537985011431469,
+      "turnover": 3.8675347360063523
+    },
+    "regime_oracle_lag16": {
+      "sharpe": 0.4877730909506828,
+      "sharpe_se": 0.022896200216619467,
+      "cagr": 0.05984979952999549,
+      "max_drawdown": -0.29974986482180255,
+      "turnover": 3.8580309646685205
+    },
+    "regime_oracle_lag32": {
+      "sharpe": 0.36109575660884974,
+      "sharpe_se": 0.022860951707428308,
+      "cagr": 0.044632738819517785,
+      "max_drawdown": -0.3557759120870727,
+      "turnover": 3.837022628026996
+    }
+  },
+  "null_check": {
+    "regime_aware": {
+      "mean_sharpe": -0.0070484205498325915,
+      "t": -0.4539598391456781,
+      "noise_floor_p95": 0.3438897010898447,
+      "passed": true
+    },
+    "regime_gate": {
+      "mean_sharpe": -0.0012735997639295215,
+      "t": -0.12471239428000092,
+      "noise_floor_p95": 0.2037147542350663,
+      "passed": true
+    }
+  }
+}
