@@ -3,7 +3,7 @@
 An AI trading system developed inside a **synthetic market laboratory**, where the ground truth is
 known, before it is ever pointed at a real market.
 
-Status: **planning only.** No code written. No money involved.
+Status: **Phase 0 in progress.** Sandbox generator built and validated. No money involved.
 
 ---
 

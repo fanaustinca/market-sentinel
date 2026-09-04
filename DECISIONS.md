@@ -114,3 +114,46 @@ normally impractical for retail because it is enormously data-hungry — but an 
 exactly the condition RL needs, so it becomes viable here once the simulator has been validated
 against reality. Its specific risk is learning to exploit simulator quirks rather than market
 structure, which is why it comes after rung 2.
+
+---
+
+## 2026-09-03 — Ground truth is a separate object from market data
+
+**Decision:** `MarketData` holds prices and a neutral name, nothing else. Generator parameters,
+signal presence, and regime labels live in a separate `GroundTruth` object; `Scenario` pairs them.
+Modelling code accepts `MarketData`, never `Scenario`.
+
+**Why:** The plan requires that the AI cannot tell which rung of the Reality Ladder it is on. Making
+that a matter of discipline would eventually fail. With the answer key in a different object there
+is no field to leak it through — passing prices to a model cannot accidentally pass the answer too.
+
+---
+
+## 2026-09-03 — Validate the generator by rejection rate, not by single paths
+
+**Decision:** The generator is verified by running ~1000 independent null markets and checking that
+each statistical test rejects at exactly its 5% significance level, rather than by asserting that
+any individual path passes.
+
+**Why:** Seed 42 produces a market our tests call "trending" — from a generator built to contain no
+signal at all. That is not a bug; at a 5% level, one path in twenty is flagged by chance. Asserting
+that a single path passes would produce a test that fails randomly one run in twenty, and would
+prove nothing when it passed.
+
+Inverting the question fixes both problems. Too many rejections means the generator leaks structure;
+too few means the paths are suspiciously well behaved, which random data never is. The band is
+three binomial standard errors.
+
+This is the same reasoning the Null Test will use in Phase 1: the question is never "did the AI lose
+money on noise?" but "did the AI's results fall inside the distribution chance alone produces?"
+
+---
+
+## 2026-09-03 — Hand-write Ljung-Box and the variance ratio test rather than use statsmodels
+
+**Decision:** `sentinel/stats/randomwalk.py` implements the tests directly on numpy and scipy.
+
+**Why:** These two tests are the measuring instrument the entire project depends on; a wrong or
+misunderstood one invalidates every result downstream. They are about thirty lines each, and the
+cost of understanding them fully is far below the cost of trusting them blindly. It also drops a
+heavy dependency. Cross-check against `statsmodels` if any result ever looks surprising.

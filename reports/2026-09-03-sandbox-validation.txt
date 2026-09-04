@@ -1,0 +1,45 @@
+========================================================================
+SANDBOX VALIDATION -- is the null market genuinely empty?
+========================================================================
+
+1. Why one path proves nothing
+------------------------------
+Seed 42 is a market built with no signal whatsoever. Here is what our
+tests say about it:
+
+  ljung_box: stat=19.9648 p=0.0296 -- autocorrelation detected within 10 lags -- not a random walk  <-- flags structure
+  jarque_bera: stat=1.0692 p=0.5859 -- returns are consistent with a normal distribution
+  variance_ratio_q2: stat=1.0476 p=0.0169 -- VR(2)=1.048 above 1 -- moves reinforce each other (trending)  <-- flags structure
+  variance_ratio_q5: stat=1.0821 p=0.0601 -- VR(5)=1.082, indistinguishable from 1 -- consistent with a random walk
+  variance_ratio_q10: stat=1.0746 p=0.2676 -- VR(10)=1.075, indistinguishable from 1 -- consistent with a random walk
+
+Two tests report structure in a market containing none. Nothing is
+wrong: at a 5% significance level, one path in twenty gets flagged by
+chance. Judging the generator on a single path would be the exact error
+this project exists to avoid.
+
+2. The right question: does it reject at exactly the expected rate?
+-------------------------------------------------------------------
+Generating 1000 independent null markets of 1260 days each...
+
+  expected 5%, acceptable band [2.93%, 7.07%]
+
+  ljung_box             4.90%   PASS
+  variance_ratio_q2     4.80%   PASS
+  variance_ratio_q5     4.40%   PASS
+  jarque_bera           3.90%   PASS
+
+Rejections arrive at precisely the rate the mathematics predicts. Too
+many would mean the generator leaks structure; too few would mean the
+paths are suspiciously well behaved, which random data never is.
+
+3. Does it produce the parameters we asked for?
+-----------------------------------------------
+  volatility      requested 0.1600   observed 0.1600
+  log-space drift  expected 0.0672   observed 0.0690
+  (without the volatility drag it would be 0.0800 -- a full
+   1.28% a year of return nobody asked for)
+
+========================================================================
+The generator is sound. Phase 1 can build the AI on top of it.
+========================================================================
