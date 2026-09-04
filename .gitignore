@@ -20,3 +20,8 @@ venv/
 
 # os
 .DS_Store
+
+# build artifacts
+*.egg-info/
+build/
+dist/
