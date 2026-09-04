@@ -75,10 +75,15 @@ class GroundTruth:
     Attributes:
         model: which generator produced this, e.g. "gbm".
         params: the exact parameters it was built with.
-        has_exploitable_signal: whether any pattern exists that a strategy could
-            profit from. This is the field the Null Test asserts against -- when
+        has_exploitable_signal: whether the *direction* of returns is predictable
+            from the past. This is the field the Null Test asserts against -- when
             it is False, an AI that makes money has found a bug in our code, not
             an edge in the market.
+        has_predictable_volatility: whether the *risk level* is predictable.
+            Deliberately separate from the field above, because a market can have
+            completely unforecastable direction while its volatility is highly
+            forecastable. Real markets are exactly like this, and treating the two
+            as one thing is a common way to overstate what a model has found.
         regimes: for regime-switching models, the true state on each day. Lets us
             score a regime classifier directly against the right answer, which is
             impossible on real data where nobody knows the true label.
@@ -87,6 +92,7 @@ class GroundTruth:
     model: str
     params: dict[str, Any]
     has_exploitable_signal: bool
+    has_predictable_volatility: bool = False
     regimes: np.ndarray | None = None
 
 
