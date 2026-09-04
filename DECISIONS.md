@@ -634,3 +634,81 @@ preservation rather than return maximisation, it may be the more relevant number
 **What would settle it:** not more backtesting on SPY — the shuffle has extracted what this path can
 say. Either more independent paths (other indices, other countries, pre-1993 data), or paper trading
 forward, where the answer is not yet known to anybody.
+
+---
+
+## 2026-09-04 — Replication across 391 market-years: the return edge does not survive, the drawdown does
+
+**Decision:** The project's answer, on the evidence it now has, is that **trend following is a
+risk-reduction tool and not a return-generation tool.** Any further work should be framed that way.
+Evidence in `reports/2026-09-04-more-paths.txt`.
+
+**Why:** `is_it_timing.py` reached p = 0.13 on SPY and said the next step had to be more independent
+paths. Eight national equity indices, 391 market-years, each judged against 200 reshuffles of its own
+returns with drift preserved:
+
+    absolute_momentum, timing edge and percentile
+      US S&P 500 (1927)         +0.172   94%
+      Japan Nikkei 225 (1965)   +0.223   96%
+      Canada TSX (1979)         -0.075   32%
+      UK FTSE 100 (1984)        +0.040   60%
+      Hong Kong Hang Seng       +0.054   64%
+      Germany DAX (1987)        +0.036   59%
+      France CAC 40 (1990)      +0.027   56%
+      Australia ASX 200 (1992)  -0.129   22%
+      positive in 6 of 8       sign test p = 0.145
+
+The calibration check passes: `buy_and_hold`'s median percentile is 46%, near the 50% it must be,
+so the shuffle is doing what it claims in every market.
+
+**The return edge does not replicate to significance.** Six of eight is p = 0.145, and the median
+edge is +0.038 Sharpe — economically negligible even if real. The two strong results are the US and
+Japan, which are the two longest series and the two containing the largest sustained crashes; that
+pattern is itself a clue about what the rule is doing.
+
+**The drawdown result replicates in 8 of 8 markets**, by a median of 17.6 points, sign test
+p = 0.0039. It is the only result in this project that reaches significance.
+
+**Why the two differ, which is the whole point:** the drawdown benefit does not require the rule to
+predict anything. Stepping aside after a sustained decline mechanically truncates a long fall,
+whether or not there is any forecastable structure. It is a property of the rule's *shape*, and that
+is exactly why it survives when the return edge does not.
+
+It is not free: the same rule costs a median of 1.96% a year across these markets and sits in cash
+through part of every recovery. Whether roughly halving the worst drawdown is worth roughly two
+points of annual return is a question about the person holding it, not about the data — and stating
+it that way is the honest form of the question `plan.md` set out to answer.
+
+**Caveats that stay attached to this result.** The eight markets are not independent — 2008 happened
+everywhere — so the sign test is the number to trust and Fisher's p (0.203) is optimistic. They are
+also the markets that *survived*: every exchange here stayed open with continuous records, while
+Russia 1917 and China 1949 are missing, and those are precisely the cases where buy-and-hold was
+catastrophic and trend following would have looked heroic. That bias runs against trend following
+here, which is worth knowing and is not a licence to add anything back.
+
+Most are price-return indices, so absolute Sharpes are understated by the missing dividends. The
+real-versus-shuffled comparison is unaffected, since both arms share the same drift.
+
+---
+
+## 2026-09-04 — Status: no strategy in this project is ready for real money
+
+**Decision:** Recorded plainly so that it cannot be softened by later summarising.
+
+`plan.md` §2 lists five success criteria. Against 33 years of SPY, the best candidate
+(`absolute_momentum`) meets three of them: CAGR 9.84% against a 6% target, Sharpe 0.798 against 0.7,
+and turnover of 1 round trip a year against a limit of 50. It fails max drawdown, at −27.8% against
+a −15% target. On the multi-asset universe, `rotate_SPY_to_cash` meets the drawdown target at −12.9%
+but does not beat buy-and-hold risk-adjusted.
+
+More importantly, the criterion `plan.md` added — "**and above the null floor**" — is the one that
+decides, and against the correct floor no strategy clears it. The demeaned floors every earlier
+report quoted were too generous, because they credited a strategy for being invested in a market
+that went up.
+
+So the position is: nothing here is ready to fund, and the plan anticipated this and permits it.
+What the project *has* produced is a measured, replicated, significant finding about risk reduction,
+and a set of instruments — the Null Test, the noise floor with its window attached, the truncation
+detector, the drift-preserving shuffle, the oracle ladder — that are reusable and that caught every
+false positive this project generated. That is a better outcome than a strategy that looked good
+because nobody had built the instruments to check it.

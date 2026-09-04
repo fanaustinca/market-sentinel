@@ -1,0 +1,88 @@
+
+REPLICATION ACROSS MARKETS
+
+  8 national equity indices, 391 market-years, each judged
+  against 200 reshuffles of its own returns with drift preserved.
+
+  buy_and_hold
+    market                             edge   percentile
+    US S&P 500 (1927)                +0.014         56%
+    Japan Nikkei 225 (1965)          -0.011         48%
+    Canada TSX (1979)                -0.020         42%
+    UK FTSE 100 (1984)               +0.005         50%
+    Hong Kong Hang Seng (1986)       -0.015         44%
+    Germany DAX (1987)               -0.015         46%
+    France CAC 40 (1990)             -0.022         46%
+    Australia ASX 200 (1992)         -0.006         46%
+    median                           -0.013         46%
+    positive in 2 of 8 markets   sign test p = 0.965   Fisher p = 0.8483
+
+  absolute_momentum
+    market                             edge   percentile
+    US S&P 500 (1927)                +0.172         94%
+    Japan Nikkei 225 (1965)          +0.223         96%
+    Canada TSX (1979)                -0.075         32%
+    UK FTSE 100 (1984)               +0.040         60%
+    Hong Kong Hang Seng (1986)       +0.054         64%
+    Germany DAX (1987)               +0.036         59%
+    France CAC 40 (1990)             +0.027         56%
+    Australia ASX 200 (1992)         -0.129         22%
+    median                           +0.038         59%
+    positive in 6 of 8 markets   sign test p = 0.145   Fisher p = 0.2028
+
+  volatility_target
+    market                             edge   percentile
+    US S&P 500 (1927)                +0.145         93%
+    Japan Nikkei 225 (1965)          +0.041         63%
+    Canada TSX (1979)                +0.087         73%
+    UK FTSE 100 (1984)               +0.028         60%
+    Hong Kong Hang Seng (1986)       +0.111         75%
+    Germany DAX (1987)               +0.042         62%
+    France CAC 40 (1990)             -0.088         30%
+    Australia ASX 200 (1992)         -0.008         48%
+    median                           +0.042         62%
+    positive in 6 of 8 markets   sign test p = 0.145   Fisher p = 0.2966
+
+  READING IT
+
+  Calibration: buy_and_hold's median percentile is 46%. 
+  It should be 50% — no timing ability means the shuffle takes nothing —
+  and it is. The instrument is working.
+
+  absolute_momentum showed a positive timing edge in 6 of 8 markets
+  (sign test p = 0.145), median edge +0.038 Sharpe.
+
+  The direction is not consistent enough across markets to call it an
+  effect. On SPY alone it was p = 0.13; pooling several paths has not
+  rescued it, and pooling was the last cheap thing available.
+
+  That is a real answer, and the plan permits acting on it: the honest
+  conclusion from this evidence is to buy an index fund.
+
+  THE DRAWDOWN RESULT, WHICH IS SEPARATE
+
+  market                           momentum     hold
+  US S&P 500 (1927)                  -44.6%   -86.2%
+  Japan Nikkei 225 (1965)            -44.2%   -81.9%
+  Canada TSX (1979)                  -41.2%   -50.0%
+  UK FTSE 100 (1984)                 -35.9%   -52.6%
+  Hong Kong Hang Seng (1986)         -52.2%   -65.2%
+  Germany DAX (1987)                 -46.5%   -72.7%
+  France CAC 40 (1990)               -46.7%   -65.3%
+  Australia ASX 200 (1992)           -44.8%   -53.9%
+
+  Momentum's worst drawdown was shallower in 8 of 8 markets, by a median of -17.6%,
+  sign test p = 0.0039.
+
+  **This is the only result in the project that reaches significance.** Note
+  what it is and is not. It does not depend on the timing edge being real:
+  stepping aside after a sustained decline mechanically truncates a long
+  fall, whether or not the rule can anticipate one. It is a property of the
+  rule's shape rather than evidence of skill, which is exactly why it
+  replicates when the return edge does not.
+
+  It is also not free. The same rule costs a median of 1.96% a year in return
+  across these markets, and sits in cash through part of every recovery.
+  Whether halving the worst drawdown is worth that is a question about the
+  person holding it, not about the data -- and it is the honest form of the
+  question this project set out to answer.

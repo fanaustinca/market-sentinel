@@ -1,0 +1,269 @@
+{
+  "generated": "2026-09-04",
+  "n_bootstrap": 200,
+  "markets": {
+    "^GSPC": {
+      "label": "US S&P 500 (1927)",
+      "years": 97.68650793650794,
+      "n_days": 24617,
+      "total_return": false,
+      "buy_and_hold": {
+        "real_sharpe": 0.4170478653660144,
+        "real_cagr": 0.06290884182553436,
+        "real_max_drawdown": -0.8618957937515599,
+        "shuffled_mean": 0.40337828486303934,
+        "timing_edge": 0.013669580502975065,
+        "percentile": 0.56
+      },
+      "absolute_momentum": {
+        "real_sharpe": 0.4772002965917164,
+        "real_cagr": 0.05564079400858457,
+        "real_max_drawdown": -0.44569995263357787,
+        "shuffled_mean": 0.3047214567453662,
+        "timing_edge": 0.1724788398463502,
+        "percentile": 0.94
+      },
+      "volatility_target": {
+        "real_sharpe": 0.5190489474865083,
+        "real_cagr": 0.054905477324669105,
+        "real_max_drawdown": -0.6479998156909086,
+        "shuffled_mean": 0.3738772899774554,
+        "timing_edge": 0.14517165750905292,
+        "percentile": 0.93
+      }
+    },
+    "^N225": {
+      "label": "Japan Nikkei 225 (1965)",
+      "years": 59.507936507936506,
+      "n_days": 14996,
+      "total_return": false,
+      "buy_and_hold": {
+        "real_sharpe": 0.407504244254608,
+        "real_cagr": 0.06395779341420016,
+        "real_max_drawdown": -0.8187120117786126,
+        "shuffled_mean": 0.4184712979206778,
+        "timing_edge": -0.01096705366606976,
+        "percentile": 0.48
+      },
+      "absolute_momentum": {
+        "real_sharpe": 0.5366436625274732,
+        "real_cagr": 0.06759745343131507,
+        "real_max_drawdown": -0.44186574924742106,
+        "shuffled_mean": 0.3136930374222872,
+        "timing_edge": 0.22295062510518598,
+        "percentile": 0.955
+      },
+      "volatility_target": {
+        "real_sharpe": 0.4298934736485329,
+        "real_cagr": 0.04677710738347374,
+        "real_max_drawdown": -0.6963369831803342,
+        "shuffled_mean": 0.388699290972582,
+        "timing_edge": 0.04119418267595093,
+        "percentile": 0.63
+      }
+    },
+    "^GSPTSE": {
+      "label": "Canada TSX (1979)",
+      "years": 46.33730158730159,
+      "n_days": 11677,
+      "total_return": false,
+      "buy_and_hold": {
+        "real_sharpe": 0.49444121198866425,
+        "real_cagr": 0.06636823810899783,
+        "real_max_drawdown": -0.4999209835663835,
+        "shuffled_mean": 0.5148413134609736,
+        "timing_edge": -0.020400101472309362,
+        "percentile": 0.42
+      },
+      "absolute_momentum": {
+        "real_sharpe": 0.33556435112916516,
+        "real_cagr": 0.031639771979182774,
+        "real_max_drawdown": -0.41219231735690354,
+        "shuffled_mean": 0.41085593501063383,
+        "timing_edge": -0.07529158388146867,
+        "percentile": 0.315
+      },
+      "volatility_target": {
+        "real_sharpe": 0.5796646805237252,
+        "real_cagr": 0.05872035464518177,
+        "real_max_drawdown": -0.3972732926228473,
+        "shuffled_mean": 0.4929750752589044,
+        "timing_edge": 0.08668960526482083,
+        "percentile": 0.73
+      }
+    },
+    "^FTSE": {
+      "label": "UK FTSE 100 (1984)",
+      "years": 42.09920634920635,
+      "n_days": 10609,
+      "total_return": false,
+      "buy_and_hold": {
+        "real_sharpe": 0.4060722553730039,
+        "real_cagr": 0.056100647653579916,
+        "real_max_drawdown": -0.525699127389814,
+        "shuffled_mean": 0.40121210586141004,
+        "timing_edge": 0.004860149511593859,
+        "percentile": 0.505
+      },
+      "absolute_momentum": {
+        "real_sharpe": 0.34117319830980436,
+        "real_cagr": 0.03408789482699648,
+        "real_max_drawdown": -0.35941719991455034,
+        "shuffled_mean": 0.30083955112856253,
+        "timing_edge": 0.04033364718124183,
+        "percentile": 0.595
+      },
+      "volatility_target": {
+        "real_sharpe": 0.404890664819633,
+        "real_cagr": 0.0415881965337781,
+        "real_max_drawdown": -0.452441535218166,
+        "shuffled_mean": 0.37639859671545545,
+        "timing_edge": 0.028492068104177537,
+        "percentile": 0.605
+      }
+    },
+    "^HSI": {
+      "label": "Hong Kong Hang Seng (1986)",
+      "years": 38.198412698412696,
+      "n_days": 9626,
+      "total_return": false,
+      "buy_and_hold": {
+        "real_sharpe": 0.36530454439484544,
+        "real_cagr": 0.06206920940852223,
+        "real_max_drawdown": -0.6518186042408536,
+        "shuffled_mean": 0.380020866364995,
+        "timing_edge": -0.014716321970149548,
+        "percentile": 0.44
+      },
+      "absolute_momentum": {
+        "real_sharpe": 0.33741989320902677,
+        "real_cagr": 0.044856225567587504,
+        "real_max_drawdown": -0.5216793077661052,
+        "shuffled_mean": 0.28337550207087203,
+        "timing_edge": 0.054044391138154735,
+        "percentile": 0.645
+      },
+      "volatility_target": {
+        "real_sharpe": 0.4692869578106074,
+        "real_cagr": 0.054951471967166654,
+        "real_max_drawdown": -0.4566627989126453,
+        "shuffled_mean": 0.35819632874933993,
+        "timing_edge": 0.11109062906126749,
+        "percentile": 0.75
+      }
+    },
+    "^GDAXI": {
+      "label": "Germany DAX (1987)",
+      "years": 38.13095238095238,
+      "n_days": 9609,
+      "total_return": true,
+      "buy_and_hold": {
+        "real_sharpe": 0.49442748794857827,
+        "real_cagr": 0.08734117879823544,
+        "real_max_drawdown": -0.7268483450958187,
+        "shuffled_mean": 0.5095096089826062,
+        "timing_edge": -0.015082121034027951,
+        "percentile": 0.465
+      },
+      "absolute_momentum": {
+        "real_sharpe": 0.4334453410892128,
+        "real_cagr": 0.05579956436896949,
+        "real_max_drawdown": -0.4651781279309567,
+        "shuffled_mean": 0.397422416278865,
+        "timing_edge": 0.0360229248103478,
+        "percentile": 0.59
+      },
+      "volatility_target": {
+        "real_sharpe": 0.5255298299164506,
+        "real_cagr": 0.060225662327133334,
+        "real_max_drawdown": -0.4625691468257461,
+        "shuffled_mean": 0.4834536580233714,
+        "timing_edge": 0.04207617189307916,
+        "percentile": 0.62
+      }
+    },
+    "^FCHI": {
+      "label": "France CAC 40 (1990)",
+      "years": 36.11507936507937,
+      "n_days": 9101,
+      "total_return": false,
+      "buy_and_hold": {
+        "real_sharpe": 0.30106065873185933,
+        "real_cagr": 0.042183952808336755,
+        "real_max_drawdown": -0.6528567675996465,
+        "shuffled_mean": 0.32270806286824977,
+        "timing_edge": -0.021647404136390436,
+        "percentile": 0.46
+      },
+      "absolute_momentum": {
+        "real_sharpe": 0.2517555724716279,
+        "real_cagr": 0.026279221501634975,
+        "real_max_drawdown": -0.46721618858561076,
+        "shuffled_mean": 0.2250031358326831,
+        "timing_edge": 0.026752436638944777,
+        "percentile": 0.56
+      },
+      "volatility_target": {
+        "real_sharpe": 0.21036479466102484,
+        "real_cagr": 0.01870823793673515,
+        "real_max_drawdown": -0.4660706500557439,
+        "shuffled_mean": 0.2982103951725963,
+        "timing_edge": -0.08784560051157145,
+        "percentile": 0.295
+      }
+    },
+    "^AXJO": {
+      "label": "Australia ASX 200 (1992)",
+      "years": 33.21031746031746,
+      "n_days": 8369,
+      "total_return": false,
+      "buy_and_hold": {
+        "real_sharpe": 0.4308651263527958,
+        "real_cagr": 0.05536756174736901,
+        "real_max_drawdown": -0.5393706107995206,
+        "shuffled_mean": 0.4367363971273485,
+        "timing_edge": -0.005871270774552739,
+        "percentile": 0.465
+      },
+      "absolute_momentum": {
+        "real_sharpe": 0.20477688852047213,
+        "real_cagr": 0.01676455654128972,
+        "real_max_drawdown": -0.44848020280463186,
+        "shuffled_mean": 0.33328013556588926,
+        "timing_edge": -0.12850324704541713,
+        "percentile": 0.225
+      },
+      "volatility_target": {
+        "real_sharpe": 0.41211514493634777,
+        "real_cagr": 0.04093203344106233,
+        "real_max_drawdown": -0.35773359614127354,
+        "shuffled_mean": 0.4199152377611636,
+        "timing_edge": -0.0078000928248158075,
+        "percentile": 0.475
+      }
+    }
+  },
+  "pooled": {
+    "buy_and_hold": {
+      "fisher_p": 0.8483006156819227,
+      "sign_positive": 2,
+      "sign_total": 8,
+      "sign_p": 0.96484375,
+      "median_percentile": 0.465
+    },
+    "absolute_momentum": {
+      "fisher_p": 0.2027581230752186,
+      "sign_positive": 6,
+      "sign_total": 8,
+      "sign_p": 0.14453125,
+      "median_percentile": 0.5925
+    },
+    "volatility_target": {
+      "fisher_p": 0.2966020803956564,
+      "sign_positive": 6,
+      "sign_total": 8,
+      "sign_p": 0.14453125,
+      "median_percentile": 0.625
+    }
+  }
+}
