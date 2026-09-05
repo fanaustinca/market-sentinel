@@ -1,0 +1,84 @@
+
+FORECASTING RISK, WHERE FORECASTING RETURN FAILED
+
+  1. Graded against the exact answer (40 Heston markets, known volatility)
+
+     model           RMSE (log)    s.e.     bias    corr
+     har                 0.2702  0.0038    +4.0%   0.801
+     ewma_0.94           0.2702  0.0045    +2.5%   0.818
+     garch11             0.2707  0.0049    +5.0%   0.816
+     rolling_21d         0.2806  0.0037    -0.5%   0.800
+
+     Pairwise, paired across the same markets:
+
+     rolling_21d vs ewma_0.94      exact: worse   proxy: worse   
+     rolling_21d vs har            exact: worse   proxy: worse   
+     rolling_21d vs garch11        exact: worse   proxy: worse   
+     ewma_0.94 vs har              exact: tied    proxy: tied    
+     ewma_0.94 vs garch11          exact: tied    proxy: worse   
+     har vs garch11                exact: tied    proxy: worse   
+
+     No reversals. Wherever the exact measure can separate two models,
+     the noisy proxy agrees. That is a real check and it is not automatic:
+     on real data a volatility forecast can only be scored against a single
+     squared return, whose standard deviation exceeds its mean. Knowing the
+     noisy ranking preserves the true one is what makes section 2 worth
+     reading, and it can only be established in a sandbox.
+
+     Note what the exact measure also shows: EWMA, HAR and GARCH are
+     indistinguishable from each other, and all three clearly beat the
+     incumbent. The robust claim is 'the rolling window is the weak one',
+     not 'GARCH is the best'.
+
+     'Tied' here means 'not separable with this many markets', not
+     'identical'. The exact measure collapses each market to a single
+     RMSE and compares across markets, so it has far fewer degrees of
+     freedom than the proxy, which pools every day. That is why the proxy
+     separates pairs the exact measure cannot -- more power, not a
+     contradiction. A reversal would be a contradiction, and there are none.
+
+  2. Real markets
+
+     market                         best      gain     DM t          p
+     US S&P 500                  garch11    0.0718    -6.58    4.6e-11
+     Japan Nikkei 225            garch11    0.1058    -4.96    7.1e-07
+     Canada TSX                  garch11    0.0843    -4.74    2.2e-06
+     UK FTSE 100                 garch11    0.0685    -6.81    9.9e-12
+     Hong Kong Hang Seng         garch11    0.0568    -2.21    2.7e-02
+     Germany DAX                 garch11    0.0842    -2.79    5.3e-03
+     France CAC 40               garch11    0.0660    -5.05    4.5e-07
+     Australia ASX 200           garch11    0.0611    -6.25    4.0e-10
+
+     The 21-day rolling standard deviation is beaten significantly in
+     8 of 8 markets. Most often by garch11.
+
+  3. Is a better forecast worth money?
+
+     forecaster        mean Sharpe   vs incumbent   mean maxDD   turnover
+     rolling_21d            +0.444         +0.000       -49.2%        2.2
+     ewma_0.94              +0.456         +0.012       -45.8%        1.7
+     har                    +0.413         -0.031       -45.3%        2.7
+     garch11                +0.411         -0.032       -46.1%        3.1
+
+     Best improvement: +0.012 of Sharpe.
+
+     DECISIONS.md predicted, before any of this was run, that a better
+     forecast would be worth 'well under 0.1 of Sharpe' because volatility
+     targeting takes its benefit from the broad level of risk rather than
+     from fine accuracy. That prediction holds.
+
+     This is the useful shape of a result: a genuine, replicated, highly
+     significant improvement in forecasting that is worth very little in
+     money. Reporting only the first half would be true and misleading.
+
+  WHAT THIS IS, AND WHAT IT IS NOT
+
+  It is the first thing this project has measured that is unambiguously
+  better than the incumbent, at conventional significance, replicated
+  across markets. Note why it was possible: the question has thousands of
+  observations rather than one. Every earlier negative result came from
+  asking something the data could not answer, not from a shortage of care.
+
+  It is NOT a claim about returns. Knowing how large tomorrow's move will
+  be says nothing about its direction, and a market with zero drift pays
+  nothing for holding it at any size. Section 3 is what it is worth.

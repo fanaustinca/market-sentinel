@@ -116,6 +116,7 @@ class RegimeSwitchingGenerator(Generator):
         return Simulation(
             log_returns=log_returns,
             regimes=states,
+            volatility=np.array(self.sigma)[states],
             extra={
                 "mu": list(self.mu),
                 "sigma": list(self.sigma),

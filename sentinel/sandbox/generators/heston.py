@@ -126,6 +126,11 @@ class HestonGenerator(Generator):
 
         return Simulation(
             log_returns=log_returns,
+            # variance_path holds annualised variance -- dt is applied separately
+            # in the return equation -- so the annualised volatility is its
+            # square root with no further scaling. For a single asset it is
+            # flattened, matching how `regimes` is shaped.
+            volatility=np.sqrt(variance_path[:, 0]) if n_assets == 1 else np.sqrt(variance_path),
             extra={
                 "mu": self.mu,
                 "long_run_variance": self.long_run_variance,

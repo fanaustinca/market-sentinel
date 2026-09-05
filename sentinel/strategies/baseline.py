@@ -217,3 +217,75 @@ class FixedWeights(Strategy):
         mask = np.zeros(len(target), dtype=bool)
         mask[:: self.rebalance_days] = True
         return target.where(pd.Series(mask, index=target.index), other=np.nan).ffill().fillna(0.0)
+
+
+class EnsembleMomentum(Strategy):
+    """Absolute momentum averaged over several horizons at once.
+
+    Not an optimisation. `AbsoluteMomentum` uses a 252-day lookback because
+    twelve months is conventional, and there is no evidence anywhere in this
+    project that 252 is better than 189 or 315 — the number was inherited, not
+    measured. A single unjustified parameter is a hidden bet, and the honest
+    response is not to search for the best value on data already seen, which is
+    how a backtest stops meaning anything. It is to stop betting on the choice.
+
+    So the signal is the *fraction* of horizons currently positive:
+
+        1 of 4 positive -> hold 25%
+        4 of 4 positive -> hold 100%
+
+    That has two effects, and only the second is the point. It makes exposure
+    graduated rather than binary, which happens to reduce whipsaw. And it makes
+    the result insensitive to any individual horizon, which means the number
+    reported is no longer partly a statement about which lookback happened to
+    suit the sample.
+
+    Judge it on **dispersion across markets**, not on mean return. If mean
+    performance improves noticeably, that is a warning rather than a discovery:
+    it would mean a horizon was picked with hindsight somewhere.
+
+    Args:
+        lookbacks: horizons in trading days. One month, one quarter, six months
+            and a year — the standard spread, chosen before any of them was
+            tested here.
+        rebalance_days: how often the rule may act.
+    """
+
+    name = "ensemble_momentum"
+
+    def __init__(
+        self,
+        lookbacks: tuple[int, ...] = (21, 63, 126, 252),
+        rebalance_days: int = 21,
+    ) -> None:
+        if not lookbacks:
+            raise ValueError("need at least one lookback")
+        if any(lookback < 2 for lookback in lookbacks):
+            raise ValueError("every lookback must be at least 2 days")
+        if rebalance_days < 1:
+            raise ValueError("rebalance_days must be at least 1")
+        self.lookbacks = tuple(int(lookback) for lookback in lookbacks)
+        self.rebalance_days = int(rebalance_days)
+
+    def compute_weights(self, data: MarketData) -> pd.DataFrame:
+        log_prices = np.log(data.prices)
+
+        # Each horizon votes. A horizon that has not filled yet does not vote,
+        # rather than voting zero -- treating "no opinion" as "bearish" would
+        # make the strategy systematically defensive for its first year, which
+        # is an artefact of the warmup rather than a view about the market.
+        votes = None
+        counted = None
+        for lookback in self.lookbacks:
+            trailing = log_prices.diff(lookback)
+            positive = (trailing > 0).astype(float).where(trailing.notna())
+            votes = positive if votes is None else votes.add(positive, fill_value=0.0)
+            available = trailing.notna().astype(float)
+            counted = available if counted is None else counted.add(available, fill_value=0.0)
+
+        desired = (votes / counted.replace(0, np.nan)) / len(data.tickers)
+
+        mask = np.zeros(len(data.prices), dtype=bool)
+        mask[:: self.rebalance_days] = True
+        desired = desired.where(pd.Series(mask, index=data.prices.index), other=np.nan).ffill()
+        return desired.fillna(0.0)

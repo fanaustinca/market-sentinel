@@ -65,9 +65,11 @@ from sentinel.strategies.baseline import (
     AbsoluteMomentum,
     AlwaysCash,
     BuyAndHold,
+    EnsembleMomentum,
     FixedWeights,
     ShortHorizonMomentum,
 )
+from sentinel.strategies.composite import TrendScaledVolatility
 from sentinel.strategies.regime import RegimeAwareStrategy, RegimeGate
 from sentinel.strategies.volatility import RegimeVolatilityTarget, VolatilityTarget
 
@@ -88,7 +90,9 @@ def strategies() -> list:
         BuyAndHold(),
         AlwaysCash(),
         AbsoluteMomentum(),
+        EnsembleMomentum(),
         ShortHorizonMomentum(),
+        TrendScaledVolatility(trend=EnsembleMomentum()),
         RegimeAwareStrategy(),
         RegimeGate(),
         VolatilityTarget(),
@@ -331,6 +335,7 @@ def universe_strategies() -> list:
         RegimeRotation(risk_assets=["SPY"], defensive_assets=[]),
         RegimeRotation(risk_assets=["SPY"], defensive_assets=["IEF"]),
         RegimeRotation(risk_assets=["SPY"], defensive_assets=["IEF", "GLD"]),
+        TrendScaledVolatility(trend=EnsembleMomentum()),
         RegimeRotation(
             risk_assets=["SPY", "IWM", "EFA"],
             defensive_assets=["IEF", "GLD"],

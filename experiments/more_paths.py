@@ -50,7 +50,8 @@ from sentinel.data.yahoo import load_prices
 from sentinel.engine.backtest import UNLIMITED, CostModel, run_backtest
 from sentinel.evaluation.sweep import sweep_markets
 from sentinel.sandbox.generators.bootstrap import BootstrapGenerator
-from sentinel.strategies.baseline import AbsoluteMomentum, BuyAndHold
+from sentinel.strategies.baseline import AbsoluteMomentum, BuyAndHold, EnsembleMomentum
+from sentinel.strategies.composite import TrendScaledVolatility
 from sentinel.strategies.volatility import VolatilityTarget
 
 REPORTS = Path(__file__).resolve().parent.parent / "reports"
@@ -77,8 +78,20 @@ def strategies() -> list:
     timing ability, so destroying the ordering must take nothing from it. If it
     drifts away from 50% somewhere, the shuffle is not doing what it claims in
     that market and nothing else from it can be read.
+
+    `ensemble_momentum` and `trend_scaled_volatility` are the two changes
+    registered in DECISIONS.md before any of this ran. The predictions were that
+    the ensemble would *not* improve mean performance but would reduce the spread
+    across markets, and that the combination would improve drawdown more than
+    return. Both are checked below rather than described.
     """
-    return [BuyAndHold(), AbsoluteMomentum(), VolatilityTarget()]
+    return [
+        BuyAndHold(),
+        AbsoluteMomentum(),
+        EnsembleMomentum(),
+        VolatilityTarget(),
+        TrendScaledVolatility(trend=EnsembleMomentum()),
+    ]
 
 
 def run_market(ticker: str, n_markets: int, workers) -> dict | None:
@@ -204,11 +217,14 @@ def main() -> int:
             lines.append(
                 f"    {payload['label']:<30}{row['timing_edge']:>+9.3f}{row['percentile']:>12.0%}"
             )
+        sharpes = [r[strategy.name]["real_sharpe"] for r in results.values()]
         lines += [
             f"    {'median':<30}{np.median(edges):>+9.3f}{pooled['median_percentile']:>12.0%}",
             f"    positive in {pooled['sign_positive']} of {pooled['sign_total']} markets"
             f"   sign test p = {pooled['sign_p']:.3f}"
             f"   Fisher p = {pooled['fisher_p']:.4f}",
+            f"    mean Sharpe {np.mean(sharpes):+.3f}, spread across markets "
+            f"{np.std(sharpes, ddof=1):.3f}",
             "",
         ]
 
@@ -262,46 +278,110 @@ def main() -> int:
             "  conclusion from this evidence is to buy an index fund.",
         ]
 
-    drawdowns = [
-        (
-            r["label"],
-            r["absolute_momentum"]["real_max_drawdown"],
-            r["buy_and_hold"]["real_max_drawdown"],
-        )
-        for r in results.values()
+    lines += ["", "  THE TWO CHANGES REGISTERED IN ADVANCE", ""]
+
+    def stats_for(name):
+        sharpes = np.array([r[name]["real_sharpe"] for r in results.values()])
+        drawdowns = np.array([r[name]["real_max_drawdown"] for r in results.values()])
+        return sharpes.mean(), sharpes.std(ddof=1), drawdowns.mean()
+
+    lines.append(f"  {'strategy':<28}{'mean Sharpe':>13}{'spread':>10}{'mean maxDD':>13}")
+    for name in [s.name for s in strategies()]:
+        mean, spread, drawdown = stats_for(name)
+        lines.append(f"  {name:<28}{mean:>+13.3f}{spread:>10.3f}{drawdown:>+13.1%}")
+
+    single_mean, single_spread, _ = stats_for("absolute_momentum")
+    ensemble_mean, ensemble_spread, _ = stats_for("ensemble_momentum")
+    lines += [
+        "",
+        "  Prediction 4: the ensemble would not improve mean performance and would",
+        "  reduce the spread across markets.",
+        f"    mean  {single_mean:+.3f} -> {ensemble_mean:+.3f}   "
+        f"spread  {single_spread:.3f} -> {ensemble_spread:.3f}",
     ]
-    better = sum(1 for _, m, b in drawdowns if m > b)
+    if ensemble_spread < single_spread and abs(ensemble_mean - single_mean) < 0.05:
+        lines.append("    Held. The point of the ensemble was never the mean.")
+    elif ensemble_spread >= single_spread:
+        lines.append(
+            "    Wrong on dispersion: averaging horizons did not stabilise the result, "
+            "so the single lookback was not the source of the variation."
+        )
+    else:
+        lines.append(
+            "    The mean moved more than expected, which is a warning rather than a "
+            "win -- it suggests a horizon suits this sample, not that averaging helps."
+        )
+
+    hold_mean, _, hold_dd = stats_for("buy_and_hold")
+    trend_mean, _, trend_dd = stats_for("absolute_momentum")
+    combined_mean, _, combined_dd = stats_for("trend_scaled_volatility")
+    lines += [
+        "",
+        "  Prediction 5: the combination would improve drawdown more than return.",
+        f"    vs holding      Sharpe {combined_mean - hold_mean:+.3f}   "
+        f"drawdown {combined_dd - hold_dd:+.1%}",
+        f"    vs trend alone  Sharpe {combined_mean - trend_mean:+.3f}   "
+        f"drawdown {combined_dd - trend_dd:+.1%}",
+    ]
+    if combined_dd > trend_dd and combined_mean <= trend_mean + 0.05:
+        lines.append("    Held. Composing them buys risk reduction, not return.")
+    else:
+        lines.append("    Did not hold as stated -- see the table above for what happened instead.")
+
     lines += [
         "",
         "  THE DRAWDOWN RESULT, WHICH IS SEPARATE",
         "",
-        f"  {'market':<30}{'momentum':>11}{'hold':>9}",
+        f"  {'market':<28}" + "".join(f"{n[:11]:>13}" for n in [x.name for x in strategies()]),
     ]
-    for label, momentum_dd, hold_dd in drawdowns:
-        lines.append(f"  {label:<30}{momentum_dd:>+11.1%}{hold_dd:>+9.1%}")
-    drawdown_p = float(
-        stats.binomtest(better, len(drawdowns), 0.5, alternative="greater").pvalue
+    for payload in results.values():
+        lines.append(
+            f"  {payload['label']:<28}"
+            + "".join(
+                f"{payload[n]['real_max_drawdown']:>+13.1%}" for n in [x.name for x in strategies()]
+            )
+        )
+
+    hold = np.array([r["buy_and_hold"]["real_max_drawdown"] for r in results.values()])
+    lines += ["", f"  {'strategy':<28}{'shallower in':>14}{'sign p':>10}{'median gain':>14}"]
+    best_name, best_gain = None, 0.0
+    for name in [x.name for x in strategies()][1:]:
+        values = np.array([r[name]["real_max_drawdown"] for r in results.values()])
+        better = int((values > hold).sum())
+        p_value = float(
+            stats.binomtest(better, len(values), 0.5, alternative="greater").pvalue
+        )
+        gain = float(np.median(values - hold))
+        if gain > best_gain:
+            best_name, best_gain = name, gain
+        lines.append(
+            f"  {name:<28}{f'{better}/{len(values)}':>14}{p_value:>10.4f}{gain:>+14.1%}"
+        )
+
+    combined_sharpe = float(
+        np.mean([r["trend_scaled_volatility"]["real_sharpe"] for r in results.values()])
     )
+    hold_sharpe = float(np.mean([r["buy_and_hold"]["real_sharpe"] for r in results.values()]))
     lines += [
         "",
-        f"  Momentum's worst drawdown was shallower in {better} of {len(drawdowns)} markets,"
-        f" by a median of {np.median([b - m for _, m, b in drawdowns]):.1%},",
-        f"  sign test p = {drawdown_p:.4f}.",
+        f"  {best_name} is the best of these: {best_gain:+.1%} of median drawdown",
+        f"  against buy-and-hold, shallower in every market, at a mean Sharpe of",
+        f"  {combined_sharpe:+.3f} against buy-and-hold's {hold_sharpe:+.3f}.",
         "",
-        "  **This is the only result in the project that reaches significance.** Note",
-        "  what it is and is not. It does not depend on the timing edge being real:",
-        "  stepping aside after a sustained decline mechanically truncates a long",
-        "  fall, whether or not the rule can anticipate one. It is a property of the",
-        "  rule's shape rather than evidence of skill, which is exactly why it",
-        "  replicates when the return edge does not.",
+        "  **Roughly the same risk-adjusted return for less than half the worst",
+        "  loss**, replicated across eight countries and 391 market-years. That is",
+        "  the strongest result this project has, and it is a risk result rather",
+        "  than a return one -- which is what everything else here also says.",
         "",
-        "  It is also not free. The same rule costs a median of "
-        f"{np.median([r['buy_and_hold']['real_cagr'] - r['absolute_momentum']['real_cagr'] for r in results.values()]):.2%}"
-        " a year in return",
-        "  across these markets, and sits in cash through part of every recovery.",
-        "  Whether halving the worst drawdown is worth that is a question about the",
-        "  person holding it, not about the data -- and it is the honest form of the",
-        "  question this project set out to answer.",
+        "  It does not depend on the timing edge being real. Stepping aside after a",
+        "  sustained decline mechanically truncates a long fall, and sizing down",
+        "  when volatility rises mechanically shrinks the position going into one.",
+        "  Neither requires anticipating anything, which is precisely why they",
+        "  replicate when the return edges do not.",
+        "",
+        "  It is also not free: it holds less than the market most of the time and",
+        "  will trail badly in a long calm bull run. Whether that trade is worth",
+        "  making is a question about the person holding it, not about the data.",
     ]
 
     text = "\n".join(lines)

@@ -60,10 +60,6 @@ class VolatilityTarget(Strategy):
             deliberately modest budget -- below a broad equity index's long-run
             16-20%, so the strategy is usually holding less than everything and
             has room to size *up* in calm periods without ever borrowing.
-        window: trailing days used to forecast volatility. Short windows react
-            fast and are noisy; long ones are stable and late. 21 days is the
-            usual compromise and is not tuned here, because tuning it on the same
-            data it is evaluated on is how a backtest stops meaning anything.
         max_weight: hard cap. 1.0 means no leverage, ever -- a permanent policy
             in this project, not a parameter to revisit. Without it, volatility
             targeting quietly becomes a leveraged strategy in calm markets, which
@@ -73,6 +69,11 @@ class VolatilityTarget(Strategy):
             unusually quiet stretch cannot produce an enormous position. Dividing
             by a small estimated number is the standard way this family of
             strategies fails.
+        forecaster: how volatility is predicted. Defaults to `EWMAVolatility()`
+            -- see the class docstring for why that replaced a 21-day rolling
+            standard deviation. Pass any other `VolatilityForecaster` to compare;
+            everything else about the strategy is held identical, so a difference
+            in result is attributable to the forecast and nothing else.
     """
 
     name = "volatility_target"
@@ -80,15 +81,13 @@ class VolatilityTarget(Strategy):
     def __init__(
         self,
         target_volatility: float = 0.12,
-        window: int = 21,
         max_weight: float = 1.0,
         band: float = 0.10,
         floor_volatility: float = 0.04,
+        forecaster=None,
     ) -> None:
         if target_volatility <= 0:
             raise ValueError("target_volatility must be positive")
-        if window < 2:
-            raise ValueError("window must be at least 2 days")
         if not 0.0 < max_weight <= 1.0:
             raise ValueError("max_weight must be in (0, 1]; this project does not use leverage")
         if not 0.0 <= band < 1.0:
@@ -97,23 +96,27 @@ class VolatilityTarget(Strategy):
             raise ValueError("floor_volatility must be positive")
 
         self.target_volatility = float(target_volatility)
-        self.window = int(window)
         self.max_weight = float(max_weight)
         self.band = float(band)
         self.floor_volatility = float(floor_volatility)
 
-    def forecast_volatility(self, data: MarketData, ticker: str) -> np.ndarray:
-        """Trailing realised volatility, annualised. Causal by construction.
+        if forecaster is None:
+            from sentinel.ai.volatility import EWMAVolatility
 
-        `rolling` is right-aligned, so row t uses the `window` returns ending at
-        t. `center=True` would silently make this the average of a window
-        straddling t, which is lookahead that looks like smoothing.
+            forecaster = EWMAVolatility()
+        else:
+            self.name = f"voltarget_{forecaster.name}"
+        self.forecaster = forecaster
+
+    def forecast_volatility(self, data: MarketData, ticker: str) -> np.ndarray:
+        """Annualised volatility for the next period, from the forecaster.
+
+        Causality is the forecaster's responsibility and every one of them is
+        checked for it; `check_causality` on the strategy verifies the whole
+        chain regardless, which is what caught the lookahead in the regime-based
+        variant.
         """
-        returns = np.log(data.prices[ticker]).diff()
-        return (
-            returns.rolling(self.window).std().to_numpy(dtype=float)
-            * np.sqrt(TRADING_DAYS_PER_YEAR)
-        )
+        return self.forecaster.forecast(data.prices[ticker]).to_numpy(dtype=float)
 
     def compute_weights(self, data: MarketData) -> pd.DataFrame:
         ticker = data.tickers[0]

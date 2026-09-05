@@ -6,9 +6,20 @@ known — before it is ever pointed at a real market.
 **Status:** Phases 0–3 complete and validated, tested against 391 market-years of real data across
 eight countries. The headline result is a negative one, arrived at honestly:
 
-> **Trend following is a risk-reduction tool, not a return-generation tool.** Its drawdown benefit
-> replicates in 8 of 8 markets (p = 0.0039). Its return edge does not (p = 0.145). Nothing in this
-> project is ready for real money, and the plan anticipated that and permits it.
+> **Trend following is a risk-reduction tool, not a return-generation tool.** No return edge here
+> is statistically distinguishable from luck. What *does* replicate, in 8 of 8 markets, is drawdown.
+
+The best version of that — trend deciding *whether* to be exposed, volatility deciding *how much* —
+delivers **roughly the same risk-adjusted return as holding the market for less than half the worst
+loss**, across 391 market-years:
+
+| Across 8 countries | mean Sharpe | mean max drawdown |
+|---|---|---|
+| buy and hold | +0.415 | **−66.0%** |
+| **trend × volatility** | **+0.411** | **−29.1%** |
+
+Shallower in 8 of 8 markets, median gain 37 points, sign test **p = 0.0039**. It does not require
+predicting anything, which is exactly why it replicates when the return edges do not.
 
 The return-forecasting AI was measured, found wanting, and retired. The simulator was caught
 teaching a false lesson, corrected, and re-verified. See [HANDOFF.md](HANDOFF.md) for exactly what
@@ -201,6 +212,37 @@ than a 21-day rolling standard deviation.
 That is not an argument that models never work. It is exactly what the permanent control arm was put
 there to detect, and it detected it every time it was asked.
 
+### Forecasting risk, where forecasting return failed
+
+The return-forecasting attempt failed for a reason that is about information, not effort: real return
+signals are ~3× weaker than the method can detect. Volatility is a different problem, and the
+difference is **statistical power**:
+
+> A Sharpe ratio over 33 years has a standard error near 0.18, so two strategies differing by 0.1
+> cannot be separated. A volatility forecast is scored on all 8,000 days, and two forecasters
+> differing by a few percent are separated at p = 10⁻¹¹.
+
+Every negative result in this project came from asking a question the data could not answer. This is
+the part where that is not true. EWMA, HAR and GARCH all beat the incumbent 21-day rolling window,
+significantly, in **8 of 8 markets**. The sandbox validated the measurement itself: on Heston markets
+where the true volatility path is known, the noisy real-data scoring rule produces no ranking
+reversals against the exact one — a check impossible on real data.
+
+**And then the interesting part.** GARCH forecasts best and makes the *worst* strategy:
+
+| forecaster | forecast accuracy | mean Sharpe | turnover |
+|---|---|---|---|
+| rolling 21d | incumbent | +0.444 | 2.2 |
+| **EWMA (λ=0.94)** | **better, p<0.05 in 8/8** | **+0.456** | **1.7** |
+| GARCH(1,1) | best | +0.411 | 3.1 |
+
+A sharper forecast tracks volatility more tightly, so it trades more, and the accuracy doesn't pay
+for the cost. **A better model is not automatically better money** — and reporting "GARCH wins at
+p = 10⁻¹¹" without this table would have been true and misleading.
+
+EWMA is better on every axis, so it became the default. Its decay is the published 1994 RiskMetrics
+constant, not something fitted here.
+
 ### Does it replicate? — 8 countries, 391 market-years
 
 `is_it_timing.py` (below) reached p = 0.13 on SPY and said the next step had to be more independent
@@ -220,8 +262,17 @@ going down.
 | Australia ASX 200 (1992) | −0.129 | 22% |
 | **positive in 6 of 8** | median +0.038 | **sign test p = 0.145** |
 
-**The return edge does not replicate.** But the drawdown does, in **8 of 8 markets**, by a median of
-17.6 points — sign test **p = 0.0039**, the only significant result in the project.
+The same test on the trend × volatility composite: 5 of 8 positive, p = 0.363. The return edge does
+not appear for anything.
+
+**No return edge replicates.** But drawdown does, for every strategy tested, in **8 of 8 markets**:
+
+| | shallower in | median gain | sign p |
+|---|---|---|---|
+| absolute_momentum | 8/8 | +17.6% | 0.0039 |
+| ensemble_momentum | 8/8 | +28.0% | 0.0039 |
+| volatility_target | 8/8 | +21.7% | 0.0039 |
+| **trend × volatility** | **8/8** | **+37.3%** | **0.0039** |
 
 The two differ for a reason that is the whole point. The drawdown benefit does not require the rule
 to predict anything: stepping aside after a sustained decline mechanically truncates a long fall,
@@ -295,7 +346,7 @@ Cost through paper trading: **$0**.
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt && pip install -e .
 
-pytest                                     # 280 tests
+pytest                                     # 329 tests
 
 python experiments/validate_sandbox.py     # Phase 0 evidence
 python experiments/null_test.py            # Phase 1 gate — must pass, runs in CI
@@ -308,6 +359,7 @@ python experiments/corrected_sandbox.py    # does the fixed sandbox predict real
 python experiments/adversarial.py          # Phase 3: crashes and correlation breakdown
 python experiments/is_it_timing.py         # the harder floor: timing, or just exposure?
 python experiments/more_paths.py           # does it replicate? 8 countries, 391 market-years
+python experiments/volatility_forecasting.py  # the one question the data has power to answer
 
 python -m sentinel.journal                 # what to hold today, and why
 python -m sentinel.journal --write         # ...and record it before the outcome is known
@@ -342,10 +394,19 @@ publish and every later phase compares against these numbers.
 On the evidence: **nothing, for return.** No strategy here clears a noise floor that declines to
 credit it for simply being invested in a market that went up.
 
-For *risk*, one thing does: **absolute momentum** — hold while the trailing 12-month return is
-positive, else cash. Two parameters, checkable by hand in a spreadsheet, and a rule a beginner could
-write in an afternoon. Across eight countries it roughly halved the worst drawdown, every time, for
-a median cost of about two points of annual return.
+For *risk*, one thing does, and it is the strongest result the project has: **trend × volatility
+targeting**. Hold while the trailing trend is positive, sized so forecast risk is constant. Both
+halves are simple enough to check by hand. Across eight countries and 391 market-years it cut the
+worst drawdown from −66% to −29% — shallower in every single market — while matching buy-and-hold's
+risk-adjusted return.
+
+Neither half requires predicting anything. Stepping aside after a sustained decline mechanically
+truncates a long fall; sizing down when volatility rises mechanically shrinks the position going into
+one. That is why they replicate when the return edges do not.
+
+The cost is real: it holds less than the market most of the time and will trail badly through a long
+calm bull run. Whether that trade is worth making is a question about the person holding it, not
+about the data.
 
 That is a real finding and it is not the one the project set out to get. The plan said it must be
 able to reach the conclusion *"this doesn't work — buy an index fund"*, and on returns it has. What

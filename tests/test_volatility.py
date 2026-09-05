@@ -173,7 +173,6 @@ class TestGuards:
         "kwargs,message",
         [
             ({"target_volatility": 0.0}, "target_volatility must be positive"),
-            ({"window": 1}, "window must be at least 2"),
             ({"max_weight": 1.5}, "does not use leverage"),
             ({"band": 1.0}, "band must be"),
             ({"floor_volatility": 0.0}, "floor_volatility must be positive"),

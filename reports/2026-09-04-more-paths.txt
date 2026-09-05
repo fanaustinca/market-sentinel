@@ -16,6 +16,7 @@ REPLICATION ACROSS MARKETS
     Australia ASX 200 (1992)         -0.006         46%
     median                           -0.013         46%
     positive in 2 of 8 markets   sign test p = 0.965   Fisher p = 0.8483
+    mean Sharpe +0.415, spread across markets 0.064
 
   absolute_momentum
     market                             edge   percentile
@@ -29,19 +30,49 @@ REPLICATION ACROSS MARKETS
     Australia ASX 200 (1992)         -0.129         22%
     median                           +0.038         59%
     positive in 6 of 8 markets   sign test p = 0.145   Fisher p = 0.2028
+    mean Sharpe +0.365, spread across markets 0.112
+
+  ensemble_momentum
+    market                             edge   percentile
+    US S&P 500 (1927)                +0.127         86%
+    Japan Nikkei 225 (1965)          +0.122         80%
+    Canada TSX (1979)                +0.035         60%
+    UK FTSE 100 (1984)               -0.050         38%
+    Hong Kong Hang Seng (1986)       -0.044         38%
+    Germany DAX (1987)               +0.121         74%
+    France CAC 40 (1990)             +0.053         61%
+    Australia ASX 200 (1992)         +0.016         52%
+    median                           +0.044         60%
+    positive in 6 of 8 markets   sign test p = 0.145   Fisher p = 0.3866
+    mean Sharpe +0.392, spread across markets 0.105
 
   volatility_target
     market                             edge   percentile
-    US S&P 500 (1927)                +0.145         93%
-    Japan Nikkei 225 (1965)          +0.041         63%
-    Canada TSX (1979)                +0.087         73%
-    UK FTSE 100 (1984)               +0.028         60%
-    Hong Kong Hang Seng (1986)       +0.111         75%
+    US S&P 500 (1927)                +0.143         91%
+    Japan Nikkei 225 (1965)          +0.061         66%
+    Canada TSX (1979)                +0.091         72%
+    UK FTSE 100 (1984)               +0.031         60%
+    Hong Kong Hang Seng (1986)       +0.121         77%
     Germany DAX (1987)               +0.042         62%
-    France CAC 40 (1990)             -0.088         30%
-    Australia ASX 200 (1992)         -0.008         48%
-    median                           +0.042         62%
-    positive in 6 of 8 markets   sign test p = 0.145   Fisher p = 0.2966
+    France CAC 40 (1990)             -0.070         34%
+    Australia ASX 200 (1992)         -0.009         48%
+    median                           +0.051         64%
+    positive in 6 of 8 markets   sign test p = 0.145   Fisher p = 0.3023
+    mean Sharpe +0.456, spread across markets 0.108
+
+  trend_scaled_volatility
+    market                             edge   percentile
+    US S&P 500 (1927)                +0.215         99%
+    Japan Nikkei 225 (1965)          +0.171         91%
+    Canada TSX (1979)                +0.127         80%
+    UK FTSE 100 (1984)               -0.052         38%
+    Hong Kong Hang Seng (1986)       +0.128         80%
+    Germany DAX (1987)               +0.080         68%
+    France CAC 40 (1990)             -0.015         48%
+    Australia ASX 200 (1992)         -0.020         44%
+    median                           +0.103         74%
+    positive in 5 of 8 markets   sign test p = 0.363   Fisher p = 0.0508
+    mean Sharpe +0.411, spread across markets 0.124
 
   READING IT
 
@@ -59,30 +90,58 @@ REPLICATION ACROSS MARKETS
   That is a real answer, and the plan permits acting on it: the honest
   conclusion from this evidence is to buy an index fund.
 
+  THE TWO CHANGES REGISTERED IN ADVANCE
+
+  strategy                      mean Sharpe    spread   mean maxDD
+  buy_and_hold                       +0.415     0.064       -66.0%
+  absolute_momentum                  +0.365     0.112       -44.5%
+  ensemble_momentum                  +0.392     0.105       -39.2%
+  volatility_target                  +0.456     0.108       -45.8%
+  trend_scaled_volatility            +0.411     0.124       -29.1%
+
+  Prediction 4: the ensemble would not improve mean performance and would
+  reduce the spread across markets.
+    mean  +0.365 -> +0.392   spread  0.112 -> 0.105
+    Held. The point of the ensemble was never the mean.
+
+  Prediction 5: the combination would improve drawdown more than return.
+    vs holding      Sharpe -0.003   drawdown +36.9%
+    vs trend alone  Sharpe +0.047   drawdown +15.4%
+    Held. Composing them buys risk reduction, not return.
+
   THE DRAWDOWN RESULT, WHICH IS SEPARATE
 
-  market                           momentum     hold
-  US S&P 500 (1927)                  -44.6%   -86.2%
-  Japan Nikkei 225 (1965)            -44.2%   -81.9%
-  Canada TSX (1979)                  -41.2%   -50.0%
-  UK FTSE 100 (1984)                 -35.9%   -52.6%
-  Hong Kong Hang Seng (1986)         -52.2%   -65.2%
-  Germany DAX (1987)                 -46.5%   -72.7%
-  France CAC 40 (1990)               -46.7%   -65.3%
-  Australia ASX 200 (1992)           -44.8%   -53.9%
+  market                        buy_and_hol  absolute_mo  ensemble_mo  volatility_  trend_scale
+  US S&P 500 (1927)                  -86.2%       -44.6%       -48.6%       -59.3%       -32.3%
+  Japan Nikkei 225 (1965)            -81.9%       -44.2%       -57.4%       -66.6%       -46.1%
+  Canada TSX (1979)                  -50.0%       -41.2%       -38.9%       -37.1%       -27.5%
+  UK FTSE 100 (1984)                 -52.6%       -35.9%       -33.6%       -42.2%       -34.6%
+  Hong Kong Hang Seng (1986)         -65.2%       -52.2%       -53.6%       -41.7%       -24.9%
+  Germany DAX (1987)                 -72.7%       -46.5%       -28.1%       -44.1%       -22.9%
+  France CAC 40 (1990)               -65.3%       -46.7%       -30.5%       -43.5%       -28.4%
+  Australia ASX 200 (1992)           -53.9%       -44.8%       -22.5%       -32.3%       -16.2%
 
-  Momentum's worst drawdown was shallower in 8 of 8 markets, by a median of -17.6%,
-  sign test p = 0.0039.
+  strategy                      shallower in    sign p   median gain
+  absolute_momentum                      8/8    0.0039        +17.6%
+  ensemble_momentum                      8/8    0.0039        +28.0%
+  volatility_target                      8/8    0.0039        +21.7%
+  trend_scaled_volatility                8/8    0.0039        +37.3%
 
-  **This is the only result in the project that reaches significance.** Note
-  what it is and is not. It does not depend on the timing edge being real:
-  stepping aside after a sustained decline mechanically truncates a long
-  fall, whether or not the rule can anticipate one. It is a property of the
-  rule's shape rather than evidence of skill, which is exactly why it
-  replicates when the return edge does not.
+  trend_scaled_volatility is the best of these: +37.3% of median drawdown
+  against buy-and-hold, shallower in every market, at a mean Sharpe of
+  +0.411 against buy-and-hold's +0.415.
 
-  It is also not free. The same rule costs a median of 1.96% a year in return
-  across these markets, and sits in cash through part of every recovery.
-  Whether halving the worst drawdown is worth that is a question about the
-  person holding it, not about the data -- and it is the honest form of the
-  question this project set out to answer.
+  **Roughly the same risk-adjusted return for less than half the worst
+  loss**, replicated across eight countries and 391 market-years. That is
+  the strongest result this project has, and it is a risk result rather
+  than a return one -- which is what everything else here also says.
+
+  It does not depend on the timing edge being real. Stepping aside after a
+  sustained decline mechanically truncates a long fall, and sizing down
+  when volatility rises mechanically shrinks the position going into one.
+  Neither requires anticipating anything, which is precisely why they
+  replicate when the return edges do not.
+
+  It is also not free: it holds less than the market most of the time and
+  will trail badly in a long calm bull run. Whether that trade is worth
+  making is a question about the person holding it, not about the data.

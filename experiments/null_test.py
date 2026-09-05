@@ -42,6 +42,7 @@ from sentinel.evaluation.null_test import NullTestResult, run_null_test
 from sentinel.sandbox.generators.gbm import GBMGenerator
 from sentinel.sandbox.generators.heston import HestonGenerator
 from sentinel.sandbox.generators.jump import JumpDiffusionGenerator
+from sentinel.strategies.composite import TrendScaledVolatility
 from sentinel.strategies.regime import RegimeAwareStrategy, RegimeGate
 from sentinel.strategies.volatility import RegimeVolatilityTarget, VolatilityTarget
 from sentinel.strategies.baseline import (
@@ -49,6 +50,7 @@ from sentinel.strategies.baseline import (
     AlwaysCash,
     BuyAndHold,
     DualMomentum,
+    EnsembleMomentum,
     ShortHorizonMomentum,
 )
 
@@ -73,11 +75,13 @@ def strategies() -> list:
         BuyAndHold(),
         AbsoluteMomentum(),
         ShortHorizonMomentum(),
+        EnsembleMomentum(),
         DualMomentum(),
         RegimeAwareStrategy(),
         RegimeGate(),
         VolatilityTarget(),
         RegimeVolatilityTarget(),
+        TrendScaledVolatility(trend=EnsembleMomentum()),
         WalkForwardModel(),
         WalkForwardClassifier(),
     ]

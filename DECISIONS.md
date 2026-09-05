@@ -712,3 +712,162 @@ and a set of instruments — the Null Test, the noise floor with its window atta
 detector, the drift-preserving shuffle, the oracle ladder — that are reusable and that caught every
 false positive this project generated. That is a better outcome than a strategy that looked good
 because nobody had built the instruments to check it.
+
+---
+
+## 2026-09-04 — PRE-REGISTRATION: what will be tried next, and what is predicted
+
+**Decision:** Predictions written down *before* the experiments are run, so they can be checked
+rather than rationalised. `plan.md` §10 does this for the project as a whole; this does it for one
+round of work, because the temptation this time is specific and named.
+
+**The trap being avoided.** The obvious next move is to tune `absolute_momentum` until its timing
+p-value crosses 0.05. There is now a precise number to tune against (p = 0.145), which makes that
+easier to do accidentally than usual. `HANDOFF.md` already lists it as the one dishonest
+continuation. Nothing below adjusts a parameter of an existing strategy against real-data results.
+
+**The principle guiding what *is* tried.** Return forecasting failed, and the Recovery Test said why:
+real return signals are three times weaker than this method can detect. But the project's own
+generators contain a second, separate kind of predictability that has never been pursued —
+`HestonGenerator` produces **forecastable risk with unforecastable direction**, and `GroundTruth`
+has carried `has_predictable_volatility` as a distinct field since day one precisely because
+conflating the two is how people overstate what a model has found.
+
+Volatility is worth attacking for a reason that is about measurement rather than about markets:
+
+> A Sharpe ratio estimated over 33 years has a standard error of about 0.18. A volatility forecast
+> can be scored on all 8,000 daily observations with a proper scoring rule. **The second question
+> the data can actually answer; the first it cannot.** Every negative result in this project so far
+> came from asking a question with too little power to answer it.
+
+### What will be tried
+
+1. **Better volatility forecasters.** EWMA (RiskMetrics), HAR-RV (Corsi), GARCH(1,1), against the
+   21-day rolling standard deviation currently used, scored by QLIKE and MSE against realised
+   volatility — not by Sharpe.
+2. **A multi-horizon trend ensemble.** Averaging signals over 1/3/6/12-month lookbacks. This is a
+   *robustness* change, not an optimisation: it reduces sensitivity to a lookback nobody can
+   justify choosing, and it should be judged on dispersion across markets rather than on mean return.
+3. **Trend and volatility targeting combined**, since they answer orthogonal questions — whether to
+   be exposed, and how much. Tested on the corrected sandbox first; real data is confirmation only,
+   and gets one look.
+
+### What is predicted
+
+- **HAR-RV will beat the 21-day rolling standard deviation on QLIKE**, and by a margin that is
+  statistically clear, because the sample is thousands of observations rather than one Sharpe.
+- **EWMA will beat rolling standard deviation modestly**, and will land close to HAR.
+- **The improvement will not translate into much Sharpe.** Volatility targeting's benefit comes from
+  the broad level of risk, not from fine accuracy, so a materially better forecast should be worth
+  well under 0.1 of Sharpe. If it appears to be worth much more, suspect a bug before celebrating.
+- **The trend ensemble will not improve mean performance** and will reduce the spread across the
+  eight markets. If mean performance improves noticeably, that is a warning sign that a horizon was
+  chosen with hindsight rather than a discovery.
+- **The combination will improve drawdown more than return**, consistent with everything measured so
+  far.
+
+Each of these is falsifiable and cheap. Getting one wrong is more informative than getting all five
+right, and they are recorded here so that cannot be quietly forgotten.
+
+---
+
+## 2026-09-04 — RESULTS of the pre-registered round: 5 of 5 predictions held
+
+**Decision:** Two changes adopted, one rejected, all from measurement. Evidence in
+`reports/2026-09-04-volatility-forecasting.txt` and `reports/2026-09-04-more-paths.txt`.
+
+| # | Prediction | Outcome |
+|---|---|---|
+| 1 | HAR-RV beats the 21-day rolling window on QLIKE, clearly | **Held.** DM t = −3.7 on SPY |
+| 2 | EWMA beats rolling modestly, lands close to HAR | **Held.** −8.2440 vs −8.2483 vs −8.1899 |
+| 3 | A better forecast is worth well under 0.1 Sharpe | **Held.** Best was +0.012 |
+| 4 | The trend ensemble won't improve the mean, will cut the spread | **Held.** +0.365→+0.392, spread 0.112→0.105 |
+| 5 | The combination improves drawdown more than return | **Held.** −0.003 Sharpe, +36.9 points of drawdown |
+
+Five of five is a weaker outcome than it sounds. The pre-registration said so in advance: *"Getting
+one wrong is more informative than getting all five right."* Predictions that all hold mostly confirm
+the reasoning was already sound; they teach less than a surprise would have.
+
+**The surprise was not predicted.** GARCH(1,1) forecasts volatility *significantly better* than the
+incumbent — Diebold-Mariano p below 0.05 in 8 of 8 markets — and produces a **worse strategy**, by
+0.032 of Sharpe. A sharper forecast tracks volatility more tightly, which means trading more (3.1
+round trips a year against 1.7), and the extra accuracy does not pay for the extra cost.
+
+That is worth stating plainly, because it is the cleanest example this project has produced of the
+distinction it keeps having to make: **a better model is not automatically better money.** No
+prediction covered it, and it would have been easy to report "GARCH beats the incumbent at p = 1e-11"
+and stop there — which would have been true and misleading.
+
+### Adopted
+
+**`VolatilityTarget` now defaults to EWMA (lambda = 0.94) rather than a 21-day rolling window.**
+Better on every axis measured: forecast accuracy (significant, 8 of 8 markets), turnover (1.7 against
+2.2), drawdown (−45.8% against −49.2%), and Sharpe (+0.012). The decay parameter is the published
+RiskMetrics value from 1994, not fitted here, which is what keeps it out of sample with respect to
+this data.
+
+**`EnsembleMomentum` and `TrendScaledVolatility` join the strategy set.** The ensemble removes a
+parameter rather than tuning one — a 252-day lookback was inherited, not measured, and averaging over
+21/63/126/252 days makes the result insensitive to a choice nobody could justify. The composite
+multiplies the two, which is the simplest composition available and has no free parameter of its own.
+
+    across 8 markets       mean Sharpe    spread    mean maxDD
+    buy_and_hold                +0.415     0.064        −66.0%
+    absolute_momentum           +0.365     0.112        −44.5%
+    ensemble_momentum           +0.392     0.105        −39.2%
+    volatility_target           +0.456     0.108        −45.8%
+    trend_scaled_volatility     +0.411     0.124        −29.1%
+
+**`trend_scaled_volatility` is the best result the project has**: roughly the same risk-adjusted
+return as holding the market for **less than half the worst loss**, shallower in 8 of 8 markets by a
+median of 37 points (sign test p = 0.0039).
+
+Its return edge is still not significant — 5 of 8 markets positive, p = 0.363 — and that is the
+consistent finding. The drawdown benefit does not need the timing edge to be real: stepping aside
+after a sustained decline mechanically truncates a long fall, and sizing down when volatility rises
+mechanically shrinks the position going into one. Neither requires anticipating anything, which is
+exactly why they replicate when the return edges do not.
+
+It is not free. It holds less than the market most of the time and will trail badly through a long
+calm bull run.
+
+### Rejected
+
+**GARCH and HAR as the sizing forecast.** Both forecast better and trade worse. They stay in the
+codebase as measured comparisons, which is what the volatility experiment exists to provide.
+
+**Any tuning of `absolute_momentum`.** `HANDOFF.md` named this as the one dishonest continuation and
+nothing in this round touched a parameter of an existing strategy against real-data results. The
+ensemble *removes* a parameter; the composite adds none; EWMA's decay is a published constant.
+
+---
+
+## 2026-09-04 — Two measurement bugs in the volatility work, both invisible
+
+Logged because both produced plausible wrong numbers rather than a crash, and both were in the
+*measuring* apparatus rather than in a model.
+
+**HAR was biased by a constant factor, twice, in opposite directions.** The model predicts
+`log|return|`; exponentiating gives the geometric mean, which for a right-skewed quantity sits below
+the arithmetic mean that is wanted — Jensen's inequality. Uncorrected it under-forecast by 9.7%. The
+textbook fix, smearing by `exp(residual variance / 2)`, assumes the residuals are normal in logs;
+`log|z|` is sharply left-skewed with a variance near 1.23, so smearing overshot by 12%. The correct
+constant is exact and specific: `-E[log|Z|] = (gamma + log 2)/2 = 0.63518` for a standard normal,
+with an empirical calibration on the training window on top of it for fat tails.
+
+Nothing about any version looked wrong. The forecasts tracked volatility perfectly well and only
+their *level* was off, so QLIKE charged the mistake to the model as poor forecasting rather than to
+the arithmetic — and it would have been recorded as "HAR does not work here".
+
+**Models were being ranked on different samples.** A rolling window needs 21 days of warmup and a
+walk-forward regression needs two years, so scoring each over its own full range compares them on
+different periods. On SPY that difference was 1993–95, which contains a bear market, and it *reversed
+the ranking* between the per-model table and the pairwise tests. `score_all` now intersects the valid
+ranges. A ranking is only a ranking if every model faced the same days.
+
+**And one bad check of my own.** The first version of the sandbox validation compared point-estimate
+orderings with no error bars, and reported a disagreement between the exact and proxy rankings that
+was pure noise — three models tied to four decimal places will "rank" in arbitrary order. It now
+compares pairwise with a paired t-test and flags only *reversals*, where one measure says A is
+significantly better and the other says B is. One measure finding a difference the other cannot is a
+difference in power, not a contradiction.

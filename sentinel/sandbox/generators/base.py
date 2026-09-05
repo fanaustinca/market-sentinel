@@ -33,11 +33,21 @@ class Simulation:
         regimes: true market state per step, when the model has states. This is
             the answer key a regime classifier gets scored against -- something
             no real market can ever provide.
+        volatility: true annualised volatility governing each return, for
+            generators that have one. The same idea as `regimes` applied to risk
+            rather than to state, and it exists for the same reason: on real data
+            a volatility forecast can only ever be scored against a single
+            squared return, which is an unbiased estimate of the truth with a
+            standard deviation larger than its mean. Here the truth itself is
+            known, so a forecaster can be graded directly -- and, more usefully,
+            the noisy real-data scoring rule can be *checked* against the exact
+            one to see whether it ranks models the same way.
         extra: resolved parameters to record in the ground truth.
     """
 
     log_returns: np.ndarray
     regimes: np.ndarray | None = None
+    volatility: np.ndarray | None = None
     extra: dict[str, Any] = field(default_factory=dict)
 
 
@@ -151,6 +161,7 @@ class Generator(ABC):
             has_exploitable_signal=self.has_exploitable_signal,
             has_predictable_volatility=self.has_predictable_volatility,
             regimes=simulation.regimes,
+            volatility=simulation.volatility,
         )
         return Scenario(
             data=MarketData(prices=frame, name=f"synthetic-{self.model_name}"),

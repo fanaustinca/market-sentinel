@@ -12,9 +12,13 @@ why. This file covers what exists, what is verified, what is not, and what to do
 Phases 0 through 3 are complete and validated, and the system has been tested against 391
 market-years across eight countries. **The headline result is negative and it is solid:**
 
-> Trend following is a **risk-reduction** tool, not a return-generation tool. Its drawdown benefit
-> replicates in 8 of 8 markets (sign test p = 0.0039 — the only significant result in the project).
-> Its return edge does not (p = 0.145). Nothing here is ready for real money.
+> Trend following is a **risk-reduction** tool, not a return-generation tool. No return edge here is
+> distinguishable from luck. Drawdown reduction replicates in 8 of 8 markets, p = 0.0039.
+
+The best version is `TrendScaledVolatility` — trend decides *whether* to be exposed, volatility
+decides *how much*. Across 8 countries: **mean Sharpe +0.411 against buy-and-hold's +0.415, mean max
+drawdown −29.1% against −66.0%.** Same risk-adjusted return, less than half the worst loss, shallower
+in every market.
 
 `plan.md` §2 anticipated this outcome and permits it. Do not spend the next session trying to
 rescue the return result; spend it either on paper trading or on the open questions below.
@@ -50,7 +54,7 @@ comparison was too generous.
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt && pip install -e .
-pytest                                   # 280 tests
+pytest                                   # 329 tests
 python experiments/null_test.py          # the Phase 1 gate
 ```
 
@@ -199,8 +203,8 @@ This is a decision rather than a task, and taking it deliberately is worth more 
 The original goal — beat cash risk-adjusted with an AI — has been measured and not met. Three
 honest continuations:
 
-**(a) Ship the risk tool.** Take `absolute_momentum` to paper trading as what the evidence supports:
-something that roughly halves the worst drawdown for about two points of annual return. Small,
+**(a) Ship the risk tool.** Take `TrendScaledVolatility` to paper trading as what the evidence
+supports: roughly the same risk-adjusted return as the index for less than half the worst drawdown. Small,
 verifiable, and the claim matches the measurement. **The plumbing for this already exists** —
 `python -m sentinel.journal --write` produces the daily reading and records it before the outcome is
 known. Running it on a schedule is the whole of Phase 5's mechanics; the remaining six months are

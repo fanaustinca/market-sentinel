@@ -87,6 +87,13 @@ class GroundTruth:
         regimes: for regime-switching models, the true state on each day. Lets us
             score a regime classifier directly against the right answer, which is
             impossible on real data where nobody knows the true label.
+        volatility: the true annualised volatility governing each return, where
+            the generator has one. Real data offers only a single squared return
+            as evidence about a day's volatility -- unbiased, but with a standard
+            deviation larger than its mean -- so a forecast there can only be
+            scored through a very noisy proxy. Here it can be graded against the
+            answer, which also makes it possible to check whether the noisy proxy
+            ranks forecasters the same way the exact measure does.
     """
 
     model: str
@@ -94,6 +101,7 @@ class GroundTruth:
     has_exploitable_signal: bool
     has_predictable_volatility: bool = False
     regimes: np.ndarray | None = None
+    volatility: np.ndarray | None = None
 
 
 @dataclass(frozen=True)

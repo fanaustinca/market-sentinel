@@ -101,9 +101,10 @@ def _explain(strategy: Strategy, data: MarketData, weights: np.ndarray) -> str:
         )
 
     if hasattr(strategy, "target_volatility"):
-        recent = float(prices.pct_change().tail(strategy.window).std() * np.sqrt(252))
+        forecast = strategy.forecast_volatility(data, ticker)
+        current = float(forecast[-1]) if np.isfinite(forecast[-1]) else float("nan")
         return (
-            f"trailing {strategy.window}-day volatility is {recent:.1%} against a "
+            f"{strategy.forecaster.name} puts volatility at {current:.1%} against a "
             f"{strategy.target_volatility:.0%} target, so hold {invested:.0%}"
         )
 

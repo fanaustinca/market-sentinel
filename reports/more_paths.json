@@ -23,13 +23,29 @@
         "timing_edge": 0.1724788398463502,
         "percentile": 0.94
       },
+      "ensemble_momentum": {
+        "real_sharpe": 0.4526274168406169,
+        "real_cagr": 0.046537925898356036,
+        "real_max_drawdown": -0.4859134920207633,
+        "shuffled_mean": 0.3256307373877456,
+        "timing_edge": 0.1269966794528713,
+        "percentile": 0.86
+      },
       "volatility_target": {
-        "real_sharpe": 0.5190489474865083,
-        "real_cagr": 0.054905477324669105,
-        "real_max_drawdown": -0.6479998156909086,
-        "shuffled_mean": 0.3738772899774554,
-        "timing_edge": 0.14517165750905292,
-        "percentile": 0.93
+        "real_sharpe": 0.5209862062516579,
+        "real_cagr": 0.052723955641816644,
+        "real_max_drawdown": -0.5928188731092242,
+        "shuffled_mean": 0.37840386294589384,
+        "timing_edge": 0.14258234330576408,
+        "percentile": 0.91
+      },
+      "trend_scaled_volatility": {
+        "real_sharpe": 0.5228989532302258,
+        "real_cagr": 0.040039467175575494,
+        "real_max_drawdown": -0.32317433574826326,
+        "shuffled_mean": 0.3077668806297641,
+        "timing_edge": 0.21513207260046174,
+        "percentile": 0.99
       }
     },
     "^N225": {
@@ -53,13 +69,29 @@
         "timing_edge": 0.22295062510518598,
         "percentile": 0.955
       },
+      "ensemble_momentum": {
+        "real_sharpe": 0.4635516866437529,
+        "real_cagr": 0.050162069425944145,
+        "real_max_drawdown": -0.5735713489252334,
+        "shuffled_mean": 0.34128636114115274,
+        "timing_edge": 0.12226532550260016,
+        "percentile": 0.805
+      },
       "volatility_target": {
-        "real_sharpe": 0.4298934736485329,
-        "real_cagr": 0.04677710738347374,
-        "real_max_drawdown": -0.6963369831803342,
-        "shuffled_mean": 0.388699290972582,
-        "timing_edge": 0.04119418267595093,
-        "percentile": 0.63
+        "real_sharpe": 0.45705224553518314,
+        "real_cagr": 0.04803243438869953,
+        "real_max_drawdown": -0.6661487655382193,
+        "shuffled_mean": 0.3963742845647573,
+        "timing_edge": 0.060677960970425826,
+        "percentile": 0.665
+      },
+      "trend_scaled_volatility": {
+        "real_sharpe": 0.4974531098794536,
+        "real_cagr": 0.03928151863031437,
+        "real_max_drawdown": -0.46054616242367397,
+        "shuffled_mean": 0.326150072848625,
+        "timing_edge": 0.1713030370308286,
+        "percentile": 0.91
       }
     },
     "^GSPTSE": {
@@ -83,13 +115,29 @@
         "timing_edge": -0.07529158388146867,
         "percentile": 0.315
       },
+      "ensemble_momentum": {
+        "real_sharpe": 0.46109215070791093,
+        "real_cagr": 0.042004986018647994,
+        "real_max_drawdown": -0.38946609104503205,
+        "shuffled_mean": 0.4263680935338471,
+        "timing_edge": 0.03472405717406385,
+        "percentile": 0.595
+      },
       "volatility_target": {
-        "real_sharpe": 0.5796646805237252,
-        "real_cagr": 0.05872035464518177,
-        "real_max_drawdown": -0.3972732926228473,
-        "shuffled_mean": 0.4929750752589044,
-        "timing_edge": 0.08668960526482083,
-        "percentile": 0.73
+        "real_sharpe": 0.5875070904108849,
+        "real_cagr": 0.05729383986626768,
+        "real_max_drawdown": -0.3713268109420742,
+        "shuffled_mean": 0.49679896870162155,
+        "timing_edge": 0.09070812170926335,
+        "percentile": 0.72
+      },
+      "trend_scaled_volatility": {
+        "real_sharpe": 0.5405345085399087,
+        "real_cagr": 0.03966018571335761,
+        "real_max_drawdown": -0.27474025708367633,
+        "shuffled_mean": 0.4140307997156977,
+        "timing_edge": 0.12650370882421103,
+        "percentile": 0.805
       }
     },
     "^FTSE": {
@@ -113,13 +161,29 @@
         "timing_edge": 0.04033364718124183,
         "percentile": 0.595
       },
+      "ensemble_momentum": {
+        "real_sharpe": 0.27262545405435906,
+        "real_cagr": 0.02300533926700199,
+        "real_max_drawdown": -0.3364690288403679,
+        "shuffled_mean": 0.32273546708557677,
+        "timing_edge": -0.050110013031217704,
+        "percentile": 0.375
+      },
       "volatility_target": {
-        "real_sharpe": 0.404890664819633,
-        "real_cagr": 0.0415881965337781,
-        "real_max_drawdown": -0.452441535218166,
-        "shuffled_mean": 0.37639859671545545,
-        "timing_edge": 0.028492068104177537,
-        "percentile": 0.605
+        "real_sharpe": 0.41210995329002487,
+        "real_cagr": 0.04098901624784146,
+        "real_max_drawdown": -0.4221775080811926,
+        "shuffled_mean": 0.3815885694454353,
+        "timing_edge": 0.030521383844589578,
+        "percentile": 0.6
+      },
+      "trend_scaled_volatility": {
+        "real_sharpe": 0.25995185431090023,
+        "real_cagr": 0.018396960754970326,
+        "real_max_drawdown": -0.34600777706408203,
+        "shuffled_mean": 0.3118422000379804,
+        "timing_edge": -0.05189034572708018,
+        "percentile": 0.38
       }
     },
     "^HSI": {
@@ -143,13 +207,29 @@
         "timing_edge": 0.054044391138154735,
         "percentile": 0.645
       },
+      "ensemble_momentum": {
+        "real_sharpe": 0.25907015484050233,
+        "real_cagr": 0.029033449729543692,
+        "real_max_drawdown": -0.5355495358852687,
+        "shuffled_mean": 0.3027224929714072,
+        "timing_edge": -0.043652338130904855,
+        "percentile": 0.385
+      },
       "volatility_target": {
-        "real_sharpe": 0.4692869578106074,
-        "real_cagr": 0.054951471967166654,
-        "real_max_drawdown": -0.4566627989126453,
-        "shuffled_mean": 0.35819632874933993,
-        "timing_edge": 0.11109062906126749,
-        "percentile": 0.75
+        "real_sharpe": 0.48581239009000216,
+        "real_cagr": 0.05405913200808854,
+        "real_max_drawdown": -0.41725799861365276,
+        "shuffled_mean": 0.36521432095194917,
+        "timing_edge": 0.12059806913805299,
+        "percentile": 0.77
+      },
+      "trend_scaled_volatility": {
+        "real_sharpe": 0.4263314518735474,
+        "real_cagr": 0.03486823286380614,
+        "real_max_drawdown": -0.24872125423498093,
+        "shuffled_mean": 0.2983423467246834,
+        "timing_edge": 0.12798910514886397,
+        "percentile": 0.8
       }
     },
     "^GDAXI": {
@@ -173,13 +253,29 @@
         "timing_edge": 0.0360229248103478,
         "percentile": 0.59
       },
+      "ensemble_momentum": {
+        "real_sharpe": 0.5435460355801235,
+        "real_cagr": 0.06440149482387003,
+        "real_max_drawdown": -0.28092425715868585,
+        "shuffled_mean": 0.42232137829547894,
+        "timing_edge": 0.12122465728464454,
+        "percentile": 0.745
+      },
       "volatility_target": {
-        "real_sharpe": 0.5255298299164506,
-        "real_cagr": 0.060225662327133334,
-        "real_max_drawdown": -0.4625691468257461,
-        "shuffled_mean": 0.4834536580233714,
-        "timing_edge": 0.04207617189307916,
+        "real_sharpe": 0.5342812245775038,
+        "real_cagr": 0.058950769951582105,
+        "real_max_drawdown": -0.4408313715981812,
+        "shuffled_mean": 0.49196960289871244,
+        "timing_edge": 0.04231162167879138,
         "percentile": 0.62
+      },
+      "trend_scaled_volatility": {
+        "real_sharpe": 0.4901345920267693,
+        "real_cagr": 0.041471044950877944,
+        "real_max_drawdown": -0.22895458514132683,
+        "shuffled_mean": 0.4100853976680673,
+        "timing_edge": 0.080049194358702,
+        "percentile": 0.68
       }
     },
     "^FCHI": {
@@ -203,13 +299,29 @@
         "timing_edge": 0.026752436638944777,
         "percentile": 0.56
       },
+      "ensemble_momentum": {
+        "real_sharpe": 0.29956985165026445,
+        "real_cagr": 0.02937960939246098,
+        "real_max_drawdown": -0.30528498986891417,
+        "shuffled_mean": 0.24646431299030816,
+        "timing_edge": 0.05310553865995629,
+        "percentile": 0.61
+      },
       "volatility_target": {
-        "real_sharpe": 0.21036479466102484,
-        "real_cagr": 0.01870823793673515,
-        "real_max_drawdown": -0.4660706500557439,
-        "shuffled_mean": 0.2982103951725963,
-        "timing_edge": -0.08784560051157145,
-        "percentile": 0.295
+        "real_sharpe": 0.23447506168249832,
+        "real_cagr": 0.02122201118549727,
+        "real_max_drawdown": -0.4345810312118532,
+        "shuffled_mean": 0.30415983114587525,
+        "timing_edge": -0.06968476946337693,
+        "percentile": 0.34
+      },
+      "trend_scaled_volatility": {
+        "real_sharpe": 0.22044089146600326,
+        "real_cagr": 0.015335418679184087,
+        "real_max_drawdown": -0.28364733252127095,
+        "shuffled_mean": 0.2351875058293716,
+        "timing_edge": -0.014746614363368327,
+        "percentile": 0.48
       }
     },
     "^AXJO": {
@@ -233,13 +345,29 @@
         "timing_edge": -0.12850324704541713,
         "percentile": 0.225
       },
+      "ensemble_momentum": {
+        "real_sharpe": 0.38057540156878616,
+        "real_cagr": 0.031197710672465684,
+        "real_max_drawdown": -0.2253117997722759,
+        "shuffled_mean": 0.3642182346730287,
+        "timing_edge": 0.016357166895757447,
+        "percentile": 0.515
+      },
       "volatility_target": {
-        "real_sharpe": 0.41211514493634777,
-        "real_cagr": 0.04093203344106233,
-        "real_max_drawdown": -0.35773359614127354,
-        "shuffled_mean": 0.4199152377611636,
-        "timing_edge": -0.0078000928248158075,
+        "real_sharpe": 0.4123352023636636,
+        "real_cagr": 0.03982277120248279,
+        "real_max_drawdown": -0.32284274266649493,
+        "shuffled_mean": 0.42092077741112793,
+        "timing_edge": -0.008585575047464322,
         "percentile": 0.475
+      },
+      "trend_scaled_volatility": {
+        "real_sharpe": 0.3329171771445664,
+        "real_cagr": 0.02364167326174793,
+        "real_max_drawdown": -0.16219378757087022,
+        "shuffled_mean": 0.3528959847822462,
+        "timing_edge": -0.019978807637679785,
+        "percentile": 0.445
       }
     }
   },
@@ -258,12 +386,26 @@
       "sign_p": 0.14453125,
       "median_percentile": 0.5925
     },
-    "volatility_target": {
-      "fisher_p": 0.2966020803956564,
+    "ensemble_momentum": {
+      "fisher_p": 0.38655800895188286,
       "sign_positive": 6,
       "sign_total": 8,
       "sign_p": 0.14453125,
-      "median_percentile": 0.625
+      "median_percentile": 0.6025
+    },
+    "volatility_target": {
+      "fisher_p": 0.3023480425956593,
+      "sign_positive": 6,
+      "sign_total": 8,
+      "sign_p": 0.14453125,
+      "median_percentile": 0.6425000000000001
+    },
+    "trend_scaled_volatility": {
+      "fisher_p": 0.05081018655685938,
+      "sign_positive": 5,
+      "sign_total": 8,
+      "sign_p": 0.36328125,
+      "median_percentile": 0.74
     }
   }
 }
