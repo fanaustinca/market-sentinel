@@ -1,0 +1,63 @@
+1. PARAMETER SENSITIVITY -- is the winning setting cherry-picked?
+
+   CAGR by lookback x n_hold.   buy-and-hold = +8.09%
+    lookback     top1     top2     top3     top4     top5
+         126   +8.70%   +8.36%   +8.06%   +8.78%   +7.74%
+         189   +8.74%   +6.86%   +8.78%   +7.84%   +7.69%
+         252  +10.87%   +8.80%   +8.42%   +7.61%   +7.98%
+         378   +4.95%   +7.72%   +7.28%   +7.44%   +7.84%
+         504   +6.41%   +6.71%   +7.99%   +7.21%   +7.10%
+   beats buy-and-hold in 8/25 cells
+   A real effect should win most cells. The best single cell out of
+   twenty-five is what noise looks like when it is reported selectively.
+
+
+2. BY PERIOD AND UNIVERSE -- unlike leverage, is it crisis-dependent?
+
+   period            hold  xsec top3     gain
+   2004-2010       +8.81%     +8.16%   -0.65%
+   2011-2017       +7.44%     +8.33%   +0.89%
+   2018-2025       +8.01%     +8.58%   +0.58%
+   Not crisis-dependent, which is more than leverage or volatility
+   targeting could say. That is a point in its favour.
+
+
+3. THE TEST THAT DECIDES IT -- terminal wealth across resampled histories
+
+   Sharpe rewards smoothness; the goal here is dollars. Both are shown,
+   because for these strategies they disagree. 200 paths, paired.
+
+   strategy               median $    mean $     10th      90th    maxDD  Sharpe
+   buy_and_hold         $    5,308 $   5,432 $  2,862 $   8,384   -25.3%  +0.782
+   volatility_target    $    3,241 $   3,329 $  2,291 $   4,454   -13.0%  +0.907
+   xsec_mom_top1        $    4,013 $   5,740 $  1,585 $  11,145   -45.4%  +0.466
+   xsec_mom_top2        $    4,529 $   5,734 $  1,963 $  10,451   -37.3%  +0.547
+   xsec_mom_top3        $    4,704 $   5,676 $  2,265 $  10,394   -35.0%  +0.598
+   low_volatility       $    3,373 $   3,592 $  2,239 $   5,018   -20.9%  +0.711
+
+   strategy              ends richer   median gap          p
+   volatility_target            2.0% $     -1,932   5.54e-54
+   xsec_mom_top1               36.5% $       -663   2.87e-01
+   xsec_mom_top2               41.5% $       -467   2.10e-01
+   xsec_mom_top3               39.5% $       -350   1.85e-01
+   low_volatility              17.0% $     -1,685   5.88e-30
+
+
+READING IT
+
+  Cross-sectional momentum has a higher mean terminal wealth than
+  buy-and-hold and a lower median. That is the signature of a lottery
+  ticket: it usually ends with less, occasionally ends with far more,
+  and the 90th percentile carries the average. It ends richer in under
+  40% of histories, at p = 0.19, with a median drawdown of -35% against
+  buy-and-hold's -25%.
+
+  It also wins only 8 of 25 parameter settings, so the single-path
+  result that opened this file was the best cell of twenty-five.
+
+  The row worth staring at is volatility_target: the best Sharpe in the
+  project, and it ends with more money than buy-and-hold in 2% of
+  histories. Ratio and dollars are different goals and this is what
+  choosing the wrong one costs.
+
+  Nothing here reliably ends richer than holding the six assets.

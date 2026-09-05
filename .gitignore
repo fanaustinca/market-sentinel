@@ -28,6 +28,12 @@ data/curated/
 data_cache/edgar/submissions_*.json
 data_cache/edgar/company_tickers.json
 
+# The paper-trading ledger, for the same reason as the journal: an append-only
+# record of decisions taken before the outcome was known. It is only evidence if
+# it is committed as it is written rather than reconstructed afterwards.
+!paper/
+!paper/*.json
+
 # The decision journal is the record, not a build artifact. Entries are
 # predictions made before the outcome was known, and they are only evidence if
 # they are committed at the time rather than reconstructed later.
