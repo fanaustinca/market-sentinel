@@ -187,3 +187,39 @@ def predicted_announcement_flag(
             if lo < len(index):
                 panel.iloc[lo:min(hi, len(index)), column] = 1.0
     return panel
+
+
+def event_reactions(
+    events: pd.DataFrame,
+    prices: pd.DataFrame,
+    buffer_minutes: int = DEFAULT_BUFFER_MINUTES,
+) -> pd.DataFrame:
+    """One row per event, carrying the move the market made when it repriced it.
+
+    The panel form (`reaction`) is what a strategy reads. This per-event form is
+    what an analysis reads, because it keeps every column the caller attached to
+    the event -- a sentiment score, an item code -- beside the outcome, without
+    the positional re-pairing that panel-to-event joins invite and get wrong.
+
+    Events that fall outside the price index, or on its first row, are dropped:
+    there is no prior close to measure a move against.
+    """
+    index = prices.index
+    dates = tradable_dates(events["accepted"], index, buffer_minutes=buffer_minutes)
+    frame = events.assign(date=dates.to_numpy()).dropna(subset=["date"])
+
+    position = pd.Series(np.arange(len(index)), index=index)
+    rows = position.reindex(frame["date"]).to_numpy()
+    keep = np.isfinite(rows) & (rows > 0)
+    frame = frame.loc[keep]
+    rows = rows[keep].astype(int)
+
+    moves = np.full(len(frame), np.nan)
+    for ticker in frame["ticker"].unique():
+        if ticker not in prices.columns:
+            continue
+        mask = (frame["ticker"] == ticker).to_numpy()
+        series = prices[ticker].to_numpy()
+        moves[mask] = series[rows[mask]] / series[rows[mask] - 1] - 1.0
+
+    return frame.assign(move=moves).dropna(subset=["move"]).reset_index(drop=True)

@@ -53,18 +53,32 @@ class EarningsAwareVolatility(VolatilityForecaster):
         base: the forecaster to correct. Its output is used unchanged on all
             ordinary days, so this can only help or hurt on the ~1% of days that
             carry an event -- which is a deliberately narrow claim.
-        events: 0/1 series aligned to the price index, from `features.events
-            .event_flag`. Row *t* means a filing became actionable at *t*'s close.
+        events: 0/1 flags from `features.events.announcement_flag`, marking rows
+            whose forecast window contains a release. Either a `Series` for a
+            single asset, or a `DataFrame` whose columns are tickers -- the
+            multi-asset form is selected by the name of the price series it is
+            asked about, which is how `VolatilityTarget` passes one asset at a
+            time. A ticker absent from the frame gets the base forecast unchanged
+            rather than an error, since an index fund has no earnings date and
+            that is a legitimate answer rather than a missing one.
     """
 
-    def __init__(self, base: VolatilityForecaster, events: pd.Series) -> None:
+    def __init__(self, base: VolatilityForecaster, events: pd.Series | pd.DataFrame) -> None:
         self.base = base
         self.events = events
         self.name = f"{base.name}+earnings"
 
+    def _flags_for(self, prices: pd.Series) -> pd.Series:
+        if isinstance(self.events, pd.DataFrame):
+            ticker = prices.name
+            if ticker not in self.events.columns:
+                return pd.Series(0.0, index=prices.index)
+            return self.events[ticker]
+        return self.events
+
     def forecast(self, prices: pd.Series) -> pd.Series:
         base = self.base.forecast(prices)
-        flags = self.events.reindex(prices.index).fillna(0.0).to_numpy() > 0
+        flags = self._flags_for(prices).reindex(prices.index).fillna(0.0).to_numpy() > 0
 
         returns = np.log(prices).diff()
         # Row t forecasts the return from t to t+1, so the outcome that tests row
