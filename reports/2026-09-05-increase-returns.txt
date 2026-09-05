@@ -1,0 +1,72 @@
+RAISING THE TOP  (2004-11-18 to 2025-12-31)
+
+THE MENU THAT NEEDS NO FORECAST -- plain stock/bond mixes
+
+  mix                         CAGR    maxDD   $1000 ->
+  20% SPY / 80% bonds        +5.08%   -19.0% $    2,842
+  40% SPY / 60% bonds        +6.74%   -19.7% $    3,951
+  60% SPY / 40% bonds        +8.23%   -31.5% $    5,293
+  80% SPY / 20% bonds        +9.55%   -44.3% $    6,834
+  100% SPY / 0% bonds       +10.69%   -55.2% $    8,502
+
+  More stocks, more money, more pain. Nothing here breaks that link,
+  and the rest of this file is the search for something that does.
+
+
+LEVERAGE -- does a better ratio become more money?
+
+   financing  volTarget x2.5   plain 80% stocks   verdict
+        2.0% $        10,060 $            6,834     beats
+        3.0% $         8,172 $            6,834     beats
+        4.0% $         6,639 $            6,834     loses
+        5.0% $         5,393 $            6,834     loses
+        6.0% $         4,381 $            6,834     loses
+        8.0% $         2,891 $            6,834     loses
+
+  The entire advantage lives between 2% and 4%. Retail margin is 5-8%.
+
+
+AND BY PERIOD, at the realistic 5%
+
+  period        x2.5 CAGR  80/20 CAGR     gain
+  2004-2010       +11.52%      +4.07%   +7.45%
+  2011-2017        +7.51%     +11.73%   -4.22%
+  2018-2025        +6.36%     +11.80%   -5.44%
+
+  Wins the crisis, loses everything after it. The same shape as every
+  other result here, amplified -- because leverage amplifies.
+
+
+WHAT LEVERAGE COSTS ON THE WAY DOWN
+
+   gearing  worst day  worst month    maxDD
+      1.00     -2.15%       -7.45%   -14.7%
+      1.75     -3.78%      -13.35%   -27.0%
+      2.50     -5.40%      -19.26%   -37.7%
+
+
+EVERYTHING BUILT HERE vs THE PLAIN MIX CARRYING THE SAME DRAWDOWN
+
+  strategy                    maxDD     its $              plain mix  verdict
+  buy_and_hold               -26.5% $   5,152      60% stocks $5,293    loses
+  volatility_target          -14.7% $   3,940      20% stocks $2,842    BEATS
+  risk_parity                -22.2% $   3,889      60% stocks $5,293    loses
+  trend_scaled_volatility     -8.4% $   3,779      20% stocks $2,842    BEATS
+  volTarget x1.75            -27.0% $   4,730      60% stocks $5,293    loses
+  volTarget x2.5             -37.7% $   5,393      80% stocks $6,834    loses
+
+
+READING IT
+
+  Six ways to raise the top were tried. Predicting returns failed six
+  times already. Better risk forecasting improves the ratio and not the
+  money. Covariance-based construction does not beat its own diagonal.
+  Adding asset classes made every strategy worse. Leverage works only at
+  financing nobody is offered and only through 2008. Choosing higher-
+  returning assets works and is indistinguishable from hindsight -- QQQ
+  returned +14.84% and EFA +6.08% over this sample, and knowing that in
+  2004 is the entire trick.
+
+  What is left is the first table. The amount of money is set by how
+  much stock is held, and every strategy here is a way of choosing a
+  point on that line rather than a way of moving the line.
