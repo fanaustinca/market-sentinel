@@ -14,6 +14,20 @@ data/curated/
 !data_cache/
 !data_cache/*.parquet
 
+# The SEC event cache, committed for the same reason as the prices: every
+# event result is pinned to the filings it used, and EDGAR accessions are
+# immutable, so a committed copy is a permanent record rather than a snapshot
+# of a moving target.
+!data_cache/edgar/
+!data_cache/edgar/*.parquet
+
+# ...but not the raw submissions dumps. Unlike Yahoo, EDGAR never restates: an
+# accession number returns the same bytes forever, so the raw pages can be
+# refetched identically at any time and committing 9MB of them buys nothing.
+# The derived parquets above are the pinned artifacts.
+data_cache/edgar/submissions_*.json
+data_cache/edgar/company_tickers.json
+
 # The decision journal is the record, not a build artifact. Entries are
 # predictions made before the outcome was known, and they are only evidence if
 # they are committed at the time rather than reconstructed later.
