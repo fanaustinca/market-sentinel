@@ -312,6 +312,50 @@ halving the worst loss follows mechanically from stepping aside after a sustaine
 whether or not the timing edge is real, and for a project whose stated goal is capital preservation
 rather than return maximisation, it may be the more relevant number.
 
+### The tech sector, with news and events
+
+The request was to narrow to one sector and give the model event data. Both were done, and they
+answer in opposite directions. Events come from **SEC EDGAR** rather than a news feed: an accession
+number is immutable and stamped to the second, where a news archive can be rewritten after the fact
+and there is no way to detect that from inside a backtest. 5,275 8-Ks across 15 long-lived tech
+names, 1994–2026, of which 1,479 are earnings releases.
+
+**89% of those releases are filed at or after 16:00, once the session has closed.** So the day a
+naive backtest trades is a day whose move had already happened. With a *perfect* oracle:
+
+| alignment | Sharpe |
+|---|---|
+| to the filing date, as most backtests do it | **+5.27** (+210%/yr, and fiction) |
+| to the first day it could actually be traded | **+0.25**, barely clearing its own shuffled-date null |
+
+That +0.25 is the ceiling for anything that reads text. **FinBERT over 1,423 point-in-time press
+releases calls direction at 50.6%** — a coin flip — with tone/reaction correlation +0.039 (p = 0.14).
+The pipeline was verified working before that was believed: the most positive document it found is
+IBM's *"revenue growth in all segments"*, which moved +9.5%. FinBERT reads the release correctly;
+the market has simply finished pricing it.
+
+The same data says something much stronger about **risk**. The session containing a release carries
+6–10× the variance EWMA expects, because EWMA cannot know a release is coming. Telling it costs
+nothing:
+
+| arm | improved | sign test | individually significant |
+|---|---|---|---|
+| **known announcement date** | **15/15** | **p = 0.000031** | **15/15** |
+| guessed from quarterly cadence | 9/15 | p = 0.30 | 10/15 |
+| known date, on HAR not EWMA | 15/15 | p = 0.000031 | 15/15 |
+
+The cadence arm is the control that makes this readable: marking days *near* earnings does nothing,
+marking the right day does a great deal. **This is the most significant result in the project** —
+the return edge reached p = 0.145 and the drawdown result p = 0.0039 — and it runs on a date anyone
+can download for free, weeks ahead.
+
+Two things it does not claim. The forecast gain **does not become a strategy gain** (Sharpe +0.827 →
++0.815): volatility targeting expresses a bigger forecast by holding less, and an earnings move is
+symmetric, so it surrenders as much drift as variance while turnover rises. And the tech basket
+itself measures its own survivorship bias — **+19.08% a year against XLK's +9.30%**, nearly ten
+points of knowing which names were still worth typing in 2026, which is why strategies here are
+compared to each other on one basket and never to an index.
+
 ## The Reality Ladder
 
 Each rung adds exactly one element of reality, so any failure is attributable.

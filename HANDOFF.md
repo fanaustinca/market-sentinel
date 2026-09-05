@@ -43,6 +43,21 @@ The project has produced six findings that are worth more than the code:
    demeaned floors flatter every strategy; reshuffled *with drift preserved*, `absolute_momentum`'s
    timing edge is p = 0.13 on SPY and p = 0.145 pooled across eight countries.
 
+7. **The strongest result in the project is the earnings calendar, and it is about volatility.**
+   Marking the session that contains a scheduled earnings release and scaling the volatility
+   forecast on it improves QLIKE in **15 of 15 tech stocks, sign test p = 0.000031, every stock
+   individually Diebold-Mariano significant**, and it replicates on a second base model. The
+   control that makes it readable: guessing the date from quarterly cadence instead gives
+   9/15, p = 0.30. Marking days *near* earnings does nothing; marking the right day does a great
+   deal. The date is free and public weeks ahead (`data/news/live.py`); only the date is needed.
+
+8. **Reading the news is worth nothing, and this was measured rather than assumed.** 89% of
+   earnings releases are filed after the close, so a backtest aligned to the filing date trades a
+   move that already happened — a perfect oracle scores Sharpe **+5.27** that way and **+0.25**
+   when aligned honestly. That +0.25 is the ceiling for anything that reads text. FinBERT over
+   1,423 point-in-time press releases lands at **50.6% direction accuracy**, a coin flip, and its
+   pipeline was verified working three ways before that was believed.
+
 The best candidate is **`absolute_momentum`** — two parameters, checkable by hand. What survives
 scrutiny is not its return but its **drawdown**, and the reason matters: stepping aside after a
 sustained decline mechanically truncates a long fall whether or not the rule can anticipate one. It
@@ -54,7 +69,7 @@ comparison was too generous.
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt && pip install -e .
-pytest                                   # 329 tests
+pytest                                   # 365 tests
 python experiments/null_test.py          # the Phase 1 gate
 ```
 
