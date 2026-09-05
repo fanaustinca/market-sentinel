@@ -90,7 +90,8 @@ class BacktestResult:
 
     @property
     def annual_turnover(self) -> float:
-        years = len(self.turnover) / 252
+        periods = self.metadata.get("periods_per_year", 252)
+        years = len(self.turnover) / periods
         return float(self.turnover.sum() / years) if years > 0 else 0.0
 
 
@@ -112,6 +113,7 @@ def run_backtest(
     costs: CostModel | None = None,
     limits: RiskLimits | None = None,
     risk_free_rate: float = 0.0,
+    periods_per_year: int = 252,
 ) -> BacktestResult:
     """Run `strategy` over `data` and measure what happened.
 
@@ -120,6 +122,21 @@ def run_backtest(
             which is the right choice inside the sandbox: a positive rate would
             let a strategy earn money simply by holding cash, and the Null Test
             needs to measure skill, not interest.
+        periods_per_year: how many rows make a year. 252 for daily bars, 52 for
+            weekly, 12 for monthly.
+
+            This must match the data or every annualised figure is wrong by a
+            constant factor, and the failure is silent. Annualising monthly bars
+            as if they were daily inflates the reported Sharpe by
+            `sqrt(252/12)` = 4.6 -- which was exactly the bug
+            `experiments/sampling_frequency.py` surfaced: the null distribution
+            appeared to widen 4.5-fold as sampling got coarser, apparently
+            contradicting the theory that precision depends on calendar span
+            rather than bar count. Correcting the factor collapsed every
+            frequency onto the same number and the theory held after all.
+
+            Everything else in this project runs on daily bars, so the default is
+            right for all of it, and nothing previously measured is affected.
     """
     costs = costs or CostModel()
     limits = limits or RiskLimits()
@@ -144,7 +161,7 @@ def run_backtest(
     return_matrix = simple_returns.to_numpy(dtype=float)
     n_periods, n_assets = return_matrix.shape
 
-    daily_risk_free = risk_free_rate / 252
+    daily_risk_free = risk_free_rate / periods_per_year
     cost_rate = costs.one_way_cost
 
     equity = np.empty(n_periods)
@@ -215,7 +232,11 @@ def run_backtest(
         weights=pd.DataFrame(applied, index=index, columns=data.tickers),
         turnover=pd.Series(turnover_series, index=index, name="turnover"),
         costs=pd.Series(cost_series, index=index, name="cost"),
-        performance=summarise(returns),
+        performance=summarise(returns, periods_per_year=periods_per_year),
         breaker_days=breaker_days,
-        metadata={"strategy": strategy.name, "market": data.name},
+        metadata={
+            "strategy": strategy.name,
+            "market": data.name,
+            "periods_per_year": periods_per_year,
+        },
     )

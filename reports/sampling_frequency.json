@@ -1,0 +1,83 @@
+{
+  "generated": "2026-09-04",
+  "noise_floor_by_frequency": {
+    "frequencies": {
+      "daily": {
+        "bars": 8287,
+        "bars_per_year": 252,
+        "null_sd": 0.18099343872266374,
+        "floor_p95": 0.3320005095585527
+      },
+      "every 2 days": {
+        "bars": 4144,
+        "bars_per_year": 126,
+        "null_sd": 0.18662001567367412,
+        "floor_p95": 0.36933892455290407
+      },
+      "weekly": {
+        "bars": 1658,
+        "bars_per_year": 50,
+        "null_sd": 0.17300479611988445,
+        "floor_p95": 0.3302861406887752
+      },
+      "fortnightly": {
+        "bars": 829,
+        "bars_per_year": 25,
+        "null_sd": 0.16770543872497481,
+        "floor_p95": 0.30624820675978537
+      },
+      "monthly": {
+        "bars": 395,
+        "bars_per_year": 12,
+        "null_sd": 0.17955616493458845,
+        "floor_p95": 0.344295417189758
+      }
+    },
+    "years": 32.88492063492063,
+    "bar_ratio": 20.979746835443038,
+    "sd_spread": 0.018914576948699302
+  },
+  "volatility_precision": {
+    "1": {
+      "relative_error": 0.5941154993938758,
+      "improvement": 1.0
+    },
+    "2": {
+      "relative_error": 0.4597618110513087,
+      "improvement": 1.2922245500019867
+    },
+    "7": {
+      "relative_error": 0.26648286586343545,
+      "improvement": 2.2294697914962467
+    },
+    "13": {
+      "relative_error": 0.19359074541575955,
+      "improvement": 3.068925108573454
+    },
+    "26": {
+      "relative_error": 0.13620621770611654,
+      "improvement": 4.361882367776784
+    },
+    "78": {
+      "relative_error": 0.08051781748061185,
+      "improvement": 7.37868360052028
+    }
+  },
+  "data_availability": {
+    "1d": {
+      "bars": 8458,
+      "span_years": 33.596167008898014,
+      "floor_at_that_span": 0.28380564960626004
+    },
+    "1h": {
+      "bars": 5082,
+      "span_years": 2.9048596851471595,
+      "floor_at_that_span": 0.9651689070239303
+    },
+    "30m": {
+      "bars": 780,
+      "span_years": 0.2327173169062286,
+      "floor_at_that_span": 3.40997780094551
+    }
+  }
+}

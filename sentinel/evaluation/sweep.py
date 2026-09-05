@@ -25,9 +25,11 @@ from sentinel.strategies.base import Strategy
 
 
 def _run_one(args: tuple) -> tuple[float, float, float]:
-    strategy, generator, n_steps, seed, costs, limits, n_assets = args
+    strategy, generator, n_steps, seed, costs, limits, n_assets, periods = args
     scenario = generator.generate(n_steps=n_steps, n_assets=n_assets, seed=seed)
-    result = run_backtest(scenario.data, strategy, costs=costs, limits=limits)
+    result = run_backtest(
+        scenario.data, strategy, costs=costs, limits=limits, periods_per_year=periods
+    )
     performance = result.performance
     return performance.sharpe, performance.cagr, performance.max_drawdown
 
@@ -42,6 +44,7 @@ def sweep_markets(
     limits: RiskLimits | None = None,
     workers: int | None = None,
     n_assets: int = 1,
+    periods_per_year: int = 252,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Backtest `strategy` on `n_markets` markets from `generator`.
 
@@ -54,6 +57,9 @@ def sweep_markets(
             would be buried under sampling noise several times its size.
         limits: defaults to `UNLIMITED`. Measurement runs switch the risk layer
             off deliberately -- it would mask the behaviour being measured.
+        periods_per_year: rows per year in the generated markets. Must match the
+            sampling frequency or every annualised figure is off by a constant
+            factor, silently -- see `run_backtest`.
         n_assets: how many assets each generated market carries. Must match what
             the strategy expects: a multi-asset strategy given a one-asset market
             cannot find the tickers it trades, and a noise floor computed on the
@@ -70,7 +76,7 @@ def sweep_markets(
     limits = limits if limits is not None else UNLIMITED
 
     jobs = [
-        (strategy, generator, n_steps, seed_offset + i, costs, limits, n_assets)
+        (strategy, generator, n_steps, seed_offset + i, costs, limits, n_assets, periods_per_year)
         for i in range(n_markets)
     ]
 

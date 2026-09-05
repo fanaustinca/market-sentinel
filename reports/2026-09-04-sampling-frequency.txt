@@ -1,0 +1,66 @@
+
+WOULD HOURLY BARS HELP?
+
+  1. For predicting returns: no.
+
+     sampling            bars   null sd   floor p95
+     daily               8287     0.181       0.332
+     every 2 days        4144     0.187       0.369
+     weekly              1658     0.173       0.330
+     fortnightly          829     0.168       0.306
+     monthly              395     0.180       0.344
+
+     Bar count varies 21-fold across those rows. The spread of
+     the null distribution varies by 0.019.
+
+     The precision of an estimated Sharpe is set by how many years the
+     record covers, not by how finely those years are sliced. Slicing does
+     not create new recessions or new crashes; it re-describes the ones
+     already there. Going from daily to hourly multiplies the rows by seven
+     and the information about market cycles by roughly nothing.
+
+  2. For estimating risk: yes, substantially.
+
+     bars per day      error vs truth   improvement
+     1                          0.594         1.00x
+     2                          0.460         1.29x
+     7                          0.266         2.23x
+     13                         0.194         3.07x
+     26                         0.136         4.36x
+     78                         0.081         7.38x
+
+     A day's squared return is one very noisy look at that day's variance.
+     Chopping the day into M pieces improves the estimate by about sqrt(M),
+     which is the standard realised-volatility result.
+
+     This matters here more than it might elsewhere, because this project
+     has already established that direction is not forecastable and risk is.
+     Faster data helps the half that works and not the half that does not.
+
+  3. And then the practical problem, which settles it for now.
+
+     interval          bars      span   noise floor
+     1d                8458     33.6y          0.28
+     1h                5082      2.9y          0.97
+     30m                780      0.2y          3.41
+
+     Free hourly history is 2.9 years -- 5,082 bars against the daily
+     series' 8,458 over 34 years. Switching to hourly would mean
+     **fewer observations, over a sixteenth of the calendar span.**
+
+     The noise floor at 2.9 years is 0.97. Nothing this project has
+     measured comes close to that, so the answer would be 'cannot tell'
+     for every strategy, including the ones that work.
+
+  WHAT THIS DOES NOT RULE OUT
+
+  Buying intraday history, or recording it going forward from now, and
+  using it *only* to sharpen the volatility forecast while the trend signal
+  continues to run on daily bars. That is the version consistent with
+  everything measured here, and it is a real improvement rather than a
+  hopeful one -- section 2 says roughly how large.
+
+  It would not make the strategy trade faster. The drawdown result comes
+  from stepping aside after a *sustained* decline, which is a slow signal
+  by construction. A sharper volatility estimate changes position size, not
+  trading frequency.
