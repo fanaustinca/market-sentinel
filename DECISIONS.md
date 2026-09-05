@@ -871,3 +871,97 @@ was pure noise — three models tied to four decimal places will "rank" in arbit
 compares pairwise with a paired t-test and flags only *reversals*, where one measure says A is
 significantly better and the other says B is. One measure finding a difference the other cannot is a
 difference in power, not a contradiction.
+
+---
+
+## 2026-09-04 — A silent multi-asset bug: volatility sizing was single-asset all along
+
+**Decision:** `VolatilityTarget` now forecasts and sizes every asset separately, and
+`TrendScaledVolatility` checks that its two components produced matching columns instead of relying
+on array shapes lining up.
+
+**What was wrong.** `VolatilityTarget.compute_weights` returned a single column — always
+`tickers[0]`. On a six-asset universe anything multiplying it against a multi-asset weight matrix got
+**numpy broadcasting rather than an error**, so a portfolio of equities, small caps, international,
+two treasury funds and gold was sized entirely by the S&P's volatility. Gold does not have equity's
+volatility; sizing it as though it did is not a conservative approximation, it is a different
+strategy.
+
+Nothing failed. No shape mismatch was raised, the weights summed to something sensible, no leverage
+appeared, and the reported Sharpe and drawdown were entirely plausible. It was caught only because a
+CAGR of 3.91% alongside a −8.6% drawdown looked oddly extreme and was worth a second look — not by
+any test.
+
+**And a second bug underneath it.** Fixing the first exposed the fact that both components are
+complete allocators, and both divide their conviction across the assets available. Multiplying their
+raw weights divides twice, and that version returned 0.43% a year against buy-and-hold's 8.09% — low
+enough to notice, but not obviously a bug rather than a very conservative strategy. The composition
+now multiplies the components' *aggregate* exposures and takes the split across assets from the
+elementwise product. For a single asset it is exactly `trend x volatility` and nothing changes.
+
+**What was affected.** Only multi-asset results, and only in the rung-2 universe section. Every
+single-asset number — all of `more_paths`, the eight-country replication, the whole SPY table, and
+the Null Test — was computed on one asset at a time and is unchanged. Verified by re-running all
+three: the null gate still passes 39 of 39 cells, and the replication drawdown result is identical
+at 8 of 8, p = 0.0039.
+
+**Corrected multi-asset result**, 2004-2025, six assets:
+
+    strategy                      Sharpe    floor     CAGR    maxDD
+    buy_and_hold                  +0.805   +0.469   +7.56%   -24.5%
+    trend_scaled_volatility       +0.843   +0.426   +3.89%    -8.5%
+
+The composite now has the highest Sharpe in the table and clears its floor, with a max drawdown a
+third of buy-and-hold's — while giving up half the return. Same shape as everywhere else in this
+project: the risk result is strong and the return result is not.
+
+**The lesson worth keeping.** Both of these were in the *composition* of correct components rather
+than in any component itself, and neither could have been caught by the causality detector, the Null
+Test, or any existing check — all of them ran happily on the broken version and reported passes.
+Silent broadcasting between array shapes is a whole class of bug this project had no defence against
+until now. `tests/test_composite.py::TestMultiAssetSizing` is that defence.
+
+---
+
+## 2026-09-04 — The control nobody runs: is timing better than simply holding less?
+
+**Decision:** Recorded because it is the first question a sceptic should ask and it had never been
+asked here.
+
+A strategy that holds less of a risky asset will naturally show lower return and lower drawdown. So
+before crediting the *timing* for anything, it has to beat a constant allocation matched to the same
+risk. On 33 years of SPY:
+
+    strategy                      CAGR      vol   maxDD
+    buy_and_hold                +9.30%    15.4%  -51.0%
+    always 57% stocks           +5.95%     9.9%  -32.3%
+    trend_scaled_volatility     +6.48%     9.0%  -18.0%
+
+It wins on all three: more return, less volatility, and a drawdown 14 points shallower than the
+constant allocation at matched risk. So the timing is doing something that holding less does not,
+which is worth knowing — the alternative explanation was that this whole project had built an
+elaborate way to own fewer shares.
+
+That is one path, and the timing edge across eight countries remains p = 0.145. The drawdown gap is
+the part that replicates.
+
+---
+
+## 2026-09-04 — Why this is not a free lunch, stated so it is not mistaken for one
+
+**Decision:** The strategy is a **trade**, not an edge, and every summary should say so.
+
+Measured on SPY: it trailed buy-and-hold **continuously for 16.7 years**, from April 2009 to the
+present, falling from 1.17x the index to 0.42x. Through the 2009-2021 bull market it returned 7.6% a
+year against the index's 16.0%.
+
+That is the honest answer to "if this works, why doesn't everyone do it". Trend following and
+volatility targeting are neither obscure nor secret — they are standard institutional practice and
+appear throughout the academic literature. Nothing here was invented; it was rebuilt and measured.
+What stops people using them is that almost nobody holds a strategy through sixteen consecutive years
+of watching a friend who did nothing get richer.
+
+And structurally there is nothing to arbitrage away. This is not an inefficiency that would close if
+more people knew about it. It is an exchange of return for smaller drawdowns, available to anyone,
+which most people decline because they want the bigger number. Any future summary that presents it as
+a way to make more money is wrong on the project's own evidence.

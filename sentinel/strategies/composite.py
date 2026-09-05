@@ -59,6 +59,10 @@ class TrendScaledVolatility(Strategy):
             band is applied once here to the combined target -- applying it twice
             would produce a strategy whose turnover depends on the order the two
             components happened to be composed in.
+
+            Both components are complete allocators and both divide their
+            conviction across the assets available, so their aggregate exposures
+            are multiplied rather than their raw weights. See `compute_weights`.
         band: no-trade band on the final position.
     """
 
@@ -77,16 +81,52 @@ class TrendScaledVolatility(Strategy):
         self.band = float(band)
 
     def compute_weights(self, data: MarketData) -> pd.DataFrame:
-        trend_weights = self.trend.compute_weights(data).to_numpy(dtype=float)
-        volatility_weights = self.volatility.compute_weights(data).to_numpy(dtype=float)
+        trend_frame = self.trend.compute_weights(data)
+        volatility_frame = self.volatility.compute_weights(data)
+
+        # Checked rather than assumed. When the volatility component returned a
+        # single column and the trend component returned six, numpy broadcast the
+        # one across the six without complaint, and a portfolio of equities,
+        # bonds and gold was sized entirely by SPY's volatility. Nothing failed
+        # and every number looked reasonable.
+        if list(trend_frame.columns) != list(volatility_frame.columns):
+            raise ValueError(
+                f"{self.trend.name} produced columns {list(trend_frame.columns)} and "
+                f"{self.volatility.name} produced {list(volatility_frame.columns)}; "
+                "the two must agree, or one is silently broadcast over the other"
+            )
+
+        trend_weights = trend_frame.to_numpy(dtype=float)
+        volatility_weights = volatility_frame.to_numpy(dtype=float)
 
         # Both components produce cash during their own warmups, and cash is the
         # correct answer for "not enough is known yet". Multiplying preserves
         # that: the combination is invested only once both have a view.
-        desired = np.nan_to_num(trend_weights, nan=0.0) * np.nan_to_num(
-            volatility_weights, nan=0.0
+        trend_weights = np.nan_to_num(trend_weights, nan=0.0)
+        volatility_weights = np.nan_to_num(volatility_weights, nan=0.0)
+        product = trend_weights * volatility_weights
+
+        # Each component is a complete allocator, so on a six-asset universe both
+        # already divide their conviction across the six. Multiplying them
+        # directly divides twice, and the portfolio ends up at a sixth of the
+        # exposure either component intended -- which showed up as a CAGR of
+        # 0.43% against buy-and-hold's 8.09%, a number low enough to notice but
+        # not obviously wrong.
+        #
+        # So the *aggregate* views multiply and the *composition across assets*
+        # comes from the elementwise product. If trend wants to be fully invested
+        # and volatility wants half exposure, the result is half exposure, spread
+        # in proportion to where both agree. For a single asset this is exactly
+        # `trend x volatility` and nothing changes.
+        target_gross = trend_weights.sum(axis=1) * volatility_weights.sum(axis=1)
+        product_gross = product.sum(axis=1)
+        scale = np.divide(
+            target_gross,
+            product_gross,
+            out=np.zeros_like(target_gross),
+            where=product_gross > 1e-12,
         )
-        desired = np.clip(desired, 0.0, 1.0)
+        desired = np.clip(product * scale[:, None], 0.0, 1.0)
 
         applied = np.zeros_like(desired)
         held = np.zeros(desired.shape[1])

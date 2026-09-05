@@ -119,22 +119,56 @@ class VolatilityTarget(Strategy):
         return self.forecaster.forecast(data.prices[ticker]).to_numpy(dtype=float)
 
     def compute_weights(self, data: MarketData) -> pd.DataFrame:
-        ticker = data.tickers[0]
-        volatility = self.forecast_volatility(data, ticker)
+        """Size every asset to its own risk, then cap the total.
 
-        safe = np.maximum(volatility, self.floor_volatility)
-        desired = np.clip(self.target_volatility / safe, 0.0, self.max_weight)
-        # Warmup rows have no forecast. Cash, because nothing is known yet.
-        desired = np.where(np.isfinite(volatility), desired, 0.0)
+        Each asset is forecast separately and sized by *its own* volatility,
+        which is the only version that means anything: gold and long treasuries
+        do not have equity's volatility, and sizing them as if they did is not a
+        conservative approximation, it is a different strategy.
 
-        weights = np.empty(len(desired))
-        held = 0.0
-        for t, target in enumerate(desired):
-            if abs(target - held) > self.band:
-                held = float(target)
-            weights[t] = held
+        This was a real bug and a silent one. The strategy previously returned a
+        single column -- always `tickers[0]` -- and anything multiplying it
+        against a multi-asset weight matrix got numpy broadcasting instead of an
+        error, so a six-asset portfolio was sized entirely by SPY's volatility.
+        Every number it produced was plausible. `TrendScaledVolatility` now
+        checks the columns match rather than relying on shapes lining up.
 
-        return pd.DataFrame({ticker: weights}, index=data.prices.index)
+        The gross position is capped at `max_weight`, so a basket of quiet assets
+        cannot add up to leverage. That cap binds often, which is intended: this
+        project does not borrow.
+        """
+        tickers = data.tickers
+        rows = len(data.prices)
+
+        desired = np.zeros((rows, len(tickers)))
+        for column, ticker in enumerate(tickers):
+            volatility = self.forecast_volatility(data, ticker)
+            safe = np.maximum(volatility, self.floor_volatility)
+            sized = np.clip(self.target_volatility / safe, 0.0, self.max_weight)
+            # Warmup rows have no forecast. Cash, because nothing is known yet.
+            desired[:, column] = np.where(np.isfinite(volatility), sized, 0.0)
+
+        if len(tickers) > 1:
+            # Split the risk budget across assets rather than giving each the
+            # full target, or the portfolio runs at sqrt(n) times the intended
+            # risk whenever the assets move together -- which is exactly when it
+            # matters. Correlations are not estimated here: this is a sizing
+            # rule, not an optimiser, and a covariance matrix estimated from the
+            # same data would add far more failure modes than it removes.
+            desired = desired / len(tickers)
+
+        gross = desired.sum(axis=1, keepdims=True)
+        excess = gross > self.max_weight
+        desired = np.where(excess, desired * (self.max_weight / np.maximum(gross, 1e-12)), desired)
+
+        applied = np.zeros_like(desired)
+        held = np.zeros(len(tickers))
+        for t in range(rows):
+            if np.abs(desired[t] - held).sum() > self.band:
+                held = desired[t].copy()
+            applied[t] = held
+
+        return pd.DataFrame(applied, index=data.prices.index, columns=tickers)
 
 
 class RegimeVolatilityTarget(VolatilityTarget):

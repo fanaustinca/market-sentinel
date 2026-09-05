@@ -58,6 +58,23 @@
       "beats_floor": true,
       "seconds": 1.3
     },
+    "ensemble_momentum": {
+      "sharpe": 0.7366872155085913,
+      "cagr": 0.0780652302759346,
+      "volatility": 0.1103332312085052,
+      "max_drawdown": -0.24146062372799626,
+      "max_drawdown_days": 1367,
+      "turnover": 2.7851593742579768,
+      "breaker_days": 220,
+      "bootstrap_floor": {
+        "p95": 0.3575443890306738,
+        "p99": 0.4394193968045833,
+        "mean": 0.05868255469289023,
+        "sd": 0.18586453282292803
+      },
+      "beats_floor": true,
+      "seconds": 1.3
+    },
     "short_momentum": {
       "sharpe": 0.007922913227087486,
       "cagr": -0.00493615971016792,
@@ -75,6 +92,23 @@
       "beats_floor": false,
       "seconds": 1.3
     },
+    "trend_scaled_volatility": {
+      "sharpe": 0.7433018889188776,
+      "cagr": 0.06475999242055974,
+      "volatility": 0.08987678612098136,
+      "max_drawdown": -0.17963606154461986,
+      "max_drawdown_days": 1164,
+      "turnover": 2.8744672789484635,
+      "breaker_days": 66,
+      "bootstrap_floor": {
+        "p95": 0.3270940086191879,
+        "p99": 0.4207847410605128,
+        "mean": 0.048178283653900804,
+        "sd": 0.17881897030484506
+      },
+      "beats_floor": true,
+      "seconds": 1.6
+    },
     "regime_aware": {
       "sharpe": 0.5036167164543447,
       "cagr": 0.041046400955597306,
@@ -90,7 +124,7 @@
         "sd": 0.18341170964825795
       },
       "beats_floor": true,
-      "seconds": 343.4
+      "seconds": 327.0
     },
     "regime_gate": {
       "sharpe": 0.4525528948635954,
@@ -107,24 +141,24 @@
         "sd": 0.18237255312588724
       },
       "beats_floor": true,
-      "seconds": 326.3
+      "seconds": 318.6
     },
     "volatility_target": {
-      "sharpe": 0.7312745320992841,
-      "cagr": 0.07925079801748014,
-      "volatility": 0.11306765979327484,
-      "max_drawdown": -0.3938305898975799,
-      "max_drawdown_days": 1578,
-      "turnover": 2.2120568487162457,
-      "breaker_days": 264,
+      "sharpe": 0.7426578829826445,
+      "cagr": 0.07781033627576361,
+      "volatility": 0.10891429430787056,
+      "max_drawdown": -0.32400999931642027,
+      "max_drawdown_days": 1423,
+      "turnover": 1.782450206517543,
+      "breaker_days": 242,
       "bootstrap_floor": {
-        "p95": 0.38359920088282967,
-        "p99": 0.4460085040495132,
-        "mean": 0.06641420770493472,
-        "sd": 0.17773812418821577
+        "p95": 0.3725248943988317,
+        "p99": 0.448584459052715,
+        "mean": 0.06937516426261006,
+        "sd": 0.17787475716529816
       },
       "beats_floor": true,
-      "seconds": 1.3
+      "seconds": 1.4
     },
     "regime_volatility_target": {
       "sharpe": 0.5827247780156682,
@@ -141,7 +175,7 @@
         "sd": 0.1800333198087273
       },
       "beats_floor": true,
-      "seconds": 333.0
+      "seconds": 318.5
     },
     "ai_walkforward": {
       "sharpe": 0.055129576756693666,
@@ -158,7 +192,7 @@
         "sd": 0.16077142866644367
       },
       "beats_floor": false,
-      "seconds": 175.3
+      "seconds": 192.7
     },
     "ai_walkforward_classifier": {
       "sharpe": 0.1432273301884855,
@@ -175,7 +209,7 @@
         "sd": 0.16168732041702177
       },
       "beats_floor": true,
-      "seconds": 185.9
+      "seconds": 185.2
     }
   },
   "crises": {
@@ -183,10 +217,12 @@
       "buy_and_hold": -0.4530256467036792,
       "always_cash": 0.0,
       "absolute_momentum": -0.1521168595654564,
+      "ensemble_momentum": -0.16160911261417643,
       "short_momentum": -0.32905869095887674,
+      "trend_scaled_volatility": -0.11824251048835621,
       "regime_aware": -0.3144760417535276,
       "regime_gate": -0.42862201462313576,
-      "volatility_target": -0.37774690256232013,
+      "volatility_target": -0.32151023807205203,
       "regime_volatility_target": -0.2800525849167025,
       "ai_walkforward": -0.21883490163096975,
       "ai_walkforward_classifier": -0.11658270142798322
@@ -195,10 +231,12 @@
       "buy_and_hold": -0.4830836263502173,
       "always_cash": 0.0,
       "absolute_momentum": -0.14320652805515943,
+      "ensemble_momentum": -0.12033150958608696,
       "short_momentum": -0.2678684885217494,
+      "trend_scaled_volatility": -0.08699152099883156,
       "regime_aware": -0.08927024323442667,
       "regime_gate": -0.10665579508532608,
-      "volatility_target": -0.2679374532505908,
+      "volatility_target": -0.2692891181476794,
       "regime_volatility_target": -0.3334532581752596,
       "ai_walkforward": -0.10161562378949263,
       "ai_walkforward_classifier": -0.09948757238959671
@@ -207,10 +245,12 @@
       "buy_and_hold": -0.1211169302983921,
       "always_cash": 0.0,
       "absolute_momentum": -0.12111693029839221,
+      "ensemble_momentum": -0.12111693029839199,
       "short_momentum": -0.12839849050310914,
+      "trend_scaled_volatility": -0.11075376816062299,
       "regime_aware": -0.041161907293754796,
       "regime_gate": -0.047529818329420714,
-      "volatility_target": -0.12667945003952508,
+      "volatility_target": -0.1275054814131379,
       "regime_volatility_target": -0.12962653168769966,
       "ai_walkforward": -0.030704304819012096,
       "ai_walkforward_classifier": -0.04007783899590012
@@ -219,10 +259,12 @@
       "buy_and_hold": -0.22476570998205492,
       "always_cash": 0.0,
       "absolute_momentum": -0.2182420695494125,
+      "ensemble_momentum": -0.15078500257002037,
       "short_momentum": -0.11574793953963958,
+      "trend_scaled_volatility": -0.1127670153884116,
       "regime_aware": -0.014804910720899511,
       "regime_gate": -0.02261856170049159,
-      "volatility_target": -0.14131101656900213,
+      "volatility_target": -0.14328736773637818,
       "regime_volatility_target": -0.11300101328152468,
       "ai_walkforward": -0.018717380012606588,
       "ai_walkforward_classifier": -0.04203697198331613
@@ -321,6 +363,22 @@
         },
         "beats_floor": true
       },
+      "trend_scaled_volatility": {
+        "sharpe": 0.8431008508225452,
+        "cagr": 0.038871796180433904,
+        "volatility": 0.04651994872676583,
+        "max_drawdown": -0.08453299470113373,
+        "max_drawdown_days": 598,
+        "turnover": 3.2354511361670135,
+        "breaker_days": 0,
+        "bootstrap_floor": {
+          "p95": 0.4263061047599065,
+          "p99": 0.571990403679876,
+          "mean": 0.053068827999484834,
+          "sd": 0.23077579760432856
+        },
+        "beats_floor": true
+      },
       "rotate_SPY+IWM+EFA_to_IEF+GLD_mom": {
         "sharpe": 0.3939478988328119,
         "cagr": 0.041815596309476843,
@@ -346,6 +404,7 @@
         "rotate_SPY_to_cash": -0.0773941902404991,
         "rotate_SPY_to_IEF": 0.00289601923479732,
         "rotate_SPY_to_IEF+GLD": 0.03448706490551223,
+        "trend_scaled_volatility": 0.016393376331678366,
         "rotate_SPY+IWM+EFA_to_IEF+GLD_mom": 0.04123762184541424
       },
       "covid crash": {
@@ -354,6 +413,7 @@
         "rotate_SPY_to_cash": -0.05867916223266112,
         "rotate_SPY_to_IEF": -0.021544774093468333,
         "rotate_SPY_to_IEF+GLD": -0.10057403289634681,
+        "trend_scaled_volatility": -0.03168731074524744,
         "rotate_SPY+IWM+EFA_to_IEF+GLD_mom": -0.121479759890609
       },
       "2022 bear": {
@@ -362,6 +422,7 @@
         "rotate_SPY_to_cash": -0.038799727106547,
         "rotate_SPY_to_IEF": -0.14132860530079183,
         "rotate_SPY_to_IEF+GLD": -0.17707766124033364,
+        "trend_scaled_volatility": -0.04549759192750247,
         "rotate_SPY+IWM+EFA_to_IEF+GLD_mom": -0.16517849643996818
       }
     }

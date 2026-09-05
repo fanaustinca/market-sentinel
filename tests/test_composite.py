@@ -22,6 +22,7 @@ from sentinel.evaluation.causality import check_causality
 from sentinel.evaluation.null_test import run_null_test
 from sentinel.sandbox.generators.gbm import GBMGenerator
 from sentinel.sandbox.generators.regime import RegimeSwitchingGenerator
+from sentinel.strategies.base import Strategy
 from sentinel.strategies.baseline import AbsoluteMomentum, BuyAndHold, EnsembleMomentum
 from sentinel.strategies.composite import TrendScaledVolatility
 from sentinel.strategies.volatility import VolatilityTarget
@@ -185,3 +186,104 @@ class TestTrendScaledVolatility:
     def test_accepts_the_ensemble_as_its_trend(self, trending) -> None:
         strategy = TrendScaledVolatility(trend=EnsembleMomentum())
         assert check_causality(strategy, trending).is_causal
+
+
+class TestMultiAssetSizing:
+    """The bug here was silent, plausible, and produced a whole report.
+
+    `VolatilityTarget` used to return a single column -- always `tickers[0]` --
+    and anything multiplying it against a multi-asset weight matrix got numpy
+    broadcasting rather than an error. A six-asset portfolio of equities, bonds
+    and gold was therefore sized entirely by SPY's volatility. Nothing failed,
+    no shape mismatch was raised, and the resulting Sharpe and drawdown looked
+    entirely reasonable.
+
+    Fixing it exposed a second one immediately: both components are complete
+    allocators and both divide their conviction across the available assets, so
+    multiplying their raw weights divides twice. That version returned 0.43% a
+    year against buy-and-hold's 8.09% -- low enough to notice, but not obviously
+    a bug rather than a conservative strategy.
+    """
+
+    @pytest.fixture(scope="class")
+    @classmethod
+    def panel(cls):
+        return GBMGenerator(mu=0.08, sigma=0.16).generate(
+            n_steps=2000, n_assets=4, seed=77
+        ).data
+
+    def test_volatility_target_sizes_every_asset(self, panel) -> None:
+        weights = VolatilityTarget().compute_weights(panel)
+        assert list(weights.columns) == panel.tickers
+        assert weights.shape[1] == 4
+
+    def test_each_asset_is_sized_by_its_own_volatility(self) -> None:
+        """Gold does not have equity's volatility, and sizing it as though it
+        did is not a conservative approximation -- it is a different strategy."""
+        from sentinel.sandbox.market import MarketData
+        import pandas as pd
+
+        rng = np.random.default_rng(3)
+        n = 1500
+        index = pd.bdate_range("2000-01-03", periods=n, name="date")
+        # One calm asset and one wild one, same drift.
+        calm = 100 * np.exp(np.cumsum(rng.normal(0, 0.004, n)))
+        wild = 100 * np.exp(np.cumsum(rng.normal(0, 0.020, n)))
+        data = MarketData(prices=pd.DataFrame({"CALM": calm, "WILD": wild}, index=index))
+
+        weights = VolatilityTarget(band=0.0).compute_weights(data).iloc[200:]
+        assert weights["CALM"].mean() > 2 * weights["WILD"].mean()
+
+    def test_the_composite_refuses_mismatched_columns(self, panel) -> None:
+        """Rather than letting numpy broadcast one column over four."""
+
+        class SingleColumn(Strategy):
+            name = "single_column"
+
+            def compute_weights(self, data):
+                import pandas as pd
+
+                return pd.DataFrame(
+                    {data.tickers[0]: np.ones(len(data.prices))}, index=data.prices.index
+                )
+
+        composite = TrendScaledVolatility()
+        composite.volatility = SingleColumn()
+        with pytest.raises(ValueError, match="silently broadcast"):
+            composite.compute_weights(panel)
+
+    def test_the_composite_does_not_divide_the_exposure_twice(self, panel) -> None:
+        """Aggregate views multiply; the split across assets comes from the product.
+
+        If trend wants to be fully invested and volatility wants half exposure,
+        the answer is half exposure -- not a twenty-fourth of it.
+        """
+        composite = TrendScaledVolatility(trend=EnsembleMomentum(), band=0.0)
+        combined = composite.compute_weights(panel).to_numpy().sum(axis=1)
+        trend = composite.trend.compute_weights(panel).to_numpy().sum(axis=1)
+        volatility = composite.volatility.compute_weights(panel).to_numpy().sum(axis=1)
+
+        settled = slice(400, None)
+        np.testing.assert_allclose(
+            combined[settled], (trend * volatility)[settled], atol=1e-9
+        )
+
+    def test_a_single_asset_is_unaffected_by_the_multi_asset_rule(self) -> None:
+        """The regression guard. For one asset the composition is exactly
+        trend x volatility, as it always was."""
+        data = GBMGenerator(mu=0.08).generate(n_steps=1600, n_assets=1, seed=5).data
+        composite = TrendScaledVolatility(band=0.0)
+        combined = composite.compute_weights(data).to_numpy().ravel()
+        trend = composite.trend.compute_weights(data).to_numpy().ravel()
+        volatility = composite.volatility.compute_weights(data).to_numpy().ravel()
+        np.testing.assert_allclose(combined, trend * volatility, atol=1e-9)
+
+    def test_a_basket_of_quiet_assets_cannot_become_leverage(self, panel) -> None:
+        """Six assets each sized to a 12% target must not add up to 72%."""
+        weights = VolatilityTarget(target_volatility=0.30).compute_weights(panel)
+        assert weights.to_numpy().sum(axis=1).max() <= 1.0 + 1e-9
+
+    def test_stays_causal_across_assets(self, panel) -> None:
+        for strategy in (VolatilityTarget(), TrendScaledVolatility(trend=EnsembleMomentum())):
+            report = check_causality(strategy, panel)
+            assert report.is_causal, str(report)
