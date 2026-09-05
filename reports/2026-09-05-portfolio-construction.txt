@@ -1,0 +1,89 @@
+MULTI-ASSET PANEL  2004-11-18 to 2025-12-31
+  6 assets, 21.1 years, fingerprint 740afdb2cbac
+  resampled into 200 histories, blocks of whole rows
+
+SHARPE ACROSS RESAMPLED HISTORIES
+
+  strategy                      mean      sd   worst    best
+  volatility_target_8pct      +0.915   0.201  +0.302  +1.482
+  volatility_target           +0.907   0.202  +0.272  +1.485
+  risk_parity                 +0.887   0.211  +0.310  +1.496
+  minimum_variance            +0.845   0.223  +0.254  +1.513
+  buy_and_hold                +0.782   0.214  +0.140  +1.317
+  trend_scaled_volatility     +0.733   0.209  +0.183  +1.198
+
+PAIRED AGAINST BUY-AND-HOLD  (same path for every strategy)
+
+  strategy                      edge  beats it       t          p
+  volatility_target_8pct      +0.132     89.5%  +17.19   3.28e-41
+  volatility_target           +0.124     90.5%  +18.46   5.32e-45
+  risk_parity                 +0.105     88.0%  +15.97   1.66e-37
+  minimum_variance            +0.063     61.0%   +4.85   2.53e-06
+  trend_scaled_volatility     -0.049     35.0%   -5.13   6.73e-07
+
+PAIRED AGAINST THE INCUMBENT (volatility_target)
+
+  strategy                      edge  beats it       t          p
+  volatility_target_8pct      +0.008     58.5%   +3.02   2.86e-03
+  risk_parity                 -0.019     36.0%   -3.82   1.79e-04
+  minimum_variance            -0.061     29.0%   -5.76   3.11e-08
+  buy_and_hold                -0.124      9.5%  -18.46   5.32e-45
+  trend_scaled_volatility     -0.173      8.5%  -20.79   8.73e-52
+
+
+DOES IT SURVIVE CHANGING THE ASSETS?
+
+  universe                       hold  volTarget     edge
+  6 base                       +0.788     +0.907   +0.119
+  9 wider (+EEM,VNQ,LQD)       +0.669     +0.828   +0.160
+  5 no gold                    +0.724     +0.840   +0.116
+  4 minimal                    +0.802     +0.934   +0.132
+  8 with sectors               +0.807     +1.008   +0.201
+  positive in 5/5, median edge +0.132
+
+
+DOES IT SURVIVE CHANGING THE PERIOD?
+
+  period                         hold  volTarget     edge
+  2004-2010 (the crisis)       +0.728     +1.036   +0.308
+  2011-2017                    +0.957     +0.999   +0.043
+  2018-2025                    +0.761     +0.735   -0.027
+
+
+READING IT
+
+  The bootstrap edge is real and it is not a return edge. Volatility
+  targeting beats holding on 90% of resampled histories, survives
+  every change of asset universe tried, and needs no return forecast --
+  which is why it succeeds where six previous attempts did not.
+
+  But the period split is the number to read honestly. The whole edge
+  is 2008: +0.308 through the crisis, +0.043 in the middle years, and
+  -0.027 since 2018. It is crisis insurance, and the bootstrap scores
+  it well because it resamples a history that contains a crisis.
+
+  Out of sample across eight national indices the edge falls to +0.041
+  and stops being significant (6/8 markets, p = 0.14) -- while drawdown
+  improves in 8 of 8. That is the same sentence this project has
+  written from six directions now: the risk result replicates, the
+  return result does not.
+
+
+PHASE 1 GATE -- these strategies must NOT profit on signal-free markets
+  120 markets x 2520 days x 6 assets, per cell. Risk layer off.
+
+  strategy             market    meanSharpe        t  profit%  verdict
+  buy_and_hold         gbm           -0.031    -0.97    42.5%  PASS
+  buy_and_hold         jump          -0.046    -1.57    39.2%  PASS
+  buy_and_hold         heston        -0.014    -0.42    47.5%  PASS
+  volatility_target    gbm           -0.038    -1.23    40.8%  PASS
+  volatility_target    jump          -0.068    -2.38    38.3%  PASS
+  volatility_target    heston        -0.026    -0.82    40.8%  PASS
+  risk_parity          gbm           -0.038    -1.21    42.5%  PASS
+  risk_parity          jump          -0.055    -1.87    35.0%  PASS
+  risk_parity          heston        -0.023    -0.73    45.0%  PASS
+  minimum_variance     gbm           -0.051    -1.66    44.2%  PASS
+  minimum_variance     jump          -0.065    -2.24    40.8%  PASS
+  minimum_variance     heston        -0.038    -1.28    42.5%  PASS
+
+12/12 cells pass
