@@ -1,0 +1,72 @@
+MARKET-NEUTRAL  99 US large caps, 1995-01-03 to 2025-12-31 (31.0 years)
+
+  Survivorship-biased: every name survived to 2026. This matters more
+  here than anywhere else in the project, because a reversal signal buys
+  losers, and in a survivor-only universe every loser eventually came
+  back. The concentration test below is the check on that.
+
+  strategy                                 Sharpe      CAGR    maxDD
+  equal-weight hold (not comparable)       +0.930   +16.49%   -47.4%
+  momentum q10                             -0.068    -1.85%   -68.3%
+  momentum q20                             -0.067    -1.19%   -57.6%
+  reversal q10                             +0.338    +3.43%   -30.1%
+  reversal q20                             +0.269    +2.02%   -20.9%
+  low_volatility q10                       -0.523   -10.13%   -96.9%
+  low_volatility q20                       -0.550    -8.02%   -93.1%
+  momentum+reversal q10                    +0.309    +2.83%   -36.1%
+  momentum+reversal q20                    +0.275    +1.92%   -34.5%
+  momentum+reversal+low_volatility q10     -0.135    -2.10%   -57.6%
+  momentum+reversal+low_volatility q20     -0.248    -2.60%   -61.3%
+
+
+COSTS ARE THE BINDING CONSTRAINT -- this book turns over 25x a year
+
+   one-way cost   Sharpe      CAGR
+           0bps   +0.442    +4.74%
+           2bps   +0.401    +4.21%
+           5bps   +0.338    +3.43%
+          10bps   +0.235    +2.14%
+          15bps   +0.131    +0.86%
+          20bps   +0.027    -0.41%
+          30bps   -0.178    -2.89%
+
+  Breakeven near 20bps one-way. That is the whole result: this is not
+  a question about whether the effect exists, but about whether it can
+  be reached through the spread. It is why the effect survives at all --
+  short-term reversal is payment for providing liquidity to forced
+  sellers, and anyone crossing the spread to get it is paying the very
+  premium they are trying to earn.
+
+
+DOES IT HOLD UP? the checks that killed everything else
+
+  period           Sharpe      CAGR
+  1995-2004        +0.281    +3.09%
+  2005-2014        +0.282    +2.71%
+  2015-2025        +0.330    +2.94%
+  Stable across three decades, which nothing else here managed.
+
+    quantile each side   Sharpe   where the edge lives
+                    5%   +0.187
+                   10%   +0.338
+                   20%   +0.269
+                   30%   +0.359
+                   40%   +0.344
+  Weakest in the extreme 5% and strongest across the broad middle. If
+  this were survivorship -- beaten-down survivors bouncing back -- it
+  would be concentrated in the extreme tail. It is not, which is
+  reassuring rather than conclusive.
+
+
+READING IT
+
+  Short-term reversal is the only thing in this project to pass every
+  structural check: stable across three decades, positive in 18 of 20
+  parameter settings, and 6/6 on the Phase 1 null gate. Momentum and the
+  low-volatility anomaly both fail outright in this form.
+
+  It is also not obviously tradeable. Sharpe +0.34 at 5bps and zero at
+  20bps, on a book turning over 25 times a year across 99 names, with a
+  short side that must be borrowed. The edge and the cost of reaching it
+  are the same order of magnitude, which is what an effect looks like
+  when the market has already competed it down to the cost of capture.
