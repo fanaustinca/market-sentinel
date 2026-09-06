@@ -1,0 +1,37 @@
+UNIVERSE 109 US large caps, 1995-01-01 onward
+  Survivorship-biased by construction: every name is one still listed in
+  2026. That inflates returns and is irrelevant here -- the question is
+  whether tomorrow's direction is predictable, not what these stocks did.
+
+  805,645 stock-days, 109 tickers
+  train: before 2016-01-01   test: after, 273,917 rows
+  days that went up: 51.0%
+
+DOES MORE DATA HELP? training set size vs out-of-sample accuracy
+
+   stocks   train rows  in-sample  out-sample  vs guessing  model Sharpe
+        1        5,036      82.3%       50.7%       -1.96%         +0.49
+        3       15,108      78.0%       50.4%       -2.19%         +0.41
+       10       50,359      69.7%       50.2%       -2.49%         +0.35
+       25      120,735      63.1%       50.6%       -2.03%         +0.40
+       50      240,740      59.5%       50.9%       -1.72%         +0.42
+      109      531,728      56.3%       50.8%       -1.89%         +0.41
+
+  always guessing 'up'  52.6%   (the number to beat)
+  the oracle it was trained on: Sharpe +8.8
+
+
+READING IT
+
+  Best out-of-sample accuracy: 50.9% on 240,740 training rows,
+  against 52.6% for guessing 'up' every single day.
+
+  Trained on perfect answers, the model cannot reproduce them on data
+  it has not seen. Accuracy does not improve as the training set grows
+  from 5,036 rows to 531,728 --
+  which is the signature of information that is absent rather than
+  merely hard to extract. More data cannot supply what is not there.
+
+  This also bounds reinforcement learning. An RL agent must *discover*
+  good actions through trial and error; this model was handed them and
+  still could not generalise. RL cannot exceed its own answer key.

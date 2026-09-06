@@ -1,0 +1,54 @@
+REINFORCEMENT LEARNING FOR TRADING
+
+ARM 1 -- PLANTED SIGNAL: how strong must an edge be before RL finds it?
+
+  A synthetic feature genuinely predicts the next return. Real daily
+  equity returns have a standard deviation near 1.8%, so the strength
+  column is the size of the predictable part relative to that.
+
+    signal  implied daily edge  test Sharpe  position corr
+     0.000               0.0%        -0.31         -0.105
+     0.002              11.1%         0.84          0.796
+     0.005              27.8%         2.70          0.837
+     0.010              55.6%         4.95          0.832
+     0.020             111.1%         7.29          0.815
+     0.050             277.8%         9.73          0.794
+
+
+ARM 2 -- REAL MARKETS
+
+  805,645 stock-days across 109 US large caps
+  train 531,728 rows before 2016-01-01, test 273,917 after
+
+  training reward, first epoch -> last: +0.000036 -> +0.000054
+  policy entropy, first -> last:        1.602 -> 1.608
+  mean position held during training:   0.50
+
+  OUT OF SAMPLE  Sharpe +0.889   mean position 0.74
+  always fully invested, same rows: Sharpe +0.920
+
+
+ARM 3 -- THE SAME DATA, RELATIONSHIP DESTROYED
+
+  Returns shuffled against features. Distributions identical, signal
+  gone. This is what scoring nothing looks like.
+
+  OUT OF SAMPLE  Sharpe +0.907   mean position 0.91
+
+
+READING IT
+
+  real data     Sharpe +0.889
+  signal removed Sharpe +0.907
+  fully invested Sharpe +0.920
+
+  The agent is not broken: on a planted signal it recovers the feature
+  at a correlation near 0.8. On real markets it lands where the
+  signal-removed control lands, and both trail simply staying invested.
+
+  Arm 1 says how far away the target is. RL needs a predictable
+  component of roughly 25-50% of daily volatility before it reliably
+  finds anything. The literature's estimate for daily equity
+  predictability is under 5%, and this project measured its own
+  supervised ceiling at 50.8% direction accuracy against a 52.6%
+  base rate. RL is not the missing ingredient; the signal is.
